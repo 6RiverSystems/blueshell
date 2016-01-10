@@ -4,6 +4,7 @@
   "description": "A Behavior Tree implementation in modern Javascript",
   "main": "index.js",
   "scripts": {
+		"pretest": "eslint .",
     "test": "NODE_PATH=$NODE_PATH:./ istanbul cover node_modules/.bin/gaffer-tape"
   },
   "repository": {
@@ -21,5 +22,13 @@
   "bugs": {
     "url": "https://github.com/6RiverSystems/blueshell/issues"
   },
-  "homepage": "https://github.com/6RiverSystems/blueshell#readme"
+  "homepage": "https://github.com/6RiverSystems/blueshell#readme",
+	"devDependencies": {
+		"eslint": "^1.10.2",
+		"eslint-config-defaults": "^7.1.1",
+		"gaffer-tape": "github:6riversystems/gaffer-tape",
+		"istanbul": "^0.4.1",
+		"proxyquire": "^1.7.3",
+		"sinon": "^1.17.2"
+	}
 }

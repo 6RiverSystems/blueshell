@@ -1,0 +1,15 @@
+// Based on the awesome config from walmart labs:
+//https://github.com/walmartlabs/eslint-config-defaults
+{
+	"extends": "defaults/configurations/google",
+	"rules": {
+		"max-len": [2, 110, 2],
+		"indent": [2, "tab"],
+		"dot-location": [2, "property"],
+		"no-mixed-spaces-and-tabs": [2, "smart-tabs"]
+	},
+	"env": {
+		"node": true,
+		"es6": true
+	}
+}
