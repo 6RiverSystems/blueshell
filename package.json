@@ -1,0 +1,25 @@
+{
+  "name": "blueshell",
+  "version": "0.0.1",
+  "description": "A Behavior Tree implementation in modern Javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_PATH=$NODE_PATH:./ istanbul cover node_modules/.bin/gaffer-tape"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/6RiverSystems/blueshell.git"
+  },
+  "keywords": [
+    "behavior-tree",
+    "finite",
+    "state",
+    "machines"
+  ],
+  "author": "Joshua Chaitin-Pollak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/6RiverSystems/blueshell/issues"
+  },
+  "homepage": "https://github.com/6RiverSystems/blueshell#readme"
+}
