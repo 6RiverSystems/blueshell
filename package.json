@@ -2,14 +2,14 @@
   "name": "blueshell",
   "version": "0.0.1",
   "description": "A Behavior Tree implementation in modern Javascript",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
 		"pretest": "eslint .",
     "test": "NODE_PATH=$NODE_PATH:./ istanbul cover node_modules/.bin/gaffer-tape"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/6RiverSystems/blueshell.git"
+    "url": "git://github.com/6RiverSystems/blueshell.git"
   },
   "keywords": [
     "behavior-tree",
