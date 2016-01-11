@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/6RiverSystems/blueshell.git"
+    "url": "git://github.com/6RiverSystems/blueshell.git"
   },
   "keywords": [
     "behavior-tree",
