@@ -32,5 +32,6 @@
     "sinon": "^1.17.2"
   },
   "dependencies": {
+    "tape-catch": "^1.0.4"
   }
 }
