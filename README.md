@@ -15,7 +15,8 @@ Blueshell is a Promise-based Behavior Tree implementation using modern ES6 synta
 	- If we exhaust all the children, return `FAILURE`.
 
 * Sequence
-  - Sends an event to each child into one of the returns `FAILURE`
+  - Sends an event to each child until one of the returns `FAILURE`, then return `FAILURE`
+  - If all children return success, return `SUCCESS`.
 
 * LatchedSequence
   - Sends an event to each child until one of the returns `FAILURE`, then return `FAILURE`
