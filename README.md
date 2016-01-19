@@ -2,30 +2,30 @@ Blueshell is a Promise-based Behavior Tree implementation using modern ES6 synta
 
 ## Node Types
 
-### Leaves
+### Actions (aka Tasks or Execution Nodes)
 
 * Action
 * Condition
 
-### Composites
+### Composites (aka Control Flow Nodes)
 
-* Selector
-  - Sends an event to each child until one of them returns `SUCCESS` or `RUNNING`.
+* Selector (aka Priority or Fallback)
+  - Sends an event to each child until one of them returns `SUCCESS` or `RUNNING`, then returns that value.
 	- If we exhaust all the children, return `FAILURE`.
 
 * LatchedSelector
-  - Sends an event to each child until one of them returns `SUCCESS` or `RUNNING`.
-	- If a child returns `RUNNING`, subsequent events start at that child.
+  - Sends an event to each child until one of them returns `SUCCESS` or `RUNNING`, then returns that value.
 	- If we exhaust all the children, return `FAILURE`.
+	- If a child returns `RUNNING`, subsequent events start at that child.
 
 * Sequence
-  - Sends an event to each child until one of the returns `FAILURE`, then return `FAILURE`
-  - If all children return success, return `SUCCESS`.
+  - Sends an event to each child until one of the returns `FAILURE`, or `RUNNING`, then returns that value.
+  - If all children return `SUCCESS`, return `SUCCESS`.
 
 * LatchedSequence
-  - Sends an event to each child until one of the returns `FAILURE`, then return `FAILURE`
+  - Sends an event to each child until one of the returns `FAILURE`, or `RUNNING`, then returns that value.
+  - If all children return `SUCCESS`, return `SUCCESS`.
   - If a child returns `RUNNING`, subsequent events start at that child.
-  - If all children return success, return `SUCCESS`.
 
 ### Decorators
 
@@ -54,6 +54,7 @@ The following are sources used when designing this library
 - [Handling Node Traversal](http://stackoverflow.com/a/15725129/1017787)
 - [Difference between a Decision Tree and a Behavior Tree](http://gamedev.stackexchange.com/questions/51693/decision-tree-vs-behavior-tree)
 - [Behavior Trees for AI](http://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php)
+- [Wikipedia Article](https://en.wikipedia.org/wiki/Behavior_tree_(artificial_intelligence,_robotics_and_control))
 
 
 ### Unread
