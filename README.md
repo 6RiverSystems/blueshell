@@ -1,5 +1,7 @@
 Blueshell is a Promise-based Behavior Tree implementation using modern ES6 syntax.
 
+[![Circle CI](https://circleci.com/gh/6RiverSystems/blueshell/tree/master.svg?style=svg)](https://circleci.com/gh/6RiverSystems/blueshell/tree/master)
+
 ## Node Types
 
 ### Actions (aka Tasks or Execution Nodes)
@@ -41,11 +43,6 @@ Blueshell is a Promise-based Behavior Tree implementation using modern ES6 synta
 
 * Decorator
   Base class for decorators - can only have one child.
-
-## Todo
-
-Currently only `Selector` optimizes for 'RUNNING'
-  - Should this be extended to `Sequence`?
 
 ## Inspiration and Further Reading
 
