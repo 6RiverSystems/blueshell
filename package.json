@@ -1,11 +1,11 @@
 {
   "name": "blueshell",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "A Behavior Tree implementation in modern Javascript",
   "main": "lib/index.js",
   "scripts": {
     "pretest": "eslint .",
-    "test": "NODE_PATH=$NODE_PATH:./ istanbul cover node_modules/.bin/gaffer-tape"
+    "test": "NODE_PATH=$NODE_PATH:./ mocha --recursive"
   },
   "repository": {
     "type": "git",
@@ -26,12 +26,9 @@
   "devDependencies": {
     "eslint": "^1.10.2",
     "eslint-config-defaults": "^8.0.2",
-    "gaffer-tape": "github:6riversystems/gaffer-tape",
-    "istanbul": "^0.4.1",
     "proxyquire": "^1.7.3",
-    "sinon": "^1.17.2"
-  },
-  "dependencies": {
-    "tape-catch": "^1.0.4"
+    "sinon": "^1.17.2",
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
   }
 }

@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var Behavior = require('lib/index');
+var Behavior = require('../../../lib');
 
 class Recharge extends Behavior.Action {
 
