@@ -36,7 +36,7 @@ Decorators intercept and can modify the event sent to or the result from the chi
 * Not
   - Returns 'FAILURE' when the child returns 'SUCCESS', and vice-versa
 
-* RepeatWhere
+* RepeatWhen
   - Repeats the child when an evaluation function returns true.
 
 * RepeatOnResult
