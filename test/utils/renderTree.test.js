@@ -17,10 +17,19 @@ let waitAi = new Behavior.LatchedSelector('shutdownWithWaitAi',
 		new TestActions.EmergencyShutdown()
 	]);
 
-describe.only('renderTree', function() {
+describe('renderTree', function() {
 
-	it('should generate a tree of nodes', function() {
-		renderTree(waitAi);
+	it('should generate a tree of nodes', function(done) {
+		let a = renderTree(waitAi);
+
+		assert.ok(a);
+		assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
+		assert.isAbove(a.indexOf('LatchedSelector'), 0);
+		assert.isAbove(a.indexOf('Recharge'), 0);
+		assert.isAbove(a.indexOf('WaitForCooldown'), 0);
+		assert.isAbove(a.indexOf('EmergencyShutdown'), 0);
+
+		done();
 	});
 
 });
