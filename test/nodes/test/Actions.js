@@ -5,6 +5,15 @@
 
 var Behavior = require('../../../lib');
 
+function initialState(debug) {
+	return {
+		commands: [],
+		__blueshell: {
+			debug
+		}
+	};
+}
+
 class Recharge extends Behavior.Action {
 
 	onEvent(state, event) {
@@ -29,7 +38,7 @@ class Recharge extends Behavior.Action {
 class WaitForCooldown extends Behavior.Action {
 
 	onEvent(state, event) {
-		let storage = this.getStorage(state);
+		let storage = this.getNodeStorage(state);
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : 1;
 
@@ -66,5 +75,6 @@ class EmergencyShutdown extends Behavior.Action {
 module.exports = {
 	Recharge,
 	WaitForCooldown,
-	EmergencyShutdown
+	EmergencyShutdown,
+	initialState
 };

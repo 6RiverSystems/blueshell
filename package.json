@@ -1,6 +1,6 @@
 {
   "name": "blueshell",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A Behavior Tree implementation in modern Javascript",
   "main": "lib/index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/6RiverSystems/blueshell#readme",
   "devDependencies": {
-    "eslint": "~2.2.0",
+    "eslint": "=2.5.1",
     "eslint-config-defaults": "~9.0.0",
     "proxyquire": "^1.7.3",
     "sinon": "^1.17.2",
