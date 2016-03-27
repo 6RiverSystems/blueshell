@@ -23,7 +23,7 @@ class StopMotors extends Behavior.Action {
 class StopLasers extends Behavior.Action {
 
 	onEvent(state, event) {
-		let storage = this.getStorage(state);
+		let storage = this.getNodeStorage(state);
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : state.laserCooldownTime;
 

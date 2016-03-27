@@ -38,20 +38,20 @@ describe('Base', function() {
 		});
 	});
 
-	describe('#getStorage', function() {
+	describe('#getNodeStorage', function() {
 		it('has separate storage for each state', function() {
 			var node = new Base('test');
 
 			var state1 = {};
 			var state2 = {};
 
-			var storage = node.getStorage(state1);
+			var storage = node.getNodeStorage(state1);
 
 			storage.testData = 'Node Data';
 
-			assert.equal(node.getStorage(state1).testData, 'Node Data', 'Testing Storage');
-			assert.ok(node.getStorage(state2), 'state2 storage found');
-			assert.notOk(node.getStorage(state2).testData, 'state2 testData not found');
+			assert.equal(node.getNodeStorage(state1).testData, 'Node Data', 'Testing Storage');
+			assert.ok(node.getNodeStorage(state2), 'state2 storage found');
+			assert.notOk(node.getNodeStorage(state2).testData, 'state2 testData not found');
 		});
 	});
 
@@ -66,5 +66,41 @@ describe('Base', function() {
 				assert.equal(res.result, 'SUCCESS');
 			});
 		});
+	});
+
+	describe('#EventCounter', function() {
+		it('Parent Node Counter', function() {
+			let root = new Base('root');
+			let state = {};
+
+			return root.handleEvent(state, {})
+			.then(() => root.handleEvent(state, {}))
+			.then(() => {
+				assert.equal(root.getTreeEventCounter(state), 2);
+				assert.equal(root.getLastEventSeen(state), 2);
+			});
+
+		});
+
+		it('Child Node Counter', function() {
+
+			let child = new Base('child');
+			let root = new Behavior.Decorator('root', child);
+
+			let state = {};
+
+			// Since it has a parent, it should increment
+			// the local node but not the eventCounter
+			return root.handleEvent(state, {})
+			.then(() => root.handleEvent(state, {}))
+			.then(() => {
+				assert.equal(root.getTreeEventCounter(state), 2);
+				assert.equal(root.getLastEventSeen(state), 2);
+				assert.equal(child.getTreeEventCounter(state), 2);
+				assert.equal(child.getLastEventSeen(state), 2, 'last event seen should be updated');
+			});
+
+		});
+
 	});
 });
