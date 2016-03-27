@@ -19,6 +19,11 @@ let waitAi = new Behavior.LatchedSelector('shutdownWithWaitAi',
 
 describe('renderTree', function() {
 
+	it('should not crash', function(done) {
+		renderTree.toConsole(waitAi);
+		done();
+	});
+
 	it('should generate a tree of nodes without a state', function(done) {
 		let a = renderTree(waitAi);
 
