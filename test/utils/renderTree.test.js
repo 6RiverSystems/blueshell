@@ -10,12 +10,7 @@ let renderTree = require('../../lib/utils/renderTree');
 
 var TestActions = require('../nodes/test/Actions');
 
-let waitAi = new Behavior.LatchedSelector('shutdownWithWaitAi',
-	[
-		new TestActions.Recharge(),
-		new TestActions.WaitForCooldown(),
-		new TestActions.EmergencyShutdown()
-	]);
+let waitAi = TestActions.waitAi;
 
 describe('renderTree', function() {
 
