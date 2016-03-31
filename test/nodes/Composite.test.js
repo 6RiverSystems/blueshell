@@ -16,10 +16,10 @@ describe('Composite', function() {
 	context('#resetNodeStorage', function() {
 
 		it('should reset child state', function() {
-			let state = TestActions.initialState(false);
-			state.overheated = true;
-
 			let event = {};
+			let state = TestActions.initialState(false);
+
+			state.overheated = true;
 
 			return waitAi.handleEvent(state, event)
 			.catch((err) => {
