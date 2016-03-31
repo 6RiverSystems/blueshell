@@ -47,6 +47,7 @@ class WaitForCooldown extends Behavior.Action {
 		console.log('Storage cooldown is ', storage.cooldown);
 
 		if (storage.cooldown) {
+			state.cooldownLevel = storage.cooldown;
 			result = 'RUNNING';
 		} else {
 			state.overheated = false;
@@ -71,10 +72,17 @@ class EmergencyShutdown extends Behavior.Action {
 	}
 }
 
+let waitAi = new Behavior.LatchedSelector('shutdownWithWaitAi',
+	[
+		new Recharge(),
+		new WaitForCooldown(),
+		new EmergencyShutdown()
+	]);
 
 module.exports = {
 	Recharge,
 	WaitForCooldown,
 	EmergencyShutdown,
-	initialState
+	initialState,
+	waitAi
 };
