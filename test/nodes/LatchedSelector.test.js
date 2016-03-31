@@ -15,12 +15,7 @@ let shutdownAi = new Behavior.LatchedSelector('shutdownAi',
 		new TestActions.EmergencyShutdown()
 	]);
 
-let waitAi = new Behavior.LatchedSelector('shutdownWithWaitAi',
-	[
-		new TestActions.Recharge(),
-		new TestActions.WaitForCooldown(),
-		new TestActions.EmergencyShutdown()
-	]);
+let waitAi = TestActions.waitAi;
 
 describe('LatchedSelector', function() {
 
