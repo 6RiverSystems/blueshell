@@ -29,6 +29,12 @@ Blueshell is a Promise-based Behavior Tree implementation using modern ES6 synta
   - If all children return `SUCCESS`, return `SUCCESS`.
   - If a child returns `RUNNING`, subsequent events start at that child.
 
+* IfElse
+  - Accepts a `conditional` function a `consequent` node, and an optional `alternative` node.
+  - If `conditional(state, event)` returns true, will return the result of activating the `consequent` node.
+  - If `conditional(state, event)` returns false, will return the result of activating the `alternative` node, if one is provided.
+  - If `conditional(state, event)` returns false, will return `FAILURE` if no `alternative` node is provided.
+
 ### Decorators
 
 Decorators intercept and can modify the event sent to or the result from the child.
@@ -41,6 +47,10 @@ Decorators intercept and can modify the event sent to or the result from the chi
 
 * RepeatOnResult
   - Repeats the child if it returns the specified status.
+
+* ResultSwap
+  - Allows you to swap one result of a child node for another.
+  - For example, you can use this to mask `FAILURE` as `SUCCESS`.
 
 ### Base Classes
 
