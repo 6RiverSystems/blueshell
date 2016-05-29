@@ -28,7 +28,7 @@
   "homepage": "https://github.com/6RiverSystems/blueshell#readme",
   "devDependencies": {
     "chai": "^3.5.0",
-    "eslint": "=2.5.1",
+    "eslint": "2.11.0",
     "eslint-config-defaults": "~9.0.0",
     "istanbul": "^0.4.2",
     "mocha": "^2.4.5",
