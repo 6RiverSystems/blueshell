@@ -1,6 +1,6 @@
 {
   "name": "blueshell",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "description": "A Behavior Tree implementation in modern Javascript",
   "main": "lib/index.js",
   "scripts": {
