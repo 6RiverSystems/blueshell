@@ -5,6 +5,7 @@
 
 let assert = require('chai').assert;
 
+let rc = require('../../lib/utils/resultCodes');
 let Behavior = require('../../lib');
 
 class StopMotors extends Behavior.Action {
@@ -13,10 +14,7 @@ class StopMotors extends Behavior.Action {
 
 		state.commands.push('motorsStopped');
 
-		return {
-			result: 'SUCCESS',
-			state
-		};
+		return rc.SUCCESS;
 	}
 }
 
@@ -27,20 +25,17 @@ class StopLasers extends Behavior.Action {
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : state.laserCooldownTime;
 
-		let result = 'SUCCESS';
+		let result = rc.SUCCESS;
 
 		console.log('Storage cooldown is ', storage.cooldown);
 
 		if (storage.cooldown > 0) {
-			result = 'RUNNING';
+			result = rc.RUNNING;
 		} else {
 			state.commands.push('lasersCooled');
 		}
 
-		return {
-			result,
-			state
-		};
+		return result;
 	}
 }
 
@@ -49,10 +44,7 @@ class Shutdown extends Behavior.Action {
 	onEvent(state, event) {
 		state.commands.push('powerOff');
 
-		return {
-			result: 'SUCCESS',
-			state
-		};
+		return rc.SUCCESS;
 	}
 }
 
@@ -68,44 +60,44 @@ describe('LatchedSelector', function() {
 	it('should run correctly', function() {
 
 		// With a happy bot
-		let bot = {
+		let botState = {
 			laserCooldownTime: 0,
 			commands: []
 		};
 
-		let p = shutdownSequence.handleEvent(bot, 'lowBattery');
+		let p = shutdownSequence.handleEvent(botState, 'lowBattery');
 
 		return p.then(res => {
-			assert.equal(res.result, 'SUCCESS', 'Behavior Tree success');
-			assert.equal(res.state.commands.length, 3, 'Need Three Commands');
-			assert.equal(res.state.commands[0], 'motorsStopped');
-			assert.equal(res.state.commands[1], 'lasersCooled');
-			assert.equal(res.state.commands[2], 'powerOff');
+			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
+			assert.equal(botState.commands.length, 3, 'Need Three Commands');
+			assert.equal(botState.commands[0], 'motorsStopped');
+			assert.equal(botState.commands[1], 'lasersCooled');
+			assert.equal(botState.commands[2], 'powerOff');
 		});
 	});
 
 	it('should loop correctly', function() {
 		// With a happy bot
-		let bot = {
+		let botState = {
 			laserCooldownTime: 1,
 			commands: []
 		};
 
-		let p = shutdownSequence.handleEvent(bot, 'lowBattery 1');
+		let p = shutdownSequence.handleEvent(botState, 'lowBattery 1');
 
 		return p.then(res => {
-			assert.equal(res.result, 'RUNNING', 'Behavior Tree Running');
-			assert.equal(res.state.commands.length, 1);
-			assert.equal(res.state.commands[0], 'motorsStopped');
+			assert.equal(res, rc.RUNNING, 'Behavior Tree Running');
+			assert.equal(botState.commands.length, 1);
+			assert.equal(botState.commands[0], 'motorsStopped');
 
-			return shutdownSequence.handleEvent(bot, 'lowBattery 2');
+			return shutdownSequence.handleEvent(botState, 'lowBattery 2');
 		}).then(res => {
 
-			assert.equal(res.result, 'SUCCESS', 'Behavior Tree Success');
-			assert.equal(res.state.commands.length, 3, 'Need Three Commands');
-			assert.equal(res.state.commands[0], 'motorsStopped');
-			assert.equal(res.state.commands[1], 'lasersCooled');
-			assert.equal(res.state.commands[2], 'powerOff');
+			assert.equal(res, rc.SUCCESS, 'Behavior Tree Success');
+			assert.equal(botState.commands.length, 3, 'Need Three Commands');
+			assert.equal(botState.commands[0], 'motorsStopped');
+			assert.equal(botState.commands[1], 'lasersCooled');
+			assert.equal(botState.commands[2], 'powerOff');
 		});
 	});
 });

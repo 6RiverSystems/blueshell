@@ -5,10 +5,11 @@
 
 let assert = require('chai').assert;
 
+let rc = require('../../lib/utils/resultCodes');
 let Behavior = require('../../lib');
 let renderTree = require('../../lib/utils/renderTree');
 
-var TestActions = require('../nodes/test/Actions');
+let TestActions = require('../nodes/test/Actions');
 
 let waitAi = TestActions.waitAi;
 
@@ -33,10 +34,10 @@ describe('renderTree', function() {
 		];
 
 		assertWordsInString(a, expectedWords);
-		assert.notOk(a.includes('SUCCESS'));
-		assert.notOk(a.includes('FAILURE'));
-		assert.notOk(a.includes('RUNNING'));
-		assert.notOk(a.includes('ERROR'));
+		assert.notOk(a.includes(rc.SUCCESS));
+		assert.notOk(a.includes(rc.FAILURE));
+		assert.notOk(a.includes(rc.RUNNING));
+		assert.notOk(a.includes(rc.ERROR));
 
 		done();
 	});
@@ -59,11 +60,11 @@ describe('renderTree', function() {
 
 			let expectedWords = [
 				'(LatchedSelector)',
-				'RUNNING',
+				rc.RUNNING,
 				'Recharge',
-				'FAILURE',
+				rc.FAILURE,
 				'WaitForCooldown',
-				'RUNNING',
+				rc.RUNNING,
 				'EmergencyShutdown'
 			];
 

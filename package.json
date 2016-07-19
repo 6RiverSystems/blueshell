@@ -1,11 +1,11 @@
 {
   "name": "blueshell",
-  "version": "0.3.0",
+  "version": "1.0.0-beta.1",
   "description": "A Behavior Tree implementation in modern Javascript",
   "main": "lib/index.js",
   "scripts": {
     "pretest": "eslint .",
-    "test": "NODE_ENV=test NODE_PATH=$NODE_PATH:./ istanbul cover node_modules/.bin/_mocha",
+    "test": "NODE_ENV=test NODE_PATH=$NODE_PATH:./ istanbul cover node_modules/.bin/_mocha -- ${MOCHA_OPTS}",
     "test:no-cover": "NODE_ENV=test NODE_PATH=$NODE_PATH:./ mocha",
     "test:debug": "npm run test:no-cover -- --debug-brk",
     "posttest": "nsp check",
@@ -32,8 +32,9 @@
     "chai": "^3.5.0",
     "eslint": "3.1.0",
     "eslint-config-defaults": "~9.0.0",
-    "istanbul": "^0.4.2",
+    "istanbul": "^0.4.4",
     "mocha": "^2.4.5",
+    "mocha-junit-reporter": "1.11.1",
     "nsp": "^2.2.1",
     "proxyquire": "^1.7.3",
     "sinon": "^1.17.2"

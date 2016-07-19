@@ -5,6 +5,7 @@
 
 let assert = require('chai').assert;
 
+let rc = require('../../lib/utils/resultCodes');
 let Behavior = require('../../lib');
 
 describe('IfElse', function() {
@@ -14,10 +15,7 @@ describe('IfElse', function() {
 
 			state.success = true;
 
-			return {
-				result: 'SUCCESS',
-				state
-			};
+			return rc.SUCCESS;
 		}
 	};
 
@@ -26,10 +24,7 @@ describe('IfElse', function() {
 
 			state.success = false;
 
-			return {
-				result: 'FAILURE',
-				state
-			};
+			return rc.FAILURE;
 		}
 	};
 
@@ -40,12 +35,13 @@ describe('IfElse', function() {
 			successAction
 		);
 
-		let p = ifElse.handleEvent({}, 'testEvent');
+		let state = {};
+		let p = ifElse.handleEvent(state, 'testEvent');
 
 		return p.then(res => {
-			assert.notOk(res.state.errorReason);
-			assert.equal(res.result, 'SUCCESS', 'Behavior Tree success');
-			assert.isTrue(res.state.success, 'Expected Action was called');
+			assert.notOk(state.errorReason);
+			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
+			assert.isTrue(state.success, 'Expected Action was called');
 		});
 	});
 
@@ -57,12 +53,13 @@ describe('IfElse', function() {
 			failureAction
 		);
 
-		let p = ifElse.handleEvent({}, 'testEvent');
+		let state = {};
+		let p = ifElse.handleEvent(state, 'testEvent');
 
 		return p.then(res => {
-			assert.notOk(res.state.errorReason);
-			assert.equal(res.result, 'SUCCESS', 'Behavior Tree success');
-			assert.isTrue(res.state.success, 'Expected Action was called');
+			assert.notOk(state.errorReason);
+			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
+			assert.isTrue(state.success, 'Expected Action was called');
 		});
 	});
 
@@ -74,12 +71,13 @@ describe('IfElse', function() {
 			successAction
 		);
 
-		let p = ifElse.handleEvent({}, 'testEvent');
+		let state = {};
+		let p = ifElse.handleEvent(state, 'testEvent');
 
 		return p.then(res => {
-			assert.notOk(res.state.errorReason);
-			assert.equal(res.result, 'SUCCESS', 'Behavior Tree success');
-			assert.isTrue(res.state.success, 'Expected Action was called');
+			assert.notOk(state.errorReason);
+			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
+			assert.isTrue(state.success, 'Expected Action was called');
 		});
 	});
 
@@ -91,12 +89,13 @@ describe('IfElse', function() {
 			successAction
 		);
 
-		let p = ifElse.handleEvent({}, 'testEvent');
+		let state = {};
+		let p = ifElse.handleEvent(state, 'testEvent');
 
 		return p.then(res => {
-			assert.notOk(res.state.errorReason);
-			assert.equal(res.result, 'FAILURE', 'Behavior Tree success');
-			assert.isNotTrue(res.state.success, 'Expected Action was called');
+			assert.notOk(state.errorReason);
+			assert.equal(res, rc.FAILURE, 'Behavior Tree success');
+			assert.isNotTrue(state.success, 'Expected Action was called');
 		});
 	});
 });

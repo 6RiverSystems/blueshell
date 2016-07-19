@@ -6,11 +6,21 @@
 		"max-len": [2, 110, 2],
 		"indent": [2, "tab"],
 		"dot-location": [2, "property"],
-		"no-mixed-spaces-and-tabs": [2, "smart-tabs"]
+		"no-mixed-spaces-and-tabs": [2, "smart-tabs"],
+		"no-console": [2],
+		"no-var": [2],
+		"strict": [2, "global"]
 	},
 	"env": {
 		"node": true,
 		"es6": true,
 		"mocha": true
+	},
+	"ecmaFeatures": {
+		"modules": true,
+		"classes": true,
+		"arrowFunctions": true,
+		"blockBindings": true,
+		"templateStrings": true
 	}
 }

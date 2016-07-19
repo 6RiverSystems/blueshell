@@ -3,7 +3,8 @@
  */
 'use strict';
 
-var Behavior = require('../../../lib');
+let rc = require('../../../lib/utils/resultCodes');
+let Behavior = require('../../../lib');
 
 function initialState(debug) {
 	return {
@@ -18,20 +19,17 @@ class Recharge extends Behavior.Action {
 
 	onEvent(state, event) {
 
-		let result = 'SUCCESS';
+		let result = rc.SUCCESS;
 
 		state.batteryLevel = state.batteryLevel !== undefined ? ++state.batteryLevel : 1;
 
 		if (state.overheated) {
-			result = 'FAILURE';
+			result = rc.FAILURE;
 		} else {
 			state.commands.push('findDock');
 		}
 
-		return {
-			result,
-			state
-		};
+		return result;
 	}
 }
 
@@ -42,21 +40,18 @@ class WaitForCooldown extends Behavior.Action {
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : 1;
 
-		let result = 'SUCCESS';
+		let result = rc.SUCCESS;
 
 		console.log('Storage cooldown is ', storage.cooldown);
 
 		if (storage.cooldown) {
 			state.cooldownLevel = storage.cooldown;
-			result = 'RUNNING';
+			result = rc.RUNNING;
 		} else {
 			state.overheated = false;
 		}
 
-		return {
-			result,
-			state
-		};
+		return result;
 	}
 }
 
@@ -65,10 +60,7 @@ class EmergencyShutdown extends Behavior.Action {
 	onEvent(state, event) {
 		state.commands.push('powerOff');
 
-		return {
-			result: 'SUCCESS',
-			state
-		};
+		return rc.SUCCESS;
 	}
 }
 
