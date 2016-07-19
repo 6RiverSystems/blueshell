@@ -5,6 +5,7 @@
 
 let assert = require('chai').assert;
 
+let rc = require('../../../lib/utils/resultCodes');
 let Behavior = require('../../../lib');
 let Action = Behavior.Action;
 let RepeatOnResult = Behavior.decorators.RepeatOnResult;
@@ -16,7 +17,7 @@ class CountUntil extends Action {
 		state.counter += 1;
 
 		return {
-			result: state.counter <= event ? 'RUNNING' : 'SUCCESS',
+			result: state.counter <= event ? rc.RUNNING : rc.SUCCESS,
 			state
 		};
 	}
@@ -25,8 +26,8 @@ class CountUntil extends Action {
 describe('RepeatOnResult', function() {
 	it('repeat when child returns running', function() {
 
-		var countUntil = new CountUntil();
-		var unEcho = new RepeatOnResult('RUNNING', countUntil);
+		let countUntil = new CountUntil();
+		let unEcho = new RepeatOnResult(rc.RUNNING, countUntil);
 
 		let tests = [
 			{action: unEcho, event: 0, counter: 1},
@@ -36,7 +37,7 @@ describe('RepeatOnResult', function() {
 		let makeVerify = function(test) {
 			return function(res) {
 				assert.equal(res.state.counter, test.counter, `Counter: ${test.action.name} -> ${test.counter}`);
-				assert.equal(res.result, 'SUCCESS', `Result: ${test.action.name} -> ${test.counter}`);
+				assert.equal(res, rc.SUCCESS, `Result: ${test.action.name} -> ${test.counter}`);
 			};
 		};
 

@@ -5,17 +5,15 @@
 
 let assert = require('chai').assert;
 
+let rc = require('../../../lib/utils/resultCodes');
 let Behavior = require('../../../lib');
-var Action = Behavior.Action;
-var Not = Behavior.decorators.Not;
+let Action = Behavior.Action;
+let Not = Behavior.decorators.Not;
 
 class EchoAction extends Action {
 
 	onEvent(state, event) {
-		return {
-			result: event,
-			state
-		};
+		return event;
 	}
 }
 
@@ -23,21 +21,21 @@ describe('Not', function() {
 
 	it('should negate the result code', function() {
 
-		var echo = new EchoAction();
-		var unEcho = new Not('unEcho', echo);
+		let echo = new EchoAction();
+		let unEcho = new Not('unEcho', echo);
 
 		let tests = [
-			{action: echo, event: 'SUCCESS', result: 'SUCCESS'},
-			{action: echo, event: 'FAILURE', result: 'FAILURE'},
-			{action: echo, event: 'RUNNING', result: 'RUNNING'},
-			{action: unEcho, event: 'SUCCESS', result: 'FAILURE'},
-			{action: unEcho, event: 'FAILURE', result: 'SUCCESS'},
-			{action: unEcho, event: 'RUNNING', result: 'RUNNING'}
+			{action: echo, event: rc.SUCCESS, result: rc.SUCCESS},
+			{action: echo, event: rc.FAILURE, result: rc.FAILURE},
+			{action: echo, event: rc.RUNNING, result: rc.RUNNING},
+			{action: unEcho, event: rc.SUCCESS, result: rc.FAILURE},
+			{action: unEcho, event: rc.FAILURE, result: rc.SUCCESS},
+			{action: unEcho, event: rc.RUNNING, result: rc.RUNNING}
 		];
 
 		let makeVerify = function(test) {
 			return function(res) {
-				assert.equal(res.result, test.result, `${test.action.name} -> ${test.result}`);
+				assert.equal(res, test.result, `${test.action.name} -> ${test.result}`);
 			};
 		};
 

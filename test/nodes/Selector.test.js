@@ -5,8 +5,9 @@
 
 let assert = require('chai').assert;
 
+let rc = require('../../lib/utils/resultCodes');
 let Behavior = require('../../lib');
-var TestActions = require('./test/Actions');
+let TestActions = require('./test/Actions');
 
 let waitAi = new Behavior.Selector('shutdownWithWaitAi',
 	[
@@ -19,48 +20,48 @@ describe('Selector', function() {
 	it('should return success', function() {
 
 		// With a happy bot
-		let bot = {
+		let botState = {
 			overheated: false,
 			commands: []
 		};
 
-		let p = waitAi.handleEvent(bot, 'lowBattery');
+		let p = waitAi.handleEvent(botState, 'lowBattery');
 
 		return p.then(res => {
-			assert.equal(res.result, 'SUCCESS', 'Behavior Tree success');
-			assert.equal(res.state.commands.length, 1, 'Only one command');
-			assert.equal(res.state.commands[0], 'findDock', 'Searching for dock');
+			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
+			assert.equal(botState.commands.length, 1, 'Only one command');
+			assert.equal(botState.commands[0], 'findDock', 'Searching for dock');
 		});
 	});
 
 	it('should return failure', function() {
 		// With a overheated bot
-		let bot = {
+		let botState = {
 			overheated: true,
 			commands: []
 		};
 
-		let p = waitAi.handleEvent(bot, 'lowBattery 1');
+		let p = waitAi.handleEvent(botState, 'lowBattery 1');
 
 		return p.then(res => {
-			assert.equal(res.result, 'RUNNING', 'Behavior Tree Running');
-			assert.equal(res.state.batteryLevel, 1, 'Ran recharge once');
+			assert.equal(res, rc.RUNNING, 'Behavior Tree Running');
+			assert.equal(botState.batteryLevel, 1, 'Ran recharge once');
 
-			return waitAi.handleEvent(bot, 'lowBattery 2');
+			return waitAi.handleEvent(botState, 'lowBattery 2');
 		}).then(res => {
 
-			assert.equal(res.result, 'SUCCESS', 'Behavior Tree Success');
-			assert.equal(res.state.commands.length, 0, 'No commands, waiting for cooldown');
-			assert.equal(res.state.batteryLevel, 2, 'Ran recharge again');
+			assert.equal(res, rc.SUCCESS, 'Behavior Tree Success');
+			assert.equal(botState.commands.length, 0, 'No commands, waiting for cooldown');
+			assert.equal(botState.batteryLevel, 2, 'Ran recharge again');
 
-			return waitAi.handleEvent(bot, 'lowBattery 3');
+			return waitAi.handleEvent(botState, 'lowBattery 3');
 		}).then(res => {
-			assert.equal(res.result, 'SUCCESS', 'Behavior Tree Success');
-			assert.equal(res.state.commands.length, 1, 'Only one command');
-			assert.equal(res.state.commands[0], 'findDock', 'Searching for dock');
+			assert.equal(res, rc.SUCCESS, 'Behavior Tree Success');
+			assert.equal(botState.commands.length, 1, 'Only one command');
+			assert.equal(botState.commands[0], 'findDock', 'Searching for dock');
 
 			// Ticking battery level on each call proves we are NOT latching
-			assert.equal(res.state.batteryLevel, 3, 'Ran recharge again');
+			assert.equal(botState.batteryLevel, 3, 'Ran recharge again');
 		});
 	});
 });

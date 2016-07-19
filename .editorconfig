@@ -17,7 +17,7 @@ insert_final_newline = true
 indent_style = space
 indent_size = 2
 
-# YML requires spaces
+# NPM requires spaces
 [package.json]
 indent_style = space
 indent_size = 2
