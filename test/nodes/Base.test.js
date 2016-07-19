@@ -5,9 +5,10 @@
 
 let assert = require('chai').assert;
 
+let rc = require('../../lib/utils/resultCodes');
 let Behavior = require('../../lib');
 let Base = Behavior.Action;
-var Decorator = Behavior.Decorator;
+let Decorator = Behavior.Decorator;
 
 class TestAction extends Base {
 
@@ -23,7 +24,7 @@ describe('Base', function() {
 
 	describe('#path', function() {
 		it('sets a simple path', function() {
-			var node = new Base('test');
+			let node = new Base('test');
 
 			assert.equal(node.path, 'test', 'Node Name');
 		});
@@ -40,12 +41,12 @@ describe('Base', function() {
 
 	describe('#getNodeStorage', function() {
 		it('has separate storage for each state', function() {
-			var node = new Base('test');
+			let node = new Base('test');
 
-			var state1 = {};
-			var state2 = {};
+			let state1 = {};
+			let state2 = {};
 
-			var storage = node.getNodeStorage(state1);
+			let storage = node.getNodeStorage(state1);
 
 			storage.testData = 'Node Data';
 
@@ -63,7 +64,7 @@ describe('Base', function() {
 
 			return p.then(res => {
 				console.log('TestAction completed', res);
-				assert.equal(res.result, 'SUCCESS');
+				assert.equal(res, rc.SUCCESS);
 			});
 		});
 	});
