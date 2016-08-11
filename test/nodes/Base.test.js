@@ -32,10 +32,10 @@ describe('Base', function() {
 		it('builds hierarchical paths', function() {
 			let leaf = new TestAction('leaf');
 			let parent1 = new Decorator('parent1', leaf);
-			let parent2 = new Decorator('parent2', parent1);
+			let parent2 = new Decorator('parent2_foo', parent1);
 
-			assert.equal(leaf.path, 'parent2.parent1.leaf');
-			assert.equal(parent1.path, 'parent2.parent1');
+			assert.equal(leaf.path, 'parent2_foo_parent1_leaf');
+			assert.equal(parent1.path, 'parent2_foo_parent1');
 		});
 	});
 
