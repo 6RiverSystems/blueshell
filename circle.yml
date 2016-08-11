@@ -4,10 +4,6 @@ machine:
   environment:
     MOCHA_OPTS: --reporter mocha-junit-reporter --reporter-options mochaFile=$CIRCLE_TEST_REPORTS/mocha/junit.xml
 
-dependencies:
-  pre:
-    - npm update -g npm
-
 test:
   pre:
     - mkdir -p $CIRCLE_TEST_REPORTS/mocha
