@@ -3,16 +3,19 @@
  */
 'use strict';
 
-let rc = require('./../utils/resultCodes');
+import rc = require('../utils/resultCodes');
 
-class Base {
+export = class Base {
 
-	constructor(name) {
+	name: string;
+	_parent: string;
+
+	constructor(name: string) {
 		this.name = name || this.constructor.name;
 		this._parent = '';
 	}
 
-	handleEvent(state, event) {
+	handleEvent(state: any, event: any) {
 
 		return Promise.resolve(this._beforeEvent(state, event))
 		.then(() => {
@@ -33,7 +36,7 @@ class Base {
 	}
 
 	// Return nothing
-	_beforeEvent(state, event) {
+	_beforeEvent(state: any, event: any) {
 
 		let pStorage = this._privateStorage(state);
 		let nodeStorage = this.getNodeStorage(state);
@@ -52,7 +55,7 @@ class Base {
 	}
 
 	// Logging
-	_afterEvent(res, state, event) {
+	_afterEvent(res: any, state: any, event: any) {
 
 		if (this.getDebug(state)) {
 			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console
@@ -67,12 +70,12 @@ class Base {
 	}
 
 	// Return results
-	onEvent(state, event) {
+	onEvent(state: any, event: any) {
 
 		return rc.SUCCESS;
 	}
 
-	set parent(path) {
+	set parent(path: string) {
 		this._parent = path;
 	}
 
@@ -83,7 +86,7 @@ class Base {
 	/*
 	 * Returns storage unique to this node, keyed on the node's path.
 	 */
-	getNodeStorage(state) {
+	getNodeStorage(state: any) {
 		let path = this.path;
 		let blueshell = this._privateStorage(state);
 
@@ -91,7 +94,7 @@ class Base {
 		return blueshell[path];
 	}
 
-	resetNodeStorage(state) {
+	resetNodeStorage(state: any) {
 		let path = this.path;
 		let blueshell = this._privateStorage(state);
 
@@ -99,27 +102,25 @@ class Base {
 		return blueshell[path];
 	}
 
-	_privateStorage(state) {
+	_privateStorage(state: any) {
 		state.__blueshell = state.__blueshell || {};
 
 		return state.__blueshell;
 	}
 
-	getDebug(state) {
+	getDebug(state: any) {
 		return this._privateStorage(state).debug;
 	}
 
-	getTreeEventCounter(state) {
+	getTreeEventCounter(state: any) {
 		return this._privateStorage(state).eventCounter;
 	}
 
-	getLastEventSeen(state) {
+	getLastEventSeen(state: any) {
 		return this.getNodeStorage(state).lastEventSeen;
 	}
 
-	getLastResult(state) {
+	getLastResult(state: any) {
 		return this.getNodeStorage(state).lastResult;
 	}
 }
-
-module.exports = Base;

@@ -1,0 +1,22 @@
+{
+	"compileOnSave": true,
+	"compilerOptions": {
+		"outDir": "dist",
+		"target": "es6",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"allowJs": true,
+		"sourceMap": true,
+		"forceConsistentCasingInFileNames": true,
+		"removeComments": false,
+		"preserveConstEnums": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true
+	},
+	"exclude": [
+		"node_modules",
+		"tsDist",
+		"dist",
+		"coverage"
+	]
+}
