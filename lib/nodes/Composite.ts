@@ -28,7 +28,7 @@ class Composite extends Base {
 		}
 	}
 
-	onEvent(state: any, event: any): ResultCodes {
+	onEvent(state: any, event: any): Promise<ResultCodes> {
 
 		let storage = this.getNodeStorage(state);
 
@@ -46,7 +46,7 @@ class Composite extends Base {
 		return this.handleChild(state, event, firstChild);
 	}
 
-	handleChild(state: any, event: any, i: number): ResultCodes {
+	handleChild(state: any, event: any, i: number): Promise<ResultCodes> {
 		throw new Error('This is an abstract method - please override.');
 	}
 

@@ -15,7 +15,7 @@ class Base {
 		this._parent = '';
 	}
 
-	handleEvent(state: any, event: any) {
+	handleEvent(state: any, event: any): Promise<ResultCodes> {
 
 		return Promise.resolve(this._beforeEvent(state, event))
 		.then(() => {
@@ -70,9 +70,9 @@ class Base {
 	}
 
 	// Return results
-	onEvent(state: any, event: any): ResultCodes {
+	onEvent(state: any, event: any): Promise<ResultCodes> {
 
-		return ResultCodes.SUCCESS;
+		return Promise.resolve(ResultCodes.SUCCESS);
 	}
 
 	set parent(path: string) {
