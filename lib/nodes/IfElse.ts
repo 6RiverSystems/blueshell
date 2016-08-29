@@ -3,9 +3,12 @@
  */
 'use strict';
 
-let rc = require('./../utils/ResultCodes');
-let Base = require('./Base');
+import ResultCodes = require('./../utils/ResultCodes');
+import Base = require('./Base');
 
+interface Conditional {
+	(state: any, event: any): boolean;
+}
 
 /**
  * If-Else Conditional Composite Node.
@@ -20,7 +23,11 @@ let Base = require('./Base');
  */
 class IfElse extends Base {
 
-	constructor(name, conditional, consequent, alternative) {
+	conditional: Conditional;
+	consequent: Base;
+	alternative: Base;
+
+	constructor(name: string, conditional: Conditional, consequent: Base, alternative: Base) {
 		super(name);
 
 		this.conditional = conditional;
@@ -38,17 +45,17 @@ class IfElse extends Base {
 		return children;
 	}
 
-	onEvent(state, event) {
+	onEvent(state: any, event: any): Promise<ResultCodes> {
 
 		if (this.conditional(state, event)) {
 			return this.consequent.handleEvent(state, event);
 		} else if (this.alternative) {
 			return this.alternative.handleEvent(state, event);
 		} else {
-			return rc.FAILURE;
+			return Promise.resolve(ResultCodes.FAILURE);
 		}
 	}
 
 }
 
-module.exports = IfElse;
+export = IfElse;
