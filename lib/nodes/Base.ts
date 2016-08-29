@@ -3,9 +3,9 @@
  */
 'use strict';
 
-import rc = require('../utils/resultCodes');
+import ResultCodes = require('../utils/ResultCodes');
 
-export = class Base {
+class Base {
 
 	name: string;
 	_parent: string;
@@ -28,7 +28,7 @@ export = class Base {
 				console.error('Error: ', err.stack); // eslint-disable-line no-console
 			}
 
-			return rc.ERROR;
+			return ResultCodes.ERROR;
 		})
 		.then(res => {
 			return this._afterEvent(res, state, event);
@@ -36,7 +36,7 @@ export = class Base {
 	}
 
 	// Return nothing
-	_beforeEvent(state: any, event: any) {
+	private _beforeEvent(state: any, event: any) {
 
 		let pStorage = this._privateStorage(state);
 		let nodeStorage = this.getNodeStorage(state);
@@ -55,7 +55,7 @@ export = class Base {
 	}
 
 	// Logging
-	_afterEvent(res: any, state: any, event: any) {
+	private _afterEvent(res: any, state: any, event: any) {
 
 		if (this.getDebug(state)) {
 			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console
@@ -70,9 +70,9 @@ export = class Base {
 	}
 
 	// Return results
-	onEvent(state: any, event: any) {
+	onEvent(state: any, event: any): ResultCodes {
 
-		return rc.SUCCESS;
+		return ResultCodes.SUCCESS;
 	}
 
 	set parent(path: string) {
@@ -102,7 +102,7 @@ export = class Base {
 		return blueshell[path];
 	}
 
-	_privateStorage(state: any) {
+	private _privateStorage(state: any) {
 		state.__blueshell = state.__blueshell || {};
 
 		return state.__blueshell;
@@ -124,3 +124,5 @@ export = class Base {
 		return this.getNodeStorage(state).lastResult;
 	}
 }
+
+export = Base;

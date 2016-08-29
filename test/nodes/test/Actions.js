@@ -3,7 +3,7 @@
  */
 'use strict';
 
-let rc = require('../../../lib/utils/resultCodes');
+let rc = require('../../../lib/utils/ResultCodes');
 let Behavior = require('../../../lib');
 
 function initialState(debug) {

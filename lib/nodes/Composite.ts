@@ -1,10 +1,14 @@
 'use strict';
 
-let Base = require('./Base');
+import Base = require('./Base');
+import ResultCodes = require('../utils/ResultCodes');
 
 class Composite extends Base {
 
-	constructor(name, children, latched) {
+	children: any[];
+	latched: boolean;
+
+	constructor(name: string, children: any[], latched: boolean) {
 		super(name);
 
 		// console.log(`${name} constructed with ${children.length} children`);
@@ -16,15 +20,15 @@ class Composite extends Base {
 		}
 	}
 
-	set parent(parent) {
-		this._parent = parent;
+	set parent(parent: string) {
+		super.parent = parent;
 
 		for (let child of this.children) {
 			child.parent = parent + '_' + this.name;
 		}
 	}
 
-	onEvent(state, event) {
+	onEvent(state: any, event: any): ResultCodes {
 
 		let storage = this.getNodeStorage(state);
 
@@ -42,11 +46,11 @@ class Composite extends Base {
 		return this.handleChild(state, event, firstChild);
 	}
 
-	handleChild(state, event, i) {
+	handleChild(state: any, event: any, i: number): ResultCodes {
 		throw new Error('This is an abstract method - please override.');
 	}
 
-	resetNodeStorage(state) {
+	resetNodeStorage(state: any) {
 		super.resetNodeStorage(state);
 
 		for (let child of this.children) {
@@ -54,7 +58,6 @@ class Composite extends Base {
 		}
 	}
 
-
 }
 
-module.exports = Composite;
+export = Composite;

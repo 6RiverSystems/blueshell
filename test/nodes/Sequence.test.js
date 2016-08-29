@@ -5,7 +5,7 @@
 
 let assert = require('chai').assert;
 
-let rc = require('../../lib/utils/resultCodes');
+let rc = require('../../lib/utils/ResultCodes');
 let Behavior = require('../../lib');
 
 class ShootFlares extends Behavior.Action {
