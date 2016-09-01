@@ -3,32 +3,31 @@
  */
 'use strict';
 
-let rc = require('./../utils/ResultCodes');
-let Composite = require('./Composite');
+import ResultCodes = require('./../utils/ResultCodes');
+import Composite = require('./Composite');
 
 class Sequence extends Composite {
 
 	// Recursively executes children until one of them returns
 	// failure. If we call all the children successfully, return success.
-	handleChild(state, event, i) {
+	handleChild(state: any, event: any, i: number): Promise<ResultCodes> {
 
 		let storage = this.getNodeStorage(state);
 
 		// If we finished all processing without failure return success.
 		if (i >= this.children.length) {
-			return Promise.resolve(rc.SUCCESS);
+			return Promise.resolve(ResultCodes.SUCCESS);
 		}
 
 		let child = this.children[i];
 
 		return child.handleEvent(state, event)
-		.then(res => this._afterChild(res, state, event))
-		.then(([res, state_, event_]) => {
-			if (res === rc.SUCCESS) {
+		.then((res) => {
+			if (res === ResultCodes.SUCCESS) {
 				// Call the next child
-				return this.handleChild(state_, event_, ++i);
+				return this.handleChild(state, event, ++i);
 			} else {
-				if (this.latched && res === rc.RUNNING) {
+				if (this.latched && res === ResultCodes.RUNNING) {
 					storage.running = i;
 				}
 
@@ -37,9 +36,6 @@ class Sequence extends Composite {
 		});
 	}
 
-	_afterChild(res, state, event) {
-		return [res, state, event];
-	}
 }
 
-module.exports = Sequence;
+export = Sequence;

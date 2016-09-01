@@ -3,9 +3,15 @@
  */
 'use strict';
 
-let archy = require('archy');
+import * as archy from 'archy';
+import Base = require('../nodes/Base');
 
-function buildArchyTree(node, state) {
+class ArchyTree {
+	label: string;
+	nodes: ArchyTree[] = [];
+};
+
+function buildArchyTree(node: Base, state: any): ArchyTree {
 
 	let nodeLabel = node.name;
 
@@ -24,10 +30,9 @@ function buildArchyTree(node, state) {
 
 	}
 
-	let archyTree = {
-		label: nodeLabel,
-		nodes: []
-	};
+	let archyTree = new ArchyTree();
+
+	archyTree.label = nodeLabel;
 
 	if (node.children) {
 		for (let child of node.children) {
@@ -38,17 +43,13 @@ function buildArchyTree(node, state) {
 	return archyTree;
 }
 
-function renderTree(tree, state) {
+export function renderTree(tree: Base, state: any) {
 	let a = buildArchyTree(tree, state);
 	let renderedTree = archy(a);
 
 	return renderedTree;
 }
 
-function toConsole(tree, state) {
+export function toConsole(tree: Base, state: any) {
 	console.log(renderTree(tree, state)); // eslint-disable-line no-console
 }
-
-renderTree.toConsole = toConsole;
-
-module.exports = renderTree;

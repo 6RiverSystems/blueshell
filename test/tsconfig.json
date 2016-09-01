@@ -1,11 +1,12 @@
 {
 	"compileOnSave": true,
 	"compilerOptions": {
-		"outDir": "dist",
+		"declaration": false,
+		"outDir": "../dist/test",
 		"target": "es6",
 		"module": "commonjs",
 		"moduleResolution": "node",
-		"allowJs": false,
+		"allowJs": true,
 		"sourceMap": true,
 		"forceConsistentCasingInFileNames": true,
 		"removeComments": false,
@@ -13,7 +14,6 @@
 		"noImplicitAny": true,
 		"noImplicitReturns": true
 	},
-	"files": [
-		"lib/index.ts"
+	"exclude": [
 	]
 }

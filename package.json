@@ -1,6 +1,6 @@
 {
   "name": "blueshell",
-  "version": "1.0.0-beta.2",
+  "version": "2.0.0-alpha.1",
   "description": "A Behavior Tree implementation in modern Javascript",
   "main": "lib/index.js",
   "scripts": {
@@ -9,9 +9,10 @@
     "clean": "shx rm -rf dist",
     "build": "npm-run-all build:js",
     "build:js": "tsc",
-    "test": "npm-run-all clean build test:mocha",
-    "test:mocha": "NODE_ENV=test NODE_PATH=$NODE_PATH:./ istanbul cover node_modules/.bin/_mocha -- ${MOCHA_OPTS} dist/test",
-    "test:no-cover": "NODE_ENV=test NODE_PATH=$NODE_PATH:./ mocha dist/test",
+    "build:test": "tsc --project ./test --pretty",
+    "test": "npm-run-all clean build:js build:test test:mocha",
+    "test:mocha": "NODE_ENV=test NODE_PATH=$NODE_PATH:./ istanbul cover node_modules/.bin/_mocha -- ${MOCHA_OPTS} --require source-map-support/register dist/test",
+    "test:no-cover": "NODE_ENV=test NODE_PATH=$NODE_PATH:./ mocha --require source-map-support/register dist/test",
     "test:debug": "npm run test:no-cover -- --debug-brk dist/test",
     "posttest": "nsp check",
     "preversion": "npm test",
@@ -45,10 +46,12 @@
     "proxyquire": "1.7.10",
     "shx": "0.1.4",
     "sinon": "1.17.5",
+    "source-map-support": "^0.4.2",
     "tslint": "3.15.1",
-    "typescript": "1.8.10"
+    "typescript": "^2.0.2"
   },
   "dependencies": {
+    "@types/archy": "0.0.29",
     "archy": "1.0.0"
   }
 }

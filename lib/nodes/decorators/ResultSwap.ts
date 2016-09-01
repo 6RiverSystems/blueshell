@@ -3,7 +3,9 @@
  */
 'use strict';
 
-let Decorator = require('../Decorator');
+import Decorator = require('../Decorator');
+import ResultCodes = require('../../utils/ResultCodes');
+import Base = require('../Base');
 
 // Swaps one result from the child for another
 // You can use this to mask FAILURE, etc
@@ -12,13 +14,17 @@ let Decorator = require('../Decorator');
 // when a child returns FAILURE.
 class ResultSwap extends Decorator {
 
-	constructor(inResult, outResult, child) {
+	_inResult: ResultCodes;
+	_outResult: ResultCodes;
+
+	constructor(inResult: ResultCodes, outResult: ResultCodes, child: Base) {
 		super('ResultSwap_' + inResult + '-' + outResult, child);
 		this._inResult = inResult;
 		this._outResult = outResult;
 	}
 
-	onEvent(state, event) {
+	onEvent(state: any, event: any): Promise<ResultCodes> {
+
 		let p = this.child.handleEvent(state, event);
 
 		return p.then(res => {
@@ -31,4 +37,4 @@ class ResultSwap extends Decorator {
 	}
 }
 
-module.exports = ResultSwap;
+export = ResultSwap;

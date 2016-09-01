@@ -5,10 +5,9 @@ import ResultCodes = require('../utils/ResultCodes');
 
 class Composite extends Base {
 
-	children: any[];
 	latched: boolean;
 
-	constructor(name: string, children: any[], latched: boolean) {
+	constructor(name: string, children: Array<Base>, latched: boolean) {
 		super(name);
 
 		// console.log(`${name} constructed with ${children.length} children`);

@@ -5,9 +5,9 @@
 
 let assert = require('chai').assert;
 
-let rc = require('../../lib/utils/ResultCodes');
-let Behavior = require('../../lib');
-let renderTree = require('../../lib/utils/renderTree');
+let rc = require('../../dist/utils/ResultCodes');
+let Behavior = require('../../dist');
+let renderTree = require('../../dist/utils/renderTree');
 
 let TestActions = require('../nodes/test/Actions');
 
@@ -21,7 +21,7 @@ describe('renderTree', function() {
 	});
 
 	it('should generate a tree of nodes without a state', function(done) {
-		let a = renderTree(waitAi);
+		let a = renderTree.renderTree(waitAi);
 
 		assert.ok(a);
 		assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
@@ -53,7 +53,7 @@ describe('renderTree', function() {
 			console.error(err.stack);
 		})
 		.then(() => {
-			let a = renderTree(waitAi, state);
+			let a = renderTree.renderTree(waitAi, state);
 
 			assert.ok(a);
 			assert.equal(a.indexOf('shutdownWithWaitAi'), 0);

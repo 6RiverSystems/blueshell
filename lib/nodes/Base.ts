@@ -7,6 +7,7 @@ import ResultCodes = require('../utils/ResultCodes');
 
 class Base {
 
+	children: Array<Base>;
 	name: string;
 	_parent: string;
 
@@ -71,7 +72,6 @@ class Base {
 
 	// Return results
 	onEvent(state: any, event: any): Promise<ResultCodes> {
-
 		return Promise.resolve(ResultCodes.SUCCESS);
 	}
 

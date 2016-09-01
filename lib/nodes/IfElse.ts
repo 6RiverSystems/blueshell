@@ -5,10 +5,7 @@
 
 import ResultCodes = require('./../utils/ResultCodes');
 import Base = require('./Base');
-
-interface Conditional {
-	(state: any, event: any): boolean;
-}
+import Conditional = require('../Conditional');
 
 /**
  * If-Else Conditional Composite Node.
