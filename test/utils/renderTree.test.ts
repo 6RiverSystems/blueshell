@@ -3,25 +3,23 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+import {assert} from 'chai';
 
-let rc = require('../../dist/utils/ResultCodes');
-let Behavior = require('../../dist');
-let renderTree = require('../../dist/utils/renderTree');
+import * as Blueshell from '../../dist';
 
-let TestActions = require('../nodes/test/Actions');
+import * as TestActions from '../nodes/test/Actions';
 
 let waitAi = TestActions.waitAi;
 
-describe('renderTree', function() {
+describe('RenderTree', () => {
 
-	it('should not crash', function(done) {
-		renderTree.toConsole(waitAi);
+	it('should not crash', (done) => {
+		Blueshell.toConsole(waitAi);
 		done();
 	});
 
-	it('should generate a tree of nodes without a state', function(done) {
-		let a = renderTree.renderTree(waitAi);
+	it('should generate a tree of nodes without a state', (done) => {
+		let a = Blueshell.renderTree(waitAi);
 
 		assert.ok(a);
 		assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
@@ -34,37 +32,37 @@ describe('renderTree', function() {
 		];
 
 		assertWordsInString(a, expectedWords);
-		assert.notOk(a.includes(rc.SUCCESS));
-		assert.notOk(a.includes(rc.FAILURE));
-		assert.notOk(a.includes(rc.RUNNING));
-		assert.notOk(a.includes(rc.ERROR));
+
+		Blueshell.EnumEx.getNames(Blueshell.ResultCodes).forEach((code: string) => {
+			assert.notOk(a.includes(code));
+		});
 
 		done();
 	});
 
-	it('should generate a tree of nodes with state', function() {
-		let state = TestActions.initialState(false);
+	it('should generate a tree of nodes with state', () => {
+		let state = new TestActions.BasicState(false) as any;
 		let event = {};
 
 		state.overheated = true;
 
 		return waitAi.handleEvent(state, event)
-		.catch((err) => {
+		.catch((err: any) => {
 			console.error(err.stack);
 		})
 		.then(() => {
-			let a = renderTree.renderTree(waitAi, state);
+			let a = Blueshell.renderTree(waitAi, state);
 
 			assert.ok(a);
 			assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
 
 			let expectedWords = [
 				'(LatchedSelector)',
-				rc.RUNNING,
+				Blueshell.ResultCodes[Blueshell.ResultCodes.RUNNING],
 				'Recharge',
-				rc.FAILURE,
+				Blueshell.ResultCodes[Blueshell.ResultCodes.FAILURE],
 				'WaitForCooldown',
-				rc.RUNNING,
+				Blueshell.ResultCodes[Blueshell.ResultCodes.RUNNING],
 				'EmergencyShutdown'
 			];
 
@@ -74,7 +72,7 @@ describe('renderTree', function() {
 
 });
 
-function assertWordsInString(s, words) {
+function assertWordsInString(s: string, words: string[]) {
 
 	for (let word of words) {
 		let wordPos = s.indexOf(word);

@@ -3,10 +3,10 @@
  */
 'use strict';
 
-import ResultCodes = require('../../utils/ResultCodes');
-import Decorator = require('../Decorator');
+import {Decorator} from '../Decorator';
+import {ResultCodes} from '../../utils/ResultCodes';
 
-class Not extends Decorator {
+export class Not extends Decorator {
 
 	onEvent(state: any, event: any): Promise<ResultCodes> {
 
@@ -28,5 +28,3 @@ class Not extends Decorator {
 		});
 	}
 }
-
-export = Not;

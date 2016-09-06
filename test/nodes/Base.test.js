@@ -7,7 +7,7 @@ let assert = require('chai').assert;
 
 let rc = require('../../lib/utils/ResultCodes');
 let Behavior = require('../../lib');
-let Base = Behavior.Action;
+let Base = Behavior.Base;
 let Decorator = Behavior.Decorator;
 
 class TestAction extends Base {

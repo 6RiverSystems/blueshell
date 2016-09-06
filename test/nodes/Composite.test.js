@@ -5,10 +5,11 @@
 
 let assert = require('chai').assert;
 
-let rc = require('../../lib/utils/ResultCodes');
-let Behavior = require('../../lib');
+// let rc = require('../../dist/utils/ResultCodes');
+let Blueshell = require('../../dist');
+let rc = Blueshell.ResultCodes;
 
-let TestActions = require('../nodes/test/Actions');
+let TestActions = require('./test/Actions');
 
 let waitAi = TestActions.waitAi;
 

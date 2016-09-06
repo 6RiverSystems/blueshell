@@ -3,10 +3,10 @@
  */
 'use strict';
 
-import ResultCodes = require('./../utils/ResultCodes');
-import Composite = require('./Composite');
+import {Composite} from './Composite';
+import {ResultCodes} from './../utils/ResultCodes';
 
-class Selector extends Composite {
+export class Selector extends Composite {
 
 	// Recursively sends the event to each child until one of them returns
 	// success or running. If we exhaust all the children, return failure.
@@ -37,5 +37,3 @@ class Selector extends Composite {
 	}
 
 }
-
-export = Selector;

@@ -3,16 +3,16 @@
  */
 'use strict';
 
-import Decorator = require('../Decorator');
-import Base = require('../Base');
-import ResultCodes = require('../../utils/ResultCodes');
+import {Decorator} from '../Decorator';
+import {Base} from '../Base';
+import {ResultCodes} from '../../utils/ResultCodes';
 
 //TODO: This is stupid - might as well pass state and event as well
-interface ResultConditional {
+export interface ResultConditional {
 	(result: ResultCodes): boolean;
 }
 
-class RepeatWhen extends Decorator {
+export class RepeatWhen extends Decorator {
 
 	conditional: ResultConditional;
 
@@ -34,5 +34,3 @@ class RepeatWhen extends Decorator {
 		});
 	}
 }
-
-export = RepeatWhen;

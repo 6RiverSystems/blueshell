@@ -1,10 +1,10 @@
 'use strict';
 
-import Composite = require('./Composite');
-import Base = require('./Base');
-import ResultCodes = require('../utils/ResultCodes');
+import { Composite } from './Composite';
+import { Base } from './Base';
+import {ResultCodes} from '../utils/ResultCodes';
 
-class Decorator extends Composite {
+export class Decorator extends Composite {
 
 	constructor(name: string, child: Base) {
 		super(name, [child], undefined);
@@ -20,5 +20,3 @@ class Decorator extends Composite {
 	}
 
 }
-
-export = Decorator;

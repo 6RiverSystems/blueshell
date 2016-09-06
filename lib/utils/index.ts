@@ -3,10 +3,6 @@
  */
 'use strict';
 
-import renderTree = require('./renderTree');
-import resultCodes = require('./ResultCodes');
-
-export = {
-	renderTree,
-	resultCodes
-};
+export {renderTree, toConsole} from'./renderTree';
+export {ResultCodes} from './ResultCodes';
+export {EnumEx} from './EnumEx';

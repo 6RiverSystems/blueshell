@@ -3,9 +3,9 @@
  */
 'use strict';
 
-import RepeatWhen = require('./RepeatWhen');
-import Base = require('../Base');
-import ResultCodes = require('../../utils/ResultCodes');
+import {RepeatWhen} from './RepeatWhen';
+import {Base} from '../Base';
+import {ResultCodes} from '../../utils/ResultCodes';
 
 class RepeatOnResult extends RepeatWhen {
 

@@ -1,39 +1,14 @@
 'use strict';
 
-import Base = require('./nodes/Base');
-import Composite = require('./nodes/Composite');
-import Decorator = require('./nodes/Decorator');
-import Selector = require('./nodes/Selector');
-import Sequence = require('./nodes/Sequence');
-import LatchedSelector = require('./nodes/LatchedSelector');
-import LatchedSequence = require('./nodes/LatchedSequence');
-import IfElse = require('./nodes/IfElse');
+export {Base} from './nodes/Base';
+export {Composite} from './nodes/Composite';
+export {Decorator} from './nodes/Decorator';
+export {Selector} from './nodes/Selector';
+export {Sequence} from './nodes/Sequence';
+export {LatchedSelector} from './nodes/LatchedSelector';
+export {LatchedSequence} from './nodes/LatchedSequence';
+export {IfElse} from './nodes/IfElse';
 
-import decorators = require('./nodes/decorators');
+export {decorators} from './nodes/decorators';
 
-import utils = require('./utils');
-
-export = {
-	// Base types to be extended
-	Action: Base,
-	Composite,
-	Condition: Base,
-	Decorator,
-
-	// Decorators
-	decorators,
-
-	// Composites
-	Sequence,
-	Selector,
-	LatchedSelector,
-	LatchedSequence,
-	IfElse,
-
-	// Utilities
-	utils,
-
-	// Result Codes
-	resultCodes: utils.resultCodes
-
-};
+export {ResultCodes, renderTree, toConsole, EnumEx} from './utils';

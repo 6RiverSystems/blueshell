@@ -8,11 +8,9 @@ import RepeatWhen = require('./RepeatWhen');
 import RepeatOnResult = require('./RepeatOnResult');
 import ResultSwap = require('./ResultSwap');
 
-let decorators = {
+export let decorators = {
 	Not,
 	RepeatWhen,
 	RepeatOnResult,
 	ResultSwap
 };
-
-export = decorators;

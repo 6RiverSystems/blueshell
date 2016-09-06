@@ -1,2 +1,8 @@
+--require source-map-support/register
+--require test/bootstrap.js
+
+--full-trace
+--check-leaks
+
 --recursive
 --timeout=4000

@@ -3,15 +3,13 @@
  */
 'use strict';
 
-import Selector = require('./Selector');
-import Base = require('./Base');
+import {Selector} from './Selector';
+import {Base} from './Base';
 
-class LatchedSelector extends Selector {
+export class LatchedSelector extends Selector {
 
 	constructor(name: string, children: Array<Base>) {
 		super(name, children, true);
 	}
 
 }
-
-export = LatchedSelector;

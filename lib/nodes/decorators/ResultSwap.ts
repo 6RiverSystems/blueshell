@@ -3,16 +3,16 @@
  */
 'use strict';
 
-import Decorator = require('../Decorator');
-import ResultCodes = require('../../utils/ResultCodes');
-import Base = require('../Base');
+import {Decorator} from '../Decorator';
+import {Base} from '../Base';
+import {ResultCodes} from '../../utils/ResultCodes';
 
 // Swaps one result from the child for another
 // You can use this to mask FAILURE, etc
 //
 // For example, you can use this to have a Sequence continue operation
 // when a child returns FAILURE.
-class ResultSwap extends Decorator {
+export class ResultSwap extends Decorator {
 
 	_inResult: ResultCodes;
 	_outResult: ResultCodes;
@@ -36,5 +36,3 @@ class ResultSwap extends Decorator {
 		});
 	}
 }
-
-export = ResultSwap;

@@ -4,7 +4,8 @@
 'use strict';
 
 import * as archy from 'archy';
-import Base = require('../nodes/Base');
+
+import {Base} from '../nodes/Base';
 
 class ArchyTree {
 	label: string;
@@ -43,13 +44,13 @@ function buildArchyTree(node: Base, state: any): ArchyTree {
 	return archyTree;
 }
 
-export function renderTree(tree: Base, state: any) {
+export function renderTree(tree: Base, state?: any) {
 	let a = buildArchyTree(tree, state);
 	let renderedTree = archy(a);
 
 	return renderedTree;
 }
 
-export function toConsole(tree: Base, state: any) {
+export function toConsole(tree: Base, state?: any) {
 	console.log(renderTree(tree, state)); // eslint-disable-line no-console
 }

@@ -3,8 +3,6 @@
  */
 'use strict';
 
-interface Conditional {
+export interface Conditional {
 	(state: any, event: any): boolean;
 }
-
-export = Conditional;

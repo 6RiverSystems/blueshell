@@ -3,9 +3,9 @@
  */
 'use strict';
 
-import ResultCodes = require('./../utils/ResultCodes');
-import Base = require('./Base');
-import Conditional = require('../Conditional');
+import { Base } from './Base';
+import { Conditional } from '../Conditional';
+import {ResultCodes} from './../utils/ResultCodes';
 
 /**
  * If-Else Conditional Composite Node.
@@ -18,7 +18,7 @@ import Conditional = require('../Conditional');
  * if one is not provided, 'FAILURE' is returned.
  *
  */
-class IfElse extends Base {
+export class IfElse extends Base {
 
 	conditional: Conditional;
 	consequent: Base;
@@ -55,4 +55,3 @@ class IfElse extends Base {
 
 }
 
-export = IfElse;

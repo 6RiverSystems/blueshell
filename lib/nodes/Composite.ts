@@ -1,9 +1,9 @@
 'use strict';
 
-import Base = require('./Base');
-import ResultCodes = require('../utils/ResultCodes');
+import {Base} from './Base';
+import {ResultCodes} from '../utils/ResultCodes';
 
-class Composite extends Base {
+export class Composite extends Base {
 
 	latched: boolean;
 
@@ -58,5 +58,3 @@ class Composite extends Base {
 	}
 
 }
-
-export = Composite;

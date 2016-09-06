@@ -3,10 +3,10 @@
  */
 'use strict';
 
-import ResultCodes = require('./../utils/ResultCodes');
-import Composite = require('./Composite');
+import {Composite} from './Composite';
+import {ResultCodes} from '../utils/ResultCodes';
 
-class Sequence extends Composite {
+export class Sequence extends Composite {
 
 	// Recursively executes children until one of them returns
 	// failure. If we call all the children successfully, return success.
@@ -37,5 +37,3 @@ class Sequence extends Composite {
 	}
 
 }
-
-export = Sequence;

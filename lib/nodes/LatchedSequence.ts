@@ -3,15 +3,13 @@
  */
 'use strict';
 
-import Sequence = require('./Sequence');
-import Base = require('./Base');
+import {Sequence} from './Sequence';
+import {Base} from './Base';
 
-class LatchedSequence extends Sequence {
+export class LatchedSequence extends Sequence {
 
 	constructor(name: string, children: Array<Base>) {
 		super(name, children, true);
 	}
 
 }
-
-export = LatchedSequence;

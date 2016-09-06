@@ -3,15 +3,15 @@
  */
 'use strict';
 
-import ResultCodes = require('../utils/ResultCodes');
+import {ResultCodes} from '../utils/ResultCodes';
 
-class Base {
+export class Base {
 
 	children: Array<Base>;
 	name: string;
 	_parent: string;
 
-	constructor(name: string) {
+	constructor(name?: string) {
 		this.name = name || this.constructor.name;
 		this._parent = '';
 	}
@@ -124,5 +124,3 @@ class Base {
 		return this.getNodeStorage(state).lastResult;
 	}
 }
-
-export = Base;
