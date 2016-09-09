@@ -7,12 +7,10 @@ import {RepeatWhen} from './RepeatWhen';
 import {Base} from '../Base';
 import {ResultCodes} from '../../utils/ResultCodes';
 
-class RepeatOnResult extends RepeatWhen {
+export class RepeatOnResult extends RepeatWhen {
 
 	constructor(repeatRes: ResultCodes, child: Base) {
 		super('ResultEquals-' + repeatRes, child, (res) => res === repeatRes);
 	}
 
 }
-
-export = RepeatOnResult;

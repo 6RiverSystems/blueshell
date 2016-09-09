@@ -3,39 +3,43 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+import {assert} from 'chai';
+import * as Blueshell from '../../dist';
 
-let rc = require('../../lib/utils/ResultCodes');
-let Behavior = require('../../lib');
+let rc = Blueshell.ResultCodes;
 
 describe('IfElse', function() {
 
-	let successAction = new class extends Behavior.Action {
-		onEvent(state, event) {
+	let successAction = new class extends Blueshell.Operation {
+		onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
 
 			state.success = true;
 
-			return rc.SUCCESS;
+			return Promise.resolve(rc.SUCCESS);
 		}
 	};
 
-	let failureAction = new class extends Behavior.Action {
-		onEvent(state, event) {
+	let failureAction = new class extends Blueshell.Operation {
+		onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
 
 			state.success = false;
 
-			return rc.FAILURE;
+			return Promise.resolve(rc.FAILURE);
 		}
 	};
 
 	it('should return success when conditional is true with no alternative', function() {
 
-		let ifElse = new Behavior.IfElse('testIfElse',
+		let ifElse = new Blueshell.IfElse('testIfElse',
 			(state, event) => true,
 			successAction
 		);
 
-		let state = {};
+		let state = {
+			errorReason: undefined,
+			success: false
+		};
+
 		let p = ifElse.handleEvent(state, 'testEvent');
 
 		return p.then(res => {
@@ -47,13 +51,17 @@ describe('IfElse', function() {
 
 	it('should return success when conditional is true with an alternative', function() {
 
-		let ifElse = new Behavior.IfElse('testIfElse',
+		let ifElse = new Blueshell.IfElse('testIfElse',
 			(state, event) => true,
 			successAction,
 			failureAction
 		);
 
-		let state = {};
+		let state = {
+			errorReason: undefined,
+			success: false
+		};
+
 		let p = ifElse.handleEvent(state, 'testEvent');
 
 		return p.then(res => {
@@ -65,13 +73,17 @@ describe('IfElse', function() {
 
 	it('should return success when conditional is false', function() {
 
-		let ifElse = new Behavior.IfElse('testIfElse',
+		let ifElse = new Blueshell.IfElse('testIfElse',
 			(state, event) => false,
 			failureAction,
 			successAction
 		);
 
-		let state = {};
+		let state = {
+			errorReason: undefined,
+			success: false
+		};
+
 		let p = ifElse.handleEvent(state, 'testEvent');
 
 		return p.then(res => {
@@ -84,12 +96,16 @@ describe('IfElse', function() {
 
 	it('should return failure when conditional is false and there is no alternative', function() {
 
-		let ifElse = new Behavior.IfElse('testIfElse',
+		let ifElse = new Blueshell.IfElse('testIfElse',
 			(state, event) => false,
 			successAction
 		);
 
-		let state = {};
+		let state = {
+			errorReason: undefined,
+			success: false
+		};
+
 		let p = ifElse.handleEvent(state, 'testEvent');
 
 		return p.then(res => {

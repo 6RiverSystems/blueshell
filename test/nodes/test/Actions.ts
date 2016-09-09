@@ -8,24 +8,17 @@ let rc = Blueshell.ResultCodes;
 
 export class BasicState {
 	commands: any[];
-	__blueshell: any;
+	__blueshell: any = {};
+	batteryLevel: number;
+	cooldownLevel: number;
+	overheated: boolean;
 
 	constructor(debug?: boolean) {
 		this.__blueshell.debug = debug;
 	}
 }
 
-/**
- * @deprecated call constructor directly
- *
- * @param debug
- * @returns {BasicState}
- */
-export function initialState(debug: boolean) {
-	return new BasicState(debug);
-}
-
-export class Recharge extends Blueshell.Base {
+export class Recharge extends Blueshell.Operation {
 
 	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
 
@@ -43,7 +36,7 @@ export class Recharge extends Blueshell.Base {
 	}
 }
 
-export class WaitForCooldown extends Blueshell.Base {
+export class WaitForCooldown extends Blueshell.Operation {
 
 	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
 		let storage = this.getNodeStorage(state);
@@ -65,7 +58,7 @@ export class WaitForCooldown extends Blueshell.Base {
 	}
 }
 
-export class EmergencyShutdown extends Blueshell.Base {
+export class EmergencyShutdown extends Blueshell.Operation {
 
 	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
 		state.commands.push('powerOff');

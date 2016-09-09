@@ -3,13 +3,14 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+import {assert} from 'chai';
+import * as Blueshell from '../../dist';
 
-// let rc = require('../../dist/utils/ResultCodes');
-let Blueshell = require('../../dist');
+//let Blueshell = require('../../../../dist');
 let rc = Blueshell.ResultCodes;
 
-let TestActions = require('./test/Actions');
+import * as TestActions from './test/Actions';
+import {BasicState} from './test/Actions';
 
 let waitAi = TestActions.waitAi;
 
@@ -19,7 +20,7 @@ describe('Composite', function() {
 
 		it('should reset child state', function() {
 			let event = {};
-			let state = TestActions.initialState(false);
+			let state = new BasicState(false);
 
 			state.overheated = true;
 

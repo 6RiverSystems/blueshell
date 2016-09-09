@@ -3,14 +3,18 @@
  */
 'use strict';
 
-import Not = require('./Not');
-import RepeatWhen = require('./RepeatWhen');
-import RepeatOnResult = require('./RepeatOnResult');
-import ResultSwap = require('./ResultSwap');
+import {Not} from './Not';
+import {RepeatWhen} from './RepeatWhen';
+import {RepeatOnResult} from './RepeatOnResult';
+import {ResultSwap} from './ResultSwap';
 
-export let decorators = {
+let decorators = {
 	Not,
 	RepeatWhen,
 	RepeatOnResult,
 	ResultSwap
+};
+
+export {
+	decorators
 };

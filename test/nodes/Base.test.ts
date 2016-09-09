@@ -3,12 +3,12 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+import {assert} from 'chai';
+import * as Blueshell from '../../dist';
 
-let rc = require('../../lib/utils/ResultCodes');
-let Behavior = require('../../lib');
-let Base = Behavior.Base;
-let Decorator = Behavior.Decorator;
+let rc = Blueshell.ResultCodes;
+let Base = Blueshell.Base;
+let Decorator = Blueshell.Decorator;
 
 class TestAction extends Base {
 
@@ -86,7 +86,7 @@ describe('Base', function() {
 		it('Child Node Counter', function() {
 
 			let child = new Base('child');
-			let root = new Behavior.Decorator('root', child);
+			let root = new Blueshell.Decorator('root', child);
 
 			let state = {};
 

@@ -3,16 +3,16 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+import {assert} from 'chai';
+import * as Blueshell from '../../../dist';
 
-let rc = require('../../../lib/utils/ResultCodes');
-let Behavior = require('../../../lib');
-let Action = Behavior.Action;
-let Not = Behavior.decorators.Not;
+let rc = Blueshell.ResultCodes;
 
-class EchoAction extends Action {
+let Not = Blueshell.decorators.Not;
 
-	onEvent(state, event) {
+class EchoAction extends Blueshell.Operation {
+
+	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
 		return event;
 	}
 }

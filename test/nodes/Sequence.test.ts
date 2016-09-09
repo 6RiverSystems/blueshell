@@ -3,14 +3,14 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+import {assert} from 'chai';
+import * as Blueshell from '../../dist';
 
-let rc = require('../../lib/utils/ResultCodes');
-let Behavior = require('../../lib');
+let rc = Blueshell.ResultCodes;
 
-class ShootFlares extends Behavior.Action {
+class ShootFlares extends Blueshell.Operation {
 
-	onEvent(state, event) {
+	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
 
 		let result = rc.FAILURE;
 
@@ -19,20 +19,20 @@ class ShootFlares extends Behavior.Action {
 			result = rc.SUCCESS;
 		}
 
-		return result;
+		return Promise.resolve(result);
 	}
 }
 
-class EvasiveManeuver extends Behavior.Action {
+class EvasiveManeuver extends Blueshell.Operation {
 
-	onEvent(state, event) {
+	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
 		state.commands.push('turnLeft');
 
-		return rc.SUCCESS;
+		return Promise.resolve(rc.SUCCESS);
 	}
 }
 
-let droneAi = new Behavior.Sequence('droneAi',
+let droneAi = new Blueshell.Sequence('droneAi',
 	[
 		new ShootFlares(),
 		new EvasiveManeuver()

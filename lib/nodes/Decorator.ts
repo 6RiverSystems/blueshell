@@ -7,7 +7,7 @@ import {ResultCodes} from '../utils/ResultCodes';
 export class Decorator extends Composite {
 
 	constructor(name: string, child: Base) {
-		super(name, [child], undefined);
+		super(name, [child]);
 	}
 
 	get child(): Base {

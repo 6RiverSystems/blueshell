@@ -24,7 +24,7 @@ export class IfElse extends Base {
 	consequent: Base;
 	alternative: Base;
 
-	constructor(name: string, conditional: Conditional, consequent: Base, alternative: Base) {
+	constructor(name: string, conditional: Conditional, consequent: Base, alternative?: Base) {
 		super(name);
 
 		this.conditional = conditional;

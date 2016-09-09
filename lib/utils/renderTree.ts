@@ -6,6 +6,7 @@
 import * as archy from 'archy';
 
 import {Base} from '../nodes/Base';
+import {ResultCodes} from './ResultCodes';
 
 class ArchyTree {
 	label: string;
@@ -26,7 +27,7 @@ function buildArchyTree(node: Base, state: any): ArchyTree {
 		let lastResult = node.getLastResult(state);
 
 		if (lastEventSeen === eventCounter && lastResult) {
-			nodeLabel += ' => ' + lastResult;
+			nodeLabel += ' => ' + ResultCodes[lastResult];
 		}
 
 	}

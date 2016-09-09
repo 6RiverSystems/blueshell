@@ -66,6 +66,8 @@ describe('RenderTree', () => {
 				'EmergencyShutdown'
 			];
 
+			console.log(a);
+
 			assertWordsInString(a, expectedWords);
 		});
 	});

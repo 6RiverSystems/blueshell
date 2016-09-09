@@ -3,23 +3,20 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+import {assert} from 'chai';
+import * as Blueshell from '../../../dist';
 
-let rc = require('../../../lib/utils/ResultCodes');
-let Behavior = require('../../../lib');
-let Action = Behavior.Action;
-let RepeatOnResult = Behavior.decorators.RepeatOnResult;
+let rc = Blueshell.ResultCodes;
 
-class CountUntil extends Action {
+let RepeatOnResult = Blueshell.decorators.RepeatOnResult;
 
-	onEvent(state, event) {
+class CountUntil extends Blueshell.Operation {
+
+	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
 
 		state.counter += 1;
 
-		return {
-			result: state.counter <= event ? rc.RUNNING : rc.SUCCESS,
-			state
-		};
+		return Promise.resolve(state.counter <= event ? rc.RUNNING : rc.SUCCESS);
 	}
 }
 

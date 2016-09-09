@@ -7,7 +7,7 @@ export class Composite extends Base {
 
 	latched: boolean;
 
-	constructor(name: string, children: Array<Base>, latched: boolean) {
+	constructor(name: string, children: Array<Base>, latched = false) {
 		super(name);
 
 		// console.log(`${name} constructed with ${children.length} children`);

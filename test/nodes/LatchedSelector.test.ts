@@ -3,14 +3,14 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+import {assert} from 'chai';
+import * as Blueshell from '../../dist';
 
-let rc = require('../../lib/utils/ResultCodes');
-let Behavior = require('../../lib');
+import * as TestActions from './test/Actions';
 
-let TestActions = require('./test/Actions');
+let rc = Blueshell.ResultCodes;
 
-let shutdownAi = new Behavior.LatchedSelector('shutdownAi',
+let shutdownAi = new Blueshell.LatchedSelector('shutdownAi',
 	[
 		new TestActions.Recharge(),
 		new TestActions.EmergencyShutdown()
@@ -41,7 +41,8 @@ describe('LatchedSelector', function() {
 		// With a happy bot
 		let botState = {
 			overheated: true,
-			commands: []
+			commands: [],
+			batteryLevel: 0
 		};
 
 		let p = waitAi.handleEvent(botState, 'lowBattery 1');
