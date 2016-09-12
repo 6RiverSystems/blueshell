@@ -6,6 +6,7 @@
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"allowJs": false,
+		"allowUnreachableCode": false,
 		"sourceMap": true,
 		"declaration": true,
 		"forceConsistentCasingInFileNames": true,
