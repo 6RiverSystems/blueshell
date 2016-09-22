@@ -39,8 +39,8 @@
   },
   "homepage": "https://github.com/6RiverSystems/blueshell#readme",
   "devDependencies": {
-    "@types/chai": "3.4.32",
-    "@types/mocha": "^2.2.31",
+    "@types/chai": "3.4.33",
+    "@types/mocha": "^2.2.32",
     "chai": "3.5.0",
     "eslint": "3.5.0",
     "eslint-config-defaults": "~9.0.0",
@@ -51,13 +51,13 @@
     "nsp": "2.6.1",
     "proxyquire": "1.7.10",
     "shx": "0.1.4",
-    "sinon": "1.17.5",
+    "sinon": "1.17.6",
     "source-map-support": "^0.4.2",
     "tslint": "3.15.1",
-    "typescript": "^2.1.0-dev.20160912"
+    "typescript": "^2.1.0-dev.20160922"
   },
   "dependencies": {
-    "@types/archy": "0.0.29",
+    "@types/archy": "0.0.30",
     "archy": "1.0.0"
   }
 }
