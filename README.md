@@ -55,13 +55,14 @@ Decorators intercept and can modify the event sent to or the result from the chi
 ### Base Classes
 
 * Base
-  The base of all nodes.
+  - The base of all nodes.
 
 * Composite
-  The base class for all nodes which have children.
+  - The base class for all nodes which have children.
 
 * Decorator
-  Base class for decorators - can only have one child.
+  - The base class for decorators.
+  - Can only have one child.
 
 ## Inspiration and Further Reading
 
