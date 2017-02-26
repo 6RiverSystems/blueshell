@@ -39,6 +39,7 @@
   },
   "homepage": "https://github.com/6RiverSystems/blueshell#readme",
   "devDependencies": {
+    "@types/archy": "0.0.30",
     "@types/chai": "3.4.33",
     "@types/mocha": "^2.2.32",
     "chai": "3.5.0",
