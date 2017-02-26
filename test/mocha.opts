@@ -1,4 +1,4 @@
---require source-map-support/register
+--require ts-node/register
 --require test/bootstrap.js
 
 --full-trace
