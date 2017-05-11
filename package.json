@@ -30,16 +30,45 @@
   "homepage": "https://github.com/6RiverSystems/blueshell#readme",
   "devDependencies": {
     "chai": "^3.5.0",
-    "eslint": "3.6.0",
+    "cz-conventional-changelog": "^2.0.0",
+    "eslint": "3.19.0",
     "eslint-config-defaults": "~9.0.0",
+    "husky": "^0.13.3",
     "istanbul": "^0.4.4",
     "mocha": "^3.0.0",
-    "mocha-junit-reporter": "1.12.0",
+    "mocha-junit-reporter": "^1.13.0",
     "nsp": "^2.2.1",
     "proxyquire": "^1.7.3",
-    "sinon": "^1.17.2"
+    "sinon": "^2.2.0",
+    "validate-commit-msg": "^2.12.1"
   },
   "dependencies": {
     "archy": "^1.0.0"
+  },
+  "config": {
+    "validate-commit-msg": {
+      "types": [
+        "feat",
+        "fix",
+        "docs",
+        "style",
+        "refactor",
+        "perf",
+        "test",
+        "build",
+        "ci",
+        "chore",
+        "revert"
+      ],
+      "warnOnFail": false,
+      "maxSubjectLength": 100,
+      "subjectPattern": ".+",
+      "subjectPatternErrorMsg": "subject does not match subject pattern!",
+      "helpMessage": "Follow <type>(<scope>): <subject> pattern, max 100 chars.",
+      "autoFix": false
+    },
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
