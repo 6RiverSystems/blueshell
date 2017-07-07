@@ -11,7 +11,14 @@ let Base = Behavior.Action;
 let Decorator = Behavior.Decorator;
 
 class TestAction extends Base {
+	constructor(name, precond = true) {
+		super(name);
+		this.preconditionStatus = precond;
+	}
 
+	precondition() {
+		return this.preconditionStatus;
+	}
 }
 
 describe('Base', function() {
@@ -32,10 +39,10 @@ describe('Base', function() {
 		it('builds hierarchical paths', function() {
 			let leaf = new TestAction('leaf');
 			let parent1 = new Decorator('parent1', leaf);
-			let parent2 = new Decorator('parent2', parent1);
+			let parent2 = new Decorator('parent2_foo', parent1);
 
-			assert.equal(leaf.path, 'parent2.parent1.leaf');
-			assert.equal(parent1.path, 'parent2.parent1');
+			assert.equal(leaf.path, 'parent2_foo_parent1_leaf');
+			assert.equal(parent1.path, 'parent2_foo_parent1');
 		});
 	});
 
@@ -59,6 +66,38 @@ describe('Base', function() {
 	describe('#handleEvent', function() {
 		it('handles events', function() {
 			let action = new TestAction();
+
+			let p = action.handleEvent({}, 'testEvent');
+
+			return p.then(res => {
+				console.log('TestAction completed', res);
+				assert.equal(res, rc.SUCCESS);
+			});
+		});
+	});
+
+	describe('#precondition', function() {
+		it('should return FAILURE if the precondition fails', function() {
+
+			let action = new TestAction('will fail', false);
+
+			let p = action.handleEvent({}, 'testEvent');
+
+			return p.then(res => {
+				console.log('TestAction completed', res);
+				assert.equal(res, rc.FAILURE);
+			});
+		});
+
+		it('should allow precondition to return a promise', function() {
+
+			class PromiseAction extends TestAction {
+				precondition() {
+					return Promise.resolve(true);
+				}
+			};
+
+			let action = new PromiseAction();
 
 			let p = action.handleEvent({}, 'testEvent');
 
