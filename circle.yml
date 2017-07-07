@@ -11,3 +11,9 @@ test:
     - npm test
   post:
     - mv coverage $CIRCLE_TEST_REPORTS
+
+deployment:
+  all:
+    branch: /.*/
+    commands:
+      - ./scripts/release.sh
