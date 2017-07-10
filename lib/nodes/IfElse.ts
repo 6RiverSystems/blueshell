@@ -3,9 +3,11 @@
  */
 'use strict';
 
-import { Base } from './Base';
-import { Conditional } from '../Conditional';
-import {ResultCodes} from './../utils/ResultCodes';
+import {Base} from './Base';
+import {Conditional} from '../Conditional';
+import {
+	BehaviorCode
+} from './../utils/ResultCodes';
 
 /**
  * If-Else Conditional Composite Node.
@@ -42,14 +44,13 @@ export class IfElse extends Base {
 		return children;
 	}
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
-
-		if (this.conditional(state, event)) {
-			return this.consequent.handleEvent(state, event);
+	onRun(state: any): Promise<BehaviorCode> {
+		if (this.conditional(state)) {
+			return this.consequent.run(state);
 		} else if (this.alternative) {
-			return this.alternative.handleEvent(state, event);
+			return this.alternative.run(state);
 		} else {
-			return Promise.resolve(ResultCodes.FAILURE);
+			return Promise.resolve(BehaviorCode.ERROR);
 		}
 	}
 

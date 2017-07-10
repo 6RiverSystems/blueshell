@@ -3,7 +3,10 @@
  */
 'use strict';
 
-import {ResultCodes} from '../utils/ResultCodes';
+import {
+	EventCode,
+	BehaviorCode
+} from '../utils/ResultCodes';
 
 export class Base {
 
@@ -16,24 +19,36 @@ export class Base {
 		this._parent = '';
 	}
 
-	handleEvent(state: any, event: any): Promise<ResultCodes> {
-
+	handleEvent(state: any, event: any): Promise<EventCode> {
 		return Promise.resolve(this._beforeEvent(state, event))
-		.then(() => {
-			return this.onEvent(state, event);
-		})
-		.catch(err => {
-			state.errorReason = err;
+			.then(() => {
+				return this.onEvent(state, event);
+			})
+			.then((result: EventCode) => {
+				if (!this._parent) {
+					// Run the behavior tree now that the events have been handled.
+					return this.run(state)
+						.then(() => Promise.resolve(EventCode.CONTINUE));
+				} else {
+					return result;
+				}
+			})
+			.catch((err: Error) => {
+				state.errorReason = err;
 
-			if (this.getDebug(state)) {
-				console.error('Error: ', err.stack); // eslint-disable-line no-console
-			}
+				if (this.getDebug(state)) {
+					console.error('Error: ', err.stack); // eslint-disable-line no-console
+				}
 
-			return ResultCodes.ERROR;
-		})
-		.then(res => {
-			return this._afterEvent(res, state, event);
-		});
+				return EventCode.ERROR;
+			})
+			.then((res: EventCode) => {
+				return this._afterEvent(res, state, event);
+			});
+	}
+
+	run(state: any): Promise<BehaviorCode> {
+		return this.onRun(state);
 	}
 
 	// Return nothing
@@ -70,9 +85,14 @@ export class Base {
 		return res;
 	}
 
-	// Return results
-	onEvent(state: any, event: any): Promise<ResultCodes> {
-		return Promise.resolve(ResultCodes.SUCCESS);
+	// Handle the event and modify the state (mutate), and by default propogate the event to the next node
+	onEvent(state: any, event: any): Promise<EventCode> {
+		return Promise.resolve(EventCode.CONTINUE);
+	}
+
+	// Return the behavior state of the action
+	onRun(state: any): Promise<BehaviorCode> {
+		return Promise.resolve(BehaviorCode.SUCCESS);
 	}
 
 	set parent(path: string) {

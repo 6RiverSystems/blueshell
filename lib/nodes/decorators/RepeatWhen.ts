@@ -5,15 +5,14 @@
 
 import {Decorator} from '../Decorator';
 import {Base} from '../Base';
-import {ResultCodes} from '../../utils/ResultCodes';
+import {BehaviorCode} from '../../utils/ResultCodes';
 
 //TODO: This is stupid - might as well pass state and event as well
 export interface ResultConditional {
-	(result: ResultCodes): boolean;
+	(result: BehaviorCode): boolean;
 }
 
 export class RepeatWhen extends Decorator {
-
 	conditional: ResultConditional;
 
 	constructor(desc: string, child: Base, conditional: ResultConditional) {
@@ -21,16 +20,14 @@ export class RepeatWhen extends Decorator {
 		this.conditional = conditional;
 	}
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
-
-		let p = this.child.handleEvent(state, event);
-
-		return p.then(res => {
-			if (this.conditional(res)) {
-				return this.handleEvent(state, event);
-			} else {
-				return res;
-			}
+	onRun(state: any): Promise<BehaviorCode> {
+		return this.child.run(state)
+			.then((res: BehaviorCode) => {
+				if (this.conditional(res)) {
+					return this.run(state);
+				} else {
+					return res;
+				}
 		});
 	}
 }

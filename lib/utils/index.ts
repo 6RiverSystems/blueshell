@@ -4,5 +4,5 @@
 'use strict';
 
 export {renderTree, toConsole} from'./renderTree';
-export {ResultCodes} from './ResultCodes';
+export {EventCode, BehaviorCode} from './ResultCodes';
 export {EnumEx} from './EnumEx';

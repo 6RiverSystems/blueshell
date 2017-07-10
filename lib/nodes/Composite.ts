@@ -1,10 +1,12 @@
 'use strict';
 
 import {Base} from './Base';
-import {ResultCodes} from '../utils/ResultCodes';
+import {
+	EventCode,
+	BehaviorCode
+} from '../utils/ResultCodes';
 
 export class Composite extends Base {
-
 	latched: boolean;
 
 	constructor(name: string, children: Array<Base>, latched = false) {
@@ -27,8 +29,11 @@ export class Composite extends Base {
 		}
 	}
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onEvent(state: any, event: any): Promise<EventCode> {
+		return this.handleChildEvent(state, event, 0);
+	}
 
+	onRun(state: any): Promise<BehaviorCode> {
 		let storage = this.getNodeStorage(state);
 
 		let firstChild = 0;
@@ -42,10 +47,32 @@ export class Composite extends Base {
 			storage.running = undefined;
 		}
 
-		return this.handleChild(state, event, firstChild);
+		return this.handleChildBehavior(state, firstChild);
 	}
 
-	handleChild(state: any, event: any, i: number): Promise<ResultCodes> {
+	handleChildEvent(state: any, event: any, i: number): Promise<EventCode> {
+		// If we finished all processing without failure return success.
+		if (i >= this.children.length) {
+			return Promise.resolve(EventCode.CONTINUE);
+		}
+
+		let child = this.children[i];
+
+		return child.handleEvent(state, event)
+			.then((res: EventCode) => {
+				if (res === EventCode.HANDLED) {
+					return Promise.resolve(res);
+				}
+				else if (res === EventCode.CONTINUE) {
+					// Call the next child
+					return this.handleChildEvent(state, event, ++i);
+				} else {
+					return Promise.reject(res);
+				}
+			});
+	}
+
+	handleChildBehavior(state: any, i: number): Promise<BehaviorCode> {
 		throw new Error('This is an abstract method - please override.');
 	}
 
@@ -56,5 +83,4 @@ export class Composite extends Base {
 			child.resetNodeStorage(state);
 		}
 	}
-
 }

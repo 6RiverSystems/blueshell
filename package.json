@@ -1,8 +1,9 @@
 {
-  "name": "blueshell",
-  "version": "2.0.0-alpha.1",
+  "name": "@sixriver/blueshell",
+  "version": "0.0.0-development",
   "description": "A Behavior Tree implementation in modern Javascript",
   "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "pretest": "npm-run-all pretest:eslint",
     "pretest:eslint": "shx echo eslint .",

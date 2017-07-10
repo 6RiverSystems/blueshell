@@ -17,4 +17,4 @@ export {IfElse} from './nodes/IfElse';
 
 export {decorators} from './nodes/decorators';
 
-export {ResultCodes, renderTree, toConsole, EnumEx} from './utils';
+export {EventCode, BehaviorCode, renderTree, toConsole, EnumEx} from './utils';
