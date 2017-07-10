@@ -1,8 +1,8 @@
 'use strict';
 
-import { Composite } from './Composite';
-import { Base } from './Base';
-import {ResultCodes} from '../utils/ResultCodes';
+import {Composite} from './Composite';
+import {Base} from './Base';
+import {EventCode} from '../utils/ResultCodes';
 
 export class Decorator extends Composite {
 
@@ -14,7 +14,7 @@ export class Decorator extends Composite {
 		return this.children[0];
 	}
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onEvent(state: any, event: any): Promise<EventCode> {
 		// Passthrough
 		return this.child.handleEvent(state, event);
 	}

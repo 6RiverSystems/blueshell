@@ -4,21 +4,21 @@
 'use strict';
 
 import {Decorator} from '../Decorator';
-import {ResultCodes} from '../../utils/ResultCodes';
+import {BehaviorCode} from '../../utils/ResultCodes';
 
 export class Not extends Decorator {
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onRun(state: any): Promise<BehaviorCode> {
 
-		let p = this.child.handleEvent(state, event);
+		let p = this.child.run(state);
 
-		return p.then(res => {
+		return p.then((res: BehaviorCode) => {
 			switch (res) {
-			case ResultCodes.SUCCESS:
-				res = ResultCodes.FAILURE;
+			case BehaviorCode.SUCCESS:
+				res = BehaviorCode.FAILURE;
 				break;
-			case ResultCodes.FAILURE:
-				res = ResultCodes.SUCCESS;
+			case BehaviorCode.FAILURE:
+				res = BehaviorCode.SUCCESS;
 				break;
 			default:
 				// no-op

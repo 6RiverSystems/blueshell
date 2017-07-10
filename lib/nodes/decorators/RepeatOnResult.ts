@@ -5,12 +5,12 @@
 
 import {RepeatWhen} from './RepeatWhen';
 import {Base} from '../Base';
-import {ResultCodes} from '../../utils/ResultCodes';
+import {BehaviorCode} from '../../utils/ResultCodes';
 
 export class RepeatOnResult extends RepeatWhen {
 
-	constructor(repeatRes: ResultCodes, child: Base) {
-		super('ResultEquals-' + repeatRes, child, (res) => res === repeatRes);
+	constructor(repeatRes: BehaviorCode, child: Base) {
+		super('ResultEquals-' + repeatRes, child, (res: BehaviorCode) => res === repeatRes);
 	}
 
 }

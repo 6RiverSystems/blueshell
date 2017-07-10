@@ -4,5 +4,5 @@
 'use strict';
 
 export interface Conditional {
-	(state: any, event: any): boolean;
+	(state: any): boolean;
 }

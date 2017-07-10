@@ -5,7 +5,7 @@
 
 import {Decorator} from '../Decorator';
 import {Base} from '../Base';
-import {ResultCodes} from '../../utils/ResultCodes';
+import {BehaviorCode} from '../../utils/ResultCodes';
 
 // Swaps one result from the child for another
 // You can use this to mask FAILURE, etc
@@ -14,25 +14,23 @@ import {ResultCodes} from '../../utils/ResultCodes';
 // when a child returns FAILURE.
 export class ResultSwap extends Decorator {
 
-	_inResult: ResultCodes;
-	_outResult: ResultCodes;
+	_inResult: BehaviorCode;
+	_outResult: BehaviorCode;
 
-	constructor(inResult: ResultCodes, outResult: ResultCodes, child: Base) {
+	constructor(inResult: BehaviorCode, outResult: BehaviorCode, child: Base) {
 		super('ResultSwap_' + inResult + '-' + outResult, child);
 		this._inResult = inResult;
 		this._outResult = outResult;
 	}
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onRun(state: any): Promise<BehaviorCode> {
+		return this.child.run(state)
+			.then((res: BehaviorCode) => {
+				if (res === this._inResult) {
+					res = this._outResult;
+				}
 
-		let p = this.child.handleEvent(state, event);
-
-		return p.then(res => {
-			if (res === this._inResult) {
-				res = this._outResult;
-			}
-
-			return res;
+				return res;
 		});
 	}
 }
