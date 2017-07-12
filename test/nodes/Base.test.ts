@@ -11,7 +11,16 @@ let Base = Blueshell.Base;
 let Decorator = Blueshell.Decorator;
 
 class TestAction extends Base {
+	private preconditionStatus: boolean;
 
+	constructor(name?: string, precond: boolean = true) {
+		super(name);
+		this.preconditionStatus = precond;
+	}
+
+	precondition() {
+		return this.preconditionStatus;
+	}
 }
 
 describe('Base', function() {
@@ -36,6 +45,7 @@ describe('Base', function() {
 
 			assert.equal(leaf.path, 'parent2_foo_parent1_leaf');
 			assert.equal(parent1.path, 'parent2_foo_parent1');
+			assert.equal(parent2.path, 'parent2_foo');
 		});
 	});
 
