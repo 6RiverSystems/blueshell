@@ -22,7 +22,8 @@ export class Selector extends Composite {
 		let child = this.children[i];
 
 		return child.handleEvent(state, event)
-		.then((res) => {
+		.then(res => this._afterChild(res, state, event))
+		.then(([res, state_, event_]) => {
 			if (res !== ResultCodes.FAILURE) {
 
 				if (this.latched && res === ResultCodes.RUNNING) {
@@ -36,4 +37,7 @@ export class Selector extends Composite {
 		});
 	}
 
+	_afterChild(res: ResultCodes, state: any, event: any) {
+		return [res, state, event];
+	}
 }

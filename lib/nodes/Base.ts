@@ -19,9 +19,14 @@ export class Base {
 	handleEvent(state: any, event: any): Promise<ResultCodes> {
 
 		return Promise.resolve(this._beforeEvent(state, event))
-		.then(() => {
-			return this.onEvent(state, event);
-		})
+		.then(() => this.precondition(state, event))
+			.then((passed) => {
+				if (!passed) {
+					return ResultCodes.FAILURE;
+				}
+
+				return this.onEvent(state, event);
+			})
 		.catch(err => {
 			state.errorReason = err;
 
@@ -68,6 +73,11 @@ export class Base {
 		storage.lastResult = res;
 
 		return res;
+	}
+
+	// Return true if we should proceed, false otherwise
+	precondition(state: any, event: any) {
+		return true;
 	}
 
 	// Return results
