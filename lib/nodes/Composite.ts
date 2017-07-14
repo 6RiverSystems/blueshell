@@ -1,13 +1,13 @@
 'use strict';
 
-import {Base} from './Base';
+import {Action} from './Action';
 import {ResultCodes} from '../utils/ResultCodes';
 
-export class Composite extends Base {
+export class Composite extends Action {
 
 	latched: boolean;
 
-	constructor(name: string, children: Array<Base>, latched = false) {
+	constructor(name: string, children: Array<Action>, latched = false) {
 		super(name);
 
 		// console.log(`${name} constructed with ${children.length} children`);

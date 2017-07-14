@@ -4,7 +4,7 @@
 'use strict';
 
 import {Decorator} from '../Decorator';
-import {Base} from '../Base';
+import {Action} from '../Action';
 import {ResultCodes} from '../../utils/ResultCodes';
 
 //TODO: This is stupid - might as well pass state and event as well
@@ -16,7 +16,7 @@ export class RepeatWhen extends Decorator {
 
 	conditional: ResultConditional;
 
-	constructor(desc: string, child: Base, conditional: ResultConditional) {
+	constructor(desc: string, child: Action, conditional: ResultConditional) {
 		super('RepeatWhen-' + desc, child);
 		this.conditional = conditional;
 	}

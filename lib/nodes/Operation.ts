@@ -1,9 +1,5 @@
-/**
- * Created by jpollak on 9/9/16.
- */
+import {Action} from './Action';
 
-import {Base} from './Base';
-
-export class Operation extends Base {
+export class Operation extends Action {
 
 }

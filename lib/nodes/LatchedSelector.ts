@@ -1,14 +1,11 @@
-/**
- * Created by josh on 1/10/16.
- */
 'use strict';
 
 import {Selector} from './Selector';
-import {Base} from './Base';
+import {Action} from './Action';
 
 export class LatchedSelector extends Selector {
 
-	constructor(name: string, children: Array<Base>) {
+	constructor(name: string, children: Array<Action>) {
 		super(name, children, true);
 	}
 

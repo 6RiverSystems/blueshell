@@ -1,6 +1,3 @@
-/**
- * Created by josh on 1/10/16.
- */
 'use strict';
 
 import {Composite} from './Composite';

@@ -4,7 +4,7 @@
 'use strict';
 
 import {Decorator} from '../Decorator';
-import {Base} from '../Base';
+import {Action} from '../Action';
 import {ResultCodes} from '../../utils/ResultCodes';
 
 // Swaps one result from the child for another
@@ -17,7 +17,7 @@ export class ResultSwap extends Decorator {
 	_inResult: ResultCodes;
 	_outResult: ResultCodes;
 
-	constructor(inResult: ResultCodes, outResult: ResultCodes, child: Base) {
+	constructor(inResult: ResultCodes, outResult: ResultCodes, child: Action) {
 		super('ResultSwap_' + inResult + '-' + outResult, child);
 		this._inResult = inResult;
 		this._outResult = outResult;

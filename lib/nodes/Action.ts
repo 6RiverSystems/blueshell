@@ -1,18 +1,15 @@
-/**
- * Created by josh on 1/10/16.
- */
 'use strict';
 
 import {ResultCodes} from '../utils/ResultCodes';
 
-export class Base {
+export class Action {
 
-	children: Array<Base>;
+	children: Array<Action>;
 	name: string;
 	_parent: string;
 
 	constructor(name?: string) {
-		this.name = name || this.constructor.name;
+		this.name = name || name;
 		this._parent = '';
 	}
 
@@ -42,7 +39,7 @@ export class Base {
 	}
 
 	// Return nothing
-	private _beforeEvent(state: any, event: any) {
+	protected _beforeEvent(state: any, event: any) {
 
 		let pStorage = this._privateStorage(state);
 		let nodeStorage = this.getNodeStorage(state);
@@ -61,7 +58,7 @@ export class Base {
 	}
 
 	// Logging
-	private _afterEvent(res: any, state: any, event: any) {
+	protected _afterEvent(res: any, state: any, event: any) {
 
 		if (this.getDebug(state)) {
 			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console
@@ -71,6 +68,10 @@ export class Base {
 
 		// Cache our results for the next iteration
 		storage.lastResult = res;
+
+		if (res !== ResultCodes.RUNNING) {
+			this.deactivate(state, event);
+		}
 
 		return res;
 	}
@@ -85,6 +86,10 @@ export class Base {
 		return Promise.resolve(ResultCodes.SUCCESS);
 	}
 
+	deactivate(state: any, event: any) {
+		//no-op
+	}
+
 	set parent(path: string) {
 		this._parent = path;
 	}
@@ -96,7 +101,7 @@ export class Base {
 	/*
 	 * Returns storage unique to this node, keyed on the node's path.
 	 */
-	getNodeStorage(state: any) {
+	protected getNodeStorage(state: any) {
 		let path = this.path;
 		let blueshell = this._privateStorage(state);
 

@@ -7,10 +7,10 @@ import {assert} from 'chai';
 import * as Blueshell from '../../dist';
 
 let rc = Blueshell.ResultCodes;
-let Base = Blueshell.Base;
+let Action = Blueshell.Action;
 let Decorator = Blueshell.Decorator;
 
-class TestAction extends Base {
+class TestAction extends Action {
 	private preconditionStatus: boolean;
 
 	constructor(name?: string, precond: boolean = true) {
@@ -23,7 +23,7 @@ class TestAction extends Base {
 	}
 }
 
-describe('Base', function() {
+describe('Action', function() {
 	describe('#name', function() {
 		it('has a name', function() {
 			assert.equal(new TestAction().name, 'TestAction');
@@ -33,7 +33,7 @@ describe('Base', function() {
 
 	describe('#path', function() {
 		it('sets a simple path', function() {
-			let node = new Base('test');
+			let node = new Action('test');
 
 			assert.equal(node.path, 'test', 'Node Name');
 		});
@@ -51,7 +51,7 @@ describe('Base', function() {
 
 	describe('#getNodeStorage', function() {
 		it('has separate storage for each state', function() {
-			let node = new Base('test');
+			let node = new Action('test');
 
 			let state1 = {};
 			let state2 = {};
@@ -81,7 +81,7 @@ describe('Base', function() {
 
 	describe('#EventCounter', function() {
 		it('Parent Node Counter', function() {
-			let root = new Base('root');
+			let root = new Action('root');
 			let state = {};
 
 			return root.handleEvent(state, {})
@@ -95,7 +95,7 @@ describe('Base', function() {
 
 		it('Child Node Counter', function() {
 
-			let child = new Base('child');
+			let child = new Action('child');
 			let root = new Blueshell.Decorator('root', child);
 
 			let state = {};

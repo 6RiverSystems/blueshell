@@ -1,10 +1,6 @@
 'use strict';
 
-import {Base} from './nodes/Base';
-
-type Action = Base;
-
-export {Base, Action};
+export {Action} from './nodes/Action';
 
 export {Operation} from './nodes/Operation';
 export {Composite} from './nodes/Composite';

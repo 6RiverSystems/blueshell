@@ -1,9 +1,6 @@
-/**
- * Created by jpollak on 5/29/16.
- */
 'use strict';
 
-import { Base } from './Base';
+import { Action } from './Action';
 import { Conditional } from '../Conditional';
 import {ResultCodes} from './../utils/ResultCodes';
 
@@ -18,13 +15,13 @@ import {ResultCodes} from './../utils/ResultCodes';
  * if one is not provided, 'FAILURE' is returned.
  *
  */
-export class IfElse extends Base {
+export class IfElse extends Action {
 
 	conditional: Conditional;
-	consequent: Base;
-	alternative: Base;
+	consequent: Action;
+	alternative: Action;
 
-	constructor(name: string, conditional: Conditional, consequent: Base, alternative?: Base) {
+	constructor(name: string, conditional: Conditional, consequent: Action, alternative?: Action) {
 		super(name);
 
 		this.conditional = conditional;

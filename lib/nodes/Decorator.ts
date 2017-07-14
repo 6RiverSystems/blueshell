@@ -1,16 +1,16 @@
 'use strict';
 
-import { Composite } from './Composite';
-import { Base } from './Base';
+import {Composite} from './Composite';
+import {Action} from './Action';
 import {ResultCodes} from '../utils/ResultCodes';
 
 export class Decorator extends Composite {
 
-	constructor(name: string, child: Base) {
+	constructor(name: string, child: Action) {
 		super(name, [child]);
 	}
 
-	get child(): Base {
+	get child(): Action {
 		return this.children[0];
 	}
 

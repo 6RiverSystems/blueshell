@@ -4,12 +4,12 @@
 'use strict';
 
 import {RepeatWhen} from './RepeatWhen';
-import {Base} from '../Base';
+import {Action} from '../Action';
 import {ResultCodes} from '../../utils/ResultCodes';
 
 export class RepeatOnResult extends RepeatWhen {
 
-	constructor(repeatRes: ResultCodes, child: Base) {
+	constructor(repeatRes: ResultCodes, child: Action) {
 		super('ResultEquals-' + repeatRes, child, (res) => res === repeatRes);
 	}
 
