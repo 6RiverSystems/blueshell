@@ -13,4 +13,6 @@ export {IfElse} from './nodes/IfElse';
 
 export {decorators} from './nodes/decorators';
 
+export {Event, Command} from './data';
+
 export {ResultCodes, renderTree, toConsole, EnumEx} from './utils';

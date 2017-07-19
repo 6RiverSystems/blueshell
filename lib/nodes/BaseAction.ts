@@ -19,7 +19,6 @@ export class BaseAction extends Action {
 	}
 
 	onEvent(state: any, event: any): Promise<ResultCodes> {
-
 		// if the node is reactivatable, and we get a reactivate event, call activate
 		const reactivate = event.type === 'reactivate' && this.reactivatable;
 		const storage = this.getNodeStorage(state);
@@ -28,7 +27,7 @@ export class BaseAction extends Action {
 			return this.activate(state, event);
 		} else {
 			return this.runningEvent(state, event);
-}
+		}
 	}
 
 	setCommands(state: any, event: any) {

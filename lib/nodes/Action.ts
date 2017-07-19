@@ -14,7 +14,6 @@ export class Action {
 	}
 
 	handleEvent(state: any, event: any): Promise<ResultCodes> {
-
 		return Promise.resolve(this._beforeEvent(state, event))
 		.then(() => this.precondition(state, event))
 			.then((passed) => {

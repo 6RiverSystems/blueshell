@@ -13,7 +13,8 @@
 		"removeComments": false,
 		"preserveConstEnums": true,
 		"noImplicitAny": true,
-		"noImplicitReturns": true
+		"noImplicitReturns": true,
+		"target": "es2015"
 	},
 	"files": [
 		"lib/index.ts"

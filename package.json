@@ -42,6 +42,7 @@
   "devDependencies": {
     "@types/chai": "3.4.33",
     "@types/mocha": "^2.2.32",
+    "@types/uuid": "^3.0.0",
     "chai": "3.5.0",
     "eslint": "3.5.0",
     "eslint-config-defaults": "~9.0.0",
@@ -59,6 +60,7 @@
   },
   "dependencies": {
     "@types/archy": "0.0.30",
-    "archy": "1.0.0"
+    "archy": "1.0.0",
+    "uuid": "^3.1.0"
   }
 }

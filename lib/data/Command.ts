@@ -2,8 +2,8 @@
 
 import * as uuid from 'uuid';
 
-export class Command<CommandType, DataType> {
-	id: uuid;
+export class Command {
+	id: string;
 
 	channelType: string;
 
@@ -17,9 +17,10 @@ export class Command<CommandType, DataType> {
 
 	location: string;
 
-	data: DataType;
+	data: any;
 
-	constructor(channelType: string, channelId: string, command: string, taskType: string, action, location, data) {
+	constructor(channelType: string, channelId: string, command: string,
+							taskType: string, action: string, location: string, data: any) {
 		this.id = uuid.v4();
 
 		this.channelType = channelType;
