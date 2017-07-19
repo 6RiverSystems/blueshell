@@ -11,7 +11,14 @@ export {LatchedSelector} from './nodes/LatchedSelector';
 export {LatchedSequence} from './nodes/LatchedSequence';
 export {IfElse} from './nodes/IfElse';
 
-export {decorators} from './nodes/decorators';
+export {Conditional} from './Conditional';
+
+export {
+	Not,
+	RepeatWhen,
+	RepeatOnResult,
+	ResultSwap
+} from './nodes/decorators';
 
 export {Event, Command} from './data';
 

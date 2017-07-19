@@ -1,19 +1,18 @@
-/**
- * Created by josh on 1/12/16.
- */
 'use strict';
 
 import {assert} from 'chai';
-import * as Blueshell from '../../../dist';
 
-let rc = Blueshell.ResultCodes;
+import {
+	Event,
+	Operation,
+	ResultCodes,
+	Not
+} from '../../../lib';
 
-let Not = Blueshell.decorators.Not;
+class EchoAction<State> extends Operation<State> {
 
-class EchoAction extends Blueshell.Operation {
-
-	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
-		return event;
+	onEvent(state: State, event: Event): Promise<ResultCodes> {
+		return Promise.resolve(<any>event);
 	}
 }
 
@@ -24,25 +23,27 @@ describe('Not', function() {
 		let echo = new EchoAction();
 		let unEcho = new Not('unEcho', echo);
 
-		let tests = [
-			{action: echo, event: rc.SUCCESS, result: rc.SUCCESS},
-			{action: echo, event: rc.FAILURE, result: rc.FAILURE},
-			{action: echo, event: rc.RUNNING, result: rc.RUNNING},
-			{action: unEcho, event: rc.SUCCESS, result: rc.FAILURE},
-			{action: unEcho, event: rc.FAILURE, result: rc.SUCCESS},
-			{action: unEcho, event: rc.RUNNING, result: rc.RUNNING}
+		let tests: any = [
+			{action: echo, event: ResultCodes.SUCCESS, result: ResultCodes.SUCCESS},
+			{action: echo, event: ResultCodes.FAILURE, result: ResultCodes.FAILURE},
+			{action: echo, event: ResultCodes.RUNNING, result: ResultCodes.RUNNING},
+			{action: unEcho, event: ResultCodes.SUCCESS, result: ResultCodes.FAILURE},
+			{action: unEcho, event: ResultCodes.FAILURE, result: ResultCodes.SUCCESS},
+			{action: unEcho, event: ResultCodes.RUNNING, result: ResultCodes.RUNNING}
 		];
 
-		let makeVerify = function(test) {
-			return function(res) {
+		let makeVerify = function(test: any) {
+			return function(res: any) {
 				assert.equal(res, test.result, `${test.action.name} -> ${test.result}`);
 			};
 		};
 
-		let ps = [];
+		const event = new Event('channelType', 'channelId', 'testEvent');
+
+		let ps: any = [];
 
 		for (let test of tests) {
-			let p = test.action.handleEvent({}, test.event);
+			let p = test.action.handleEvent(event, (<any>test).event);
 
 			ps.push(p.then(makeVerify(test)));
 		}

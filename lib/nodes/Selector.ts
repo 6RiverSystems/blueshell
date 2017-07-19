@@ -1,13 +1,14 @@
 'use strict';
 
+import {ResultCodes} from '../utils/ResultCodes';
+import {Event} from '../data/Event';
 import {Composite} from './Composite';
-import {ResultCodes} from './../utils/ResultCodes';
 
-export class Selector extends Composite {
+export class Selector<State> extends Composite<State> {
 
 	// Recursively sends the event to each child until one of them returns
 	// success or running. If we exhaust all the children, return failure.
-	handleChild(state: any, event: any, i: number): Promise<ResultCodes> {
+	handleChild(state: State, event: Event, i: number): Promise<ResultCodes> {
 
 		let storage = this.getNodeStorage(state);
 
@@ -34,7 +35,7 @@ export class Selector extends Composite {
 		});
 	}
 
-	_afterChild(res: ResultCodes, state: any, event: any) {
+	_afterChild(res: ResultCodes, state: State, event: any) {
 		return [res, state, event];
 	}
 }

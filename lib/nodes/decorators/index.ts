@@ -3,18 +3,7 @@
  */
 'use strict';
 
-import {Not} from './Not';
-import {RepeatWhen} from './RepeatWhen';
-import {RepeatOnResult} from './RepeatOnResult';
-import {ResultSwap} from './ResultSwap';
-
-let decorators = {
-	Not,
-	RepeatWhen,
-	RepeatOnResult,
-	ResultSwap
-};
-
-export {
-	decorators
-};
+export {Not} from './Not';
+export {RepeatWhen} from './RepeatWhen';
+export {RepeatOnResult} from './RepeatOnResult';
+export {ResultSwap} from './ResultSwap';

@@ -1,9 +1,10 @@
 'use strict';
 
-import {Action} from './Action';
 import {ResultCodes} from '../utils/ResultCodes';
+import {Event} from '../data/Event';
+import {Action} from './Action';
 
-export class BaseAction extends Action {
+export class BaseAction<State> extends Action<State> {
 	log: any;
 
 	reactivatable: boolean;
@@ -14,11 +15,11 @@ export class BaseAction extends Action {
 		this.reactivatable = false;
 	}
 
-	makeCommand(mfp: any, event: any): any {
+	makeCommand(mfp: any, event: Event): any {
 		throw new Error('Abstract Method must be implemented by children');
 	}
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onEvent(state: State, event: any): Promise<ResultCodes> {
 		// if the node is reactivatable, and we get a reactivate event, call activate
 		const reactivate = event.type === 'reactivate' && this.reactivatable;
 		const storage = this.getNodeStorage(state);
@@ -30,13 +31,13 @@ export class BaseAction extends Action {
 		}
 	}
 
-	setCommands(state: any, event: any) {
+	setCommands(state: State, event: any) {
 		let cmd = this.makeCommand(state, event);
 
 		state.outgoingCommands = Array.isArray(cmd) ? cmd : [cmd];
 	}
 
-	activate(state: any, event: any): Promise<ResultCodes> {
+	activate(state: State, event: any): Promise<ResultCodes> {
 		this.log.debug(`${this.name}: Activate`);
 		this.setCommands(state, event);
 
@@ -47,10 +48,10 @@ export class BaseAction extends Action {
 		throw new Error('Abstract Method must be implemented by children');
 	}
 
-	onComplete(state: any, event: any) {
+	onComplete(state: State, event: any) {
 	}
 
-	runningEvent(state: any, event: any): Promise<ResultCodes> {
+	runningEvent(state: State, event: any): Promise<ResultCodes> {
 		this.log.debug(`${this.name}: runningEvent`);
 
 		let result = ResultCodes.RUNNING;

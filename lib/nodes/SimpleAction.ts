@@ -1,10 +1,9 @@
 'use strict';
 
 import {BaseAction} from './BaseAction';
-import {State} from '../data/State';
 import {Command} from '../data/Command';
 
-export class SimpleAction extends BaseAction {
+export class SimpleAction<State> extends BaseAction<State> {
 
 	log: any;
 
@@ -28,7 +27,7 @@ export class SimpleAction extends BaseAction {
 	}
 
 	makeCommand(state: State, event: any) {
-		let updateUi = new Command(state.id, this.message);
+		let updateUi = new Command(state.id, this.message, null, null, null, null, null);
 
 		return updateUi;
 	}

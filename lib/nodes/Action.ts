@@ -1,19 +1,20 @@
 'use strict';
 
 import {ResultCodes} from '../utils/ResultCodes';
+import {Event} from '../data/Event';
 
-export class Action {
+export class Action<State> {
 
-	children: Array<Action>;
+	children: Array<Action<State>>;
 	name: string;
 	_parent: string;
 
 	constructor(name?: string) {
-		this.name = name || name;
+		this.name = name || this.constructor.name;
 		this._parent = '';
 	}
 
-	handleEvent(state: any, event: any): Promise<ResultCodes> {
+	handleEvent(state: State, event: Event): Promise<ResultCodes> {
 		return Promise.resolve(this._beforeEvent(state, event))
 		.then(() => this.precondition(state, event))
 			.then((passed) => {
@@ -24,7 +25,7 @@ export class Action {
 				return this.onEvent(state, event);
 			})
 		.catch(err => {
-			state.errorReason = err;
+			(<any>state).errorReason = err;
 
 			if (this.getDebug(state)) {
 				console.error('Error: ', err.stack); // eslint-disable-line no-console
@@ -38,7 +39,7 @@ export class Action {
 	}
 
 	// Return nothing
-	protected _beforeEvent(state: any, event: any) {
+	private _beforeEvent(state: State, event: Event) {
 
 		let pStorage = this._privateStorage(state);
 		let nodeStorage = this.getNodeStorage(state);
@@ -57,7 +58,7 @@ export class Action {
 	}
 
 	// Logging
-	protected _afterEvent(res: any, state: any, event: any) {
+	private _afterEvent(res: any, state: State, event: Event) {
 
 		if (this.getDebug(state)) {
 			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console
@@ -76,16 +77,16 @@ export class Action {
 	}
 
 	// Return true if we should proceed, false otherwise
-	precondition(state: any, event: any) {
+	precondition(state: State, event: Event) {
 		return true;
 	}
 
 	// Return results
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onEvent(state: State, event: Event): Promise<ResultCodes> {
 		return Promise.resolve(ResultCodes.SUCCESS);
 	}
 
-	deactivate(state: any, event: any) {
+	deactivate(state: State, event: Event) {
 		//no-op
 	}
 
@@ -100,7 +101,7 @@ export class Action {
 	/*
 	 * Returns storage unique to this node, keyed on the node's path.
 	 */
-	protected getNodeStorage(state: any) {
+	protected getNodeStorage(state: State) {
 		let path = this.path;
 		let blueshell = this._privateStorage(state);
 
@@ -108,7 +109,7 @@ export class Action {
 		return blueshell[path];
 	}
 
-	resetNodeStorage(state: any) {
+	resetNodeStorage(state: State) {
 		let path = this.path;
 		let blueshell = this._privateStorage(state);
 
@@ -116,25 +117,25 @@ export class Action {
 		return blueshell[path];
 	}
 
-	private _privateStorage(state: any) {
-		state.__blueshell = state.__blueshell || {};
+	private _privateStorage(state: State) {
+		(<any>state).__blueshell = (<any>state).__blueshell || {};
 
-		return state.__blueshell;
+		return (<any>state).__blueshell;
 	}
 
-	getDebug(state: any) {
+	getDebug(state: State) {
 		return this._privateStorage(state).debug;
 	}
 
-	getTreeEventCounter(state: any) {
+	getTreeEventCounter(state: State) {
 		return this._privateStorage(state).eventCounter;
 	}
 
-	getLastEventSeen(state: any) {
+	getLastEventSeen(state: State) {
 		return this.getNodeStorage(state).lastEventSeen;
 	}
 
-	getLastResult(state: any) {
+	getLastResult(state: State) {
 		return this.getNodeStorage(state).lastResult;
 	}
 }

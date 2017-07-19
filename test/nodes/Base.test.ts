@@ -4,13 +4,17 @@
 'use strict';
 
 import {assert} from 'chai';
-import * as Blueshell from '../../dist';
 
-let rc = Blueshell.ResultCodes;
-let Action = Blueshell.Action;
-let Decorator = Blueshell.Decorator;
+import {
+	Event,
+	ResultCodes,
+	Action,
+	Decorator,
+} from '../../lib';
 
-class TestAction extends Action {
+import {BasicState} from './test/Actions';
+
+class TestAction extends Action<BasicState> {
 	private preconditionStatus: boolean;
 
 	constructor(name?: string, precond: boolean = true) {
@@ -53,16 +57,16 @@ describe('Action', function() {
 		it('has separate storage for each state', function() {
 			let node = new Action('test');
 
-			let state1 = {};
-			let state2 = {};
+			let state1: BasicState;
+			let state2: BasicState;
 
-			let storage = node.getNodeStorage(state1);
+			let storage = (<any>node).getNodeStorage(state1);
 
 			storage.testData = 'Node Data';
 
-			assert.equal(node.getNodeStorage(state1).testData, 'Node Data', 'Testing Storage');
-			assert.ok(node.getNodeStorage(state2), 'state2 storage found');
-			assert.notOk(node.getNodeStorage(state2).testData, 'state2 testData not found');
+			assert.equal((<any>node).getNodeStorage(state1).testData, 'Node Data', 'Testing Storage');
+			assert.ok((<any>node).getNodeStorage(state2), 'state2 storage found');
+			assert.notOk((<any>node).getNodeStorage(state2).testData, 'state2 testData not found');
 		});
 	});
 
@@ -70,11 +74,12 @@ describe('Action', function() {
 		it('handles events', function() {
 			let action = new TestAction();
 
-			let p = action.handleEvent({}, 'testEvent');
+			let state: BasicState;
 
-			return p.then(res => {
+			return action.handleEvent(state, new Event('channelType', 'channelId', 'type'))
+				.then(res => {
 				console.log('TestAction completed', res);
-				assert.equal(res, rc.SUCCESS);
+				assert.equal(res, ResultCodes.SUCCESS);
 			});
 		});
 	});
@@ -82,10 +87,10 @@ describe('Action', function() {
 	describe('#EventCounter', function() {
 		it('Parent Node Counter', function() {
 			let root = new Action('root');
-			let state = {};
+			let state: BasicState;
 
-			return root.handleEvent(state, {})
-			.then(() => root.handleEvent(state, {}))
+			return root.handleEvent(state, new Event('channelType', 'channelId', 'type'))
+			.then(() => root.handleEvent(state, new Event('channelType', 'channelId', 'type')))
 			.then(() => {
 				assert.equal(root.getTreeEventCounter(state), 2);
 				assert.equal(root.getLastEventSeen(state), 2);
@@ -96,14 +101,14 @@ describe('Action', function() {
 		it('Child Node Counter', function() {
 
 			let child = new Action('child');
-			let root = new Blueshell.Decorator('root', child);
+			let root = new Decorator('root', child);
 
-			let state = {};
+			let state: BasicState;
 
 			// Since it has a parent, it should increment
 			// the local node but not the eventCounter
-			return root.handleEvent(state, {})
-			.then(() => root.handleEvent(state, {}))
+			return root.handleEvent(state, new Event('channelType', 'channelId', 'type'))
+			.then(() => root.handleEvent(state, new Event('channelType', 'channelId', 'type')))
 			.then(() => {
 				assert.equal(root.getTreeEventCounter(state), 2);
 				assert.equal(root.getLastEventSeen(state), 2);

@@ -1,8 +1,7 @@
-/**
- * Created by jpollak on 8/30/16.
- */
 'use strict';
 
-export interface Conditional {
-	(state: any, event: any): boolean;
+import {Event} from './';
+
+export interface Conditional<State> {
+	(state: State, event: Event): boolean;
 }

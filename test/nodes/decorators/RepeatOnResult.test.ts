@@ -4,46 +4,57 @@
 'use strict';
 
 import {assert} from 'chai';
-import * as Blueshell from '../../../dist';
 
-let rc = Blueshell.ResultCodes;
+import {
+	Event,
+	Operation,
+	ResultCodes,
+	RepeatOnResult
+} from '../../../lib';
 
-let RepeatOnResult = Blueshell.decorators.RepeatOnResult;
+class CountUntil extends Operation<number> {
 
-class CountUntil extends Blueshell.Operation {
+	limit: number;
 
-	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
+	constructor(limit: number) {
+		super();
 
-		state.counter += 1;
+		this.limit = limit;
+	}
 
-		return Promise.resolve(state.counter <= event ? rc.RUNNING : rc.SUCCESS);
+	onEvent(state: number, event: Event): Promise<ResultCodes> {
+
+		(<any>state).number += 1;
+
+		return Promise.resolve(state <= this.limit ? ResultCodes.RUNNING : ResultCodes.SUCCESS);
 	}
 }
 
-describe('RepeatOnResult', function() {
+describe.only('RepeatOnResult', function() {
 	it('repeat when child returns running', function() {
 
-		let countUntil = new CountUntil();
-		let unEcho = new RepeatOnResult(rc.RUNNING, countUntil);
+		let countUntil = new CountUntil(3);
+		let unEcho = new RepeatOnResult(ResultCodes.RUNNING, countUntil);
 
 		let tests = [
-			{action: unEcho, event: 0, counter: 1},
-			{action: unEcho, event: 2, counter: 3}
+			{action: unEcho, event: new Event('channelType', 'channelId', 'testEvent'), counter: 1},
+			{action: unEcho, event: new Event('channelType', 'channelId', 'testEvent'), counter: 3}
 		];
 
-		let makeVerify = function(test) {
-			return function(res) {
+		let makeVerify = function(test: any) {
+			return function(res: any) {
 				assert.equal(res.state.counter, test.counter, `Counter: ${test.action.name} -> ${test.counter}`);
-				assert.equal(res, rc.SUCCESS, `Result: ${test.action.name} -> ${test.counter}`);
+				assert.equal(res, ResultCodes.SUCCESS, `Result: ${test.action.name} -> ${test.counter}`);
 			};
 		};
 
 		for (let test of tests) {
 			// isolated per test
-			let state = {
-				counter: 0
+			let counter: any = {
+				number: 0
 			};
-			let p = test.action.handleEvent(state, test.event);
+
+			let p = test.action.handleEvent(counter, test.event);
 
 			p.then(makeVerify(test));
 		}

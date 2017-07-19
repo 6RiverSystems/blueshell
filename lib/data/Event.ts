@@ -13,7 +13,7 @@ export class Event {
 
 	data: any;
 
-	constructor(channelType: string, channelId: string, type: string, data: any) {
+	constructor(channelType: string, channelId: string, type: string, data?: any) {
 		this.id = uuid.v4();
 
 		this.channelType = channelType;

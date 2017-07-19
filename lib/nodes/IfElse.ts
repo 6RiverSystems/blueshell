@@ -1,8 +1,9 @@
 'use strict';
 
-import { Action } from './Action';
-import { Conditional } from '../Conditional';
-import {ResultCodes} from './../utils/ResultCodes';
+import {ResultCodes} from '../utils/ResultCodes';
+import {Event} from '../data/Event';
+import {Action} from './Action';
+import {Conditional} from '..//Conditional';
 
 /**
  * If-Else Conditional Composite Node.
@@ -15,13 +16,13 @@ import {ResultCodes} from './../utils/ResultCodes';
  * if one is not provided, 'FAILURE' is returned.
  *
  */
-export class IfElse extends Action {
+export class IfElse<State> extends Action<State> {
 
-	conditional: Conditional;
-	consequent: Action;
-	alternative: Action;
+	conditional: Conditional<State>;
+	consequent: Action<State>;
+	alternative: Action<State>;
 
-	constructor(name: string, conditional: Conditional, consequent: Action, alternative?: Action) {
+	constructor(name: string, conditional: Conditional<State>, consequent: Action<State>, alternative?: Action<State>) {
 		super(name);
 
 		this.conditional = conditional;
@@ -39,7 +40,7 @@ export class IfElse extends Action {
 		return children;
 	}
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onEvent(state: State, event: Event): Promise<ResultCodes> {
 
 		if (this.conditional(state, event)) {
 			return this.consequent.handleEvent(state, event);
@@ -51,4 +52,3 @@ export class IfElse extends Action {
 	}
 
 }
-
