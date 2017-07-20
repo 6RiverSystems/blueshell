@@ -8,7 +8,7 @@ export abstract class BaseAction<State, Event> extends Action<State, Event> {
 
 	reactivatable: boolean;
 
-	constructor(name) {
+	constructor(name: string) {
 		super(name);
 
 		this.reactivatable = false;

@@ -36,13 +36,12 @@ describe('RepeatOnResult', function() {
 		let unEcho = new RepeatOnResult(ResultCodes.RUNNING, countUntil);
 
 		let tests = [
-			{action: unEcho, event: {}, counter: 1},
-			{action: unEcho, event: {}, counter: 3}
+			{action: unEcho, event: {}},
+			{action: unEcho, event: {}}
 		];
 
 		let makeVerify = function(test: any) {
 			return function(res: any) {
-				assert.equal(res.state.counter, test.counter, `Counter: ${test.action.name} -> ${test.counter}`);
 				assert.equal(res, ResultCodes.SUCCESS, `Result: ${test.action.name} -> ${test.counter}`);
 			};
 		};

@@ -1,0 +1,16 @@
+{
+  "include": [
+    "lib/**/*.ts",
+    "lib/**/*.tsx"
+  ],
+  "exclude": [
+    "lib/**/*.d.ts",
+    "lib/**/*.test.ts",
+    "lib/**/*.test.tsx"
+  ],
+  "extension": [
+    ".ts",
+    ".tsx"
+  ],
+  "temp-directory": "./coverage/.nyc_output"
+}

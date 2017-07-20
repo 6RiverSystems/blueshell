@@ -7,17 +7,9 @@
   "scripts": {
     "pretest": "npm-run-all pretest:eslint",
     "pretest:eslint": "shx echo eslint .",
-    "clean": "npm-run-all clean:js clean:test",
-    "clean:js": "shx rm -rf dist",
-    "clean:test": "shx rm -rf dist-test",
-    "build": "npm-run-all build:js",
-    "build:js": "tsc --pretty",
-    "build:test": "tsc --project ./test --pretty",
-    "build:all": "npm-run-all build:js build:test",
-    "test": "npm-run-all clean build:all test:mocha",
-    "test:mocha": "NODE_ENV=test NODE_PATH=$NODE_PATH:./ istanbul cover node_modules/.bin/_mocha -- ${MOCHA_OPTS} dist-test",
-    "test:no-cover": "NODE_ENV=test NODE_PATH=$NODE_PATH:./ mocha dist-test",
-    "test:debug": "npm run test:no-cover -- --debug-brk dist-test",
+    "clean": "shx rm -rf dist",
+    "build": "tsc --pretty",
+    "test": "NODE_ENV=test nyc mocha --recursive --compilers ts:ts-node/register --bail",
     "posttest": "nsp check",
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
@@ -40,28 +32,50 @@
   },
   "homepage": "https://github.com/6RiverSystems/blueshell#readme",
   "devDependencies": {
-    "@types/chai": "3.4.33",
-    "@types/mocha": "^2.2.32",
-    "@types/uuid": "^3.0.0",
-    "chai": "3.5.0",
-    "eslint": "3.5.0",
+    "@types/chai": "4.0.1",
+    "@types/mocha": "2.2.41",
+    "@types/uuid": "3.4.0",
+    "chai": "4.1.0",
+    "coveralls": "2.13.1",
+    "eslint": "4.2.0",
     "eslint-config-defaults": "~9.0.0",
-    "istanbul": "0.4.5",
-    "mocha": "3.0.2",
-    "mocha-junit-reporter": "1.12.0",
-    "npm-run-all": "3.1.0",
-    "nsp": "2.6.1",
-    "proxyquire": "1.7.10",
-    "shx": "0.1.4",
-    "sinon": "1.17.6",
-    "source-map-support": "^0.4.2",
-    "ts-node": "^3.2.0",
-    "tslint": "3.15.1",
-    "typescript": "^2.1.0-dev.20160922"
+    "mocha": "3.4.2",
+    "mocha-junit-reporter": "1.13.0",
+    "mocha-lcov-reporter": "1.3.0",
+    "npm-run-all": "4.0.2",
+    "nsp": "2.6.3",
+    "nyc": "11.0.3",
+    "proxyquire": "1.8.0",
+    "shx": "0.2.2",
+    "sinon": "2.3.8",
+    "source-map-support": "0.4.15",
+    "ts-node": "3.2.1",
+    "tslint": "5.5.0",
+    "typescript": "2.4.2"
   },
   "dependencies": {
     "@types/archy": "0.0.30",
     "archy": "1.0.0",
-    "uuid": "^3.1.0"
+    "uuid": "3.1.0"
+  },
+  "nyc": {
+    "include": [
+      "lib/*.ts",
+      "lib/**/*.ts"
+    ],
+    "exclude": [
+      "typings"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "json",
+      "html"
+    ],
+    "all": true
   }
 }

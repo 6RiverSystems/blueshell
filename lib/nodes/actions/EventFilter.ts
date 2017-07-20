@@ -1,6 +1,7 @@
 'use strict';
 
 import {ResultCodes} from '../../utils/ResultCodes';
+import {Action} from './Action';
 import {Decorator} from '../Decorator';
 
 /** If the event matches the predicate function, call the child.
@@ -10,7 +11,7 @@ import {Decorator} from '../Decorator';
 export class EventFilter<State, Event> extends Decorator<State, Event> {
 	private elseResult: ResultCodes;
 
-	constructor(prefix, child, elseResult = ResultCodes.FAILURE) {
+	constructor(prefix: string, child: Action<State, Event>, elseResult = ResultCodes.FAILURE) {
 		super(`${prefix}-EventFilter`, child);
 
 		this.elseResult = elseResult;
