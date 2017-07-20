@@ -10,6 +10,7 @@
     "clean": "shx rm -rf dist",
     "build": "tsc --pretty",
     "test": "NODE_ENV=test nyc mocha --recursive --compilers ts:ts-node/register --bail",
+    "coverage": "NODE_ENV=test nyc report --reporter=text-lcov | coveralls",
     "posttest": "nsp check",
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
