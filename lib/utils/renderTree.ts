@@ -5,7 +5,7 @@
 
 import * as archy from 'archy';
 
-import {Action} from '../nodes/Action';
+import {Action} from '../nodes/actions/Action';
 import {ResultCodes} from './ResultCodes';
 
 class ArchyTree {
@@ -13,7 +13,7 @@ class ArchyTree {
 	nodes: ArchyTree[] = [];
 };
 
-function buildArchyTree(node: Action<any>, state: any): ArchyTree {
+function buildArchyTree(node: Action<any, any>, state: any): ArchyTree {
 
 	let nodeLabel = node.name;
 
@@ -45,13 +45,13 @@ function buildArchyTree(node: Action<any>, state: any): ArchyTree {
 	return archyTree;
 }
 
-export function renderTree(tree: Action<any>, state?: any) {
+export function renderTree(tree: Action<any, any>, state?: any) {
 	let a = buildArchyTree(tree, state);
 	let renderedTree = archy(a);
 
 	return renderedTree;
 }
 
-export function toConsole(tree: Action<any>, state?: any) {
+export function toConsole(tree: Action<any, any>, state?: any) {
 	console.log(renderTree(tree, state)); // eslint-disable-line no-console
 }

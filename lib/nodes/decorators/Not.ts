@@ -1,10 +1,9 @@
 'use strict';
 
-import {Event} from '../../data/Event';
 import {ResultCodes} from '../../utils/ResultCodes';
 import {Decorator} from '../Decorator';
 
-export class Not<State> extends Decorator<State> {
+export class Not<State, Event> extends Decorator<State, Event> {
 
 	onEvent(state: State, event: Event): Promise<ResultCodes> {
 

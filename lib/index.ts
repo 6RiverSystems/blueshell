@@ -1,6 +1,6 @@
 'use strict';
 
-export {Action} from './nodes/Action';
+export {Action} from './nodes/actions/Action';
 
 export {Operation} from './nodes/Operation';
 export {Composite} from './nodes/Composite';
@@ -19,7 +19,5 @@ export {
 	RepeatOnResult,
 	ResultSwap
 } from './nodes/decorators';
-
-export {Event, Command} from './data';
 
 export {ResultCodes, renderTree, toConsole, EnumEx} from './utils';

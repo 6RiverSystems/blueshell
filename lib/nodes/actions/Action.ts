@@ -1,11 +1,10 @@
 'use strict';
 
-import {ResultCodes} from '../utils/ResultCodes';
-import {Event} from '../data/Event';
+import {ResultCodes} from '../../utils/ResultCodes';
 
-export class Action<State> {
+export class Action<State, Event> {
 
-	children: Array<Action<State>>;
+	children: Array<Action<State, Event>>;
 	name: string;
 	_parent: string;
 
@@ -101,7 +100,7 @@ export class Action<State> {
 	/*
 	 * Returns storage unique to this node, keyed on the node's path.
 	 */
-	protected getNodeStorage(state: State) {
+	getNodeStorage(state: State) {
 		let path = this.path;
 		let blueshell = this._privateStorage(state);
 
@@ -118,7 +117,9 @@ export class Action<State> {
 	}
 
 	private _privateStorage(state: State) {
-		(<any>state).__blueshell = (<any>state).__blueshell || {};
+		let mutableState = (<any>state);
+
+		mutableState.__blueshell = mutableState.__blueshell || {};
 
 		return (<any>state).__blueshell;
 	}

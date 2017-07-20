@@ -1,7 +1,6 @@
 'use strict';
 
 import {BaseAction} from './BaseAction';
-import {Command} from '../data/Command';
 
 export class SimpleAction<State> extends BaseAction<State> {
 
@@ -24,12 +23,6 @@ export class SimpleAction<State> extends BaseAction<State> {
 			taskType,
 			doneEvent: this.doneEvent
 		}, `Created Action for ${taskType}-${action}`);
-	}
-
-	makeCommand(state: State, event: any) {
-		let updateUi = new Command(state.id, this.message, null, null, null, null, null);
-
-		return updateUi;
 	}
 
 	isCompletionEvent(event) {

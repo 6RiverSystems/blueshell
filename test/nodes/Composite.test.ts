@@ -6,7 +6,6 @@
 import {assert} from 'chai';
 
 import {
-	Event,
 	ResultCodes
 } from '../../lib';
 
@@ -20,8 +19,8 @@ describe('Composite', function() {
 	context('#resetNodeStorage', function() {
 
 		it('should reset child state', function() {
-			let event = new Event('channelType', 'channelId', 'type');
-			let state: BasicState;
+			let event = {};
+			let state: BasicState = new BasicState();;
 			state.overheated = true;
 
 			return waitAi.handleEvent(state, event)

@@ -1,14 +1,13 @@
 'use strict';
 
 import {ResultCodes} from '../utils/ResultCodes';
-import {Event} from '../data/Event';
-import {Action} from './Action';
+import {Action} from './actions/Action';
 
-export class Composite<State> extends Action<State> {
+export class Composite<State, Event> extends Action<State, Event> {
 
 	latched: boolean;
 
-	constructor(name: string, children: Array<Action<State>>, latched = false) {
+	constructor(name: string, children: Array<Action<State, Event>>, latched = false) {
 		super(name);
 
 		// console.log(`${name} constructed with ${children.length} children`);

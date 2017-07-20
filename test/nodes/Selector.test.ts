@@ -6,7 +6,6 @@
 import {assert} from 'chai';
 
 import {
-	Event,
 	ResultCodes,
 	Selector,
 } from '../../lib';
@@ -26,10 +25,10 @@ describe('Selector', function() {
 	it('should return success', function() {
 
 		// With a happy bot
-		let botState: BasicState;
+		let botState: BasicState = new BasicState();;
 		botState.overheated = false;
 
-		let p = waitAi.handleEvent(botState, new Event('channelType', 'channelId', 'lowBattery'));
+		let p = waitAi.handleEvent(botState, {});
 
 		return p.then(res => {
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
@@ -40,24 +39,24 @@ describe('Selector', function() {
 
 	it('should return failure', function() {
 		// With a overheated bot
-		let botState: BasicState;
+		let botState: BasicState = new BasicState();;
 		botState.overheated = true;
 		botState.batteryLevel = 0;
 
-		let p = waitAi.handleEvent(botState, new Event('channelType', 'channelId', 'lowBattery 1'));
+		let p = waitAi.handleEvent(botState, {});
 
 		return p.then(res => {
 			assert.equal(res, ResultCodes.RUNNING, 'Behavior Tree Running');
 			assert.equal(botState.batteryLevel, 1, 'Ran recharge once');
 
-			return waitAi.handleEvent(botState, new Event('channelType', 'channelId', 'lowBattery 2'));
+			return waitAi.handleEvent(botState, {});
 		}).then(res => {
 
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree Success');
 			assert.equal(botState.commands.length, 0, 'No commands, waiting for cooldown');
 			assert.equal(botState.batteryLevel, 2, 'Ran recharge again');
 
-			return waitAi.handleEvent(botState, new Event('channelType', 'channelId', 'lowBattery 3'));
+			return waitAi.handleEvent(botState, {});
 		}).then(res => {
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree Success');
 			assert.equal(botState.commands.length, 1, 'Only one command');

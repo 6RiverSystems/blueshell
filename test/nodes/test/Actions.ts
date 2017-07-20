@@ -1,14 +1,13 @@
 'use strict';
 
 import {
-	Event,
 	ResultCodes,
 	Operation,
 	LatchedSelector
 } from '../../../lib';
 
 export class BasicState {
-	commands: any[];
+	commands: string[] = [];
 	__blueshell: any = {};
 	batteryLevel: number;
 	cooldownLevel: number;
@@ -23,7 +22,7 @@ export class BasicState {
 	}
 }
 
-export class Recharge extends Operation<BasicState> {
+export class Recharge extends Operation<BasicState, any> {
 
 	onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
 
@@ -41,7 +40,7 @@ export class Recharge extends Operation<BasicState> {
 	}
 }
 
-export class WaitForCooldown extends Operation<BasicState> {
+export class WaitForCooldown extends Operation<BasicState, any> {
 
 	onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
 		let storage = this.getNodeStorage(state);
@@ -63,7 +62,7 @@ export class WaitForCooldown extends Operation<BasicState> {
 	}
 }
 
-export class EmergencyShutdown extends Operation<BasicState> {
+export class EmergencyShutdown extends Operation<BasicState, any> {
 
 	onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
 		state.commands.push('powerOff');

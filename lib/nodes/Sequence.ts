@@ -1,10 +1,9 @@
 'use strict';
 
 import {ResultCodes} from '../utils/ResultCodes';
-import {Event} from '../data/Event';
 import {Composite} from './Composite';
 
-export class Sequence<State> extends Composite<State> {
+export class Sequence<State, Event> extends Composite<State, Event> {
 
 	// Recursively executes children until one of them returns
 	// failure. If we call all the children successfully, return success.

@@ -1,17 +1,16 @@
 'use strict';
 
 import {ResultCodes} from '../utils/ResultCodes';
-import {Event} from '../data/Event';
-import {Action} from './Action';
+import {Action} from './actions/Action';
 import {Composite} from './Composite';
 
-export class Decorator<State> extends Composite<State> {
+export class Decorator<State, Event> extends Composite<State, Event> {
 
-	constructor(name: string, child: Action<State>) {
+	constructor(name: string, child: Action<State, Event>) {
 		super(name, [child]);
 	}
 
-	get child(): Action<State> {
+	get child(): Action<State, Event> {
 		return this.children[0];
 	}
 

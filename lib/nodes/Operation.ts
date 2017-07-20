@@ -1,9 +1,5 @@
-/**
- * Created by jpollak on 9/9/16.
- */
+import {Action} from './actions/Action';
 
-import {Action} from './Action';
-
-export class Operation<State> extends Action<State> {
+export class Operation<State, Event> extends Action<State, Event> {
 
 }

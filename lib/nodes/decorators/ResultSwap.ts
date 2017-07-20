@@ -4,8 +4,7 @@
 'use strict';
 
 import {ResultCodes} from '../../utils/ResultCodes';
-import {Event} from '../../data/Event';
-import {Action} from '../Action';
+import {Action} from '../actions/Action';
 import {Decorator} from '../Decorator';
 
 // Swaps one result from the child for another
@@ -13,12 +12,12 @@ import {Decorator} from '../Decorator';
 //
 // For example, you can use this to have a Sequence continue operation
 // when a child returns FAILURE.
-export class ResultSwap<State>extends Decorator<State> {
+export class ResultSwap<State>extends Decorator<State, Event> {
 
 	_inResult: ResultCodes;
 	_outResult: ResultCodes;
 
-	constructor(inResult: ResultCodes, outResult: ResultCodes, child: Action<State>) {
+	constructor(inResult: ResultCodes, outResult: ResultCodes, child: Action<State, Event>) {
 		super('ResultSwap_' + inResult + '-' + outResult, child);
 		this._inResult = inResult;
 		this._outResult = outResult;

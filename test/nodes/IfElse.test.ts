@@ -6,7 +6,6 @@
 import {assert} from 'chai';
 
 import {
-	Event,
 	ResultCodes,
 	Operation,
 	IfElse
@@ -16,8 +15,8 @@ import {BasicState} from './test/Actions';
 
 describe('IfElse', function() {
 
-	let successAction = new class extends Operation<BasicState> {
-		onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
+	let successAction = new class extends Operation<BasicState, any> {
+		onEvent(state: BasicState, event: any): Promise<ResultCodes> {
 
 			state.success = true;
 
@@ -25,8 +24,8 @@ describe('IfElse', function() {
 		}
 	};
 
-	let failureAction = new class extends Operation<BasicState> {
-		onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
+	let failureAction = new class extends Operation<BasicState, any> {
+		onEvent(state: BasicState, event: any): Promise<ResultCodes> {
 
 			state.success = false;
 
@@ -41,10 +40,10 @@ describe('IfElse', function() {
 			successAction
 		);
 
-		let state: BasicState;
+		let state: BasicState = new BasicState();;
 		state.errorReason = undefined;
 
-		let p = ifElse.handleEvent(state, new Event('channelType', 'channelId', 'type'));
+		let p = ifElse.handleEvent(state, {});
 
 		return p.then(res => {
 			assert.notOk(state.errorReason);
@@ -61,10 +60,12 @@ describe('IfElse', function() {
 			failureAction
 		);
 
-		let state: BasicState;
+		let state: BasicState = new BasicState();;
 		state.errorReason = undefined;
 
-		let p = ifElse.handleEvent(state, new Event('channelType', 'channelId', 'type'));
+		let event: any = {};
+
+		let p = ifElse.handleEvent(state, event);
 
 		return p.then(res => {
 			assert.notOk(state.errorReason);
@@ -81,10 +82,10 @@ describe('IfElse', function() {
 			successAction
 		);
 
-		let state: BasicState;
+		let state: BasicState = new BasicState();;
 		state.errorReason = undefined;
 
-		let p = ifElse.handleEvent(state, new Event('channelType', 'channelId', 'type'));
+		let p = ifElse.handleEvent(state, {});
 
 		return p.then(res => {
 			assert.notOk(state.errorReason);
@@ -100,10 +101,10 @@ describe('IfElse', function() {
 			successAction
 		);
 
-		let state: BasicState;
+		let state: BasicState = new BasicState();;
 		state.errorReason = undefined;
 
-		let p = ifElse.handleEvent(state, new Event('channelType', 'channelId', 'type'));
+		let p = ifElse.handleEvent(state, {});
 
 		return p.then(res => {
 			assert.notOk(state.errorReason);

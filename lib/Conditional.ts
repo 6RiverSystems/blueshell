@@ -1,7 +1,5 @@
 'use strict';
 
-import {Event} from './';
-
-export interface Conditional<State> {
+export interface Conditional<State, Event> {
 	(state: State, event: Event): boolean;
 }

@@ -1,10 +1,9 @@
 'use strict';
 
-import {ResultCodes} from '../utils/ResultCodes';
-import {Event} from '../data/Event';
+import {ResultCodes} from '../../utils/ResultCodes';
 import {Action} from './Action';
 
-export class BaseAction<State> extends Action<State> {
+export abstract class BaseAction<State, Event> extends Action<State, Event> {
 	log: any;
 
 	reactivatable: boolean;
@@ -31,24 +30,16 @@ export class BaseAction<State> extends Action<State> {
 		}
 	}
 
-	setCommands(state: State, event: any) {
-		let cmd = this.makeCommand(state, event);
-
-		state.outgoingCommands = Array.isArray(cmd) ? cmd : [cmd];
-	}
-
 	activate(state: State, event: any): Promise<ResultCodes> {
 		this.log.debug(`${this.name}: Activate`);
-		this.setCommands(state, event);
 
 		return Promise.resolve(ResultCodes.RUNNING);
 	}
 
-	isCompletionEvent(event: any): boolean {
-		throw new Error('Abstract Method must be implemented by children');
-	}
+	abstract isCompletionEvent(event: any): boolean;
 
 	onComplete(state: State, event: any) {
+		this.log.debug(`${this.name}: onComplete`);
 	}
 
 	runningEvent(state: State, event: any): Promise<ResultCodes> {

@@ -6,7 +6,6 @@
 import {assert} from 'chai';
 
 import {
-	Event,
 	ResultCodes,
 	EnumEx,
 	renderTree,
@@ -48,11 +47,10 @@ describe('RenderTree', () => {
 
 	it('should generate a tree of nodes with state', () => {
 		let state = new TestActions.BasicState(false) as any;
-		let event: Event = new Event('channelType', 'channelId', 'overheated');
 
 		state.overheated = true;
 
-		return waitAi.handleEvent(state, event)
+		return waitAi.handleEvent(state, {})
 		.catch((err: any) => {
 			console.error(err.stack);
 		})

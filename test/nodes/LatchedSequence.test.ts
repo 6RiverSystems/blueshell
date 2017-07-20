@@ -6,7 +6,6 @@
 import {assert} from 'chai';
 
 import {
-	Event,
 	Operation,
 	LatchedSequence,
 	ResultCodes,
@@ -14,7 +13,7 @@ import {
 
 import {BasicState} from './test/Actions';
 
-class StopMotors extends Operation<BasicState> {
+class StopMotors extends Operation<BasicState, any> {
 
 	onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
 
@@ -24,7 +23,7 @@ class StopMotors extends Operation<BasicState> {
 	}
 }
 
-class StopLasers extends Operation<BasicState> {
+class StopLasers extends Operation<BasicState, any> {
 
 	onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
 		let storage = this.getNodeStorage(state);
@@ -45,9 +44,9 @@ class StopLasers extends Operation<BasicState> {
 	}
 }
 
-class Shutdown extends Operation<BasicState> {
+class Shutdown extends Operation<BasicState, any> {
 
-	onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
+	onEvent(state: BasicState, event: any): Promise<ResultCodes> {
 		state.commands.push('powerOff');
 
 		return Promise.resolve(ResultCodes.SUCCESS);
@@ -66,10 +65,10 @@ describe('LatchedSelector', function() {
 	it('should run correctly', function() {
 
 		// With a happy bot
-		let botState: BasicState;
+		let botState: BasicState = new BasicState();;
 		botState.laserCooldownTime = 0;
 
-		let p = shutdownSequence.handleEvent(botState, new Event('channelType', 'channelId', 'lowBattery'));
+		let p = shutdownSequence.handleEvent(botState, {});
 
 		return p.then(res => {
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
@@ -82,17 +81,17 @@ describe('LatchedSelector', function() {
 
 	it('should loop correctly', function() {
 		// With a happy bot
-		let botState: BasicState;
+		let botState: BasicState = new BasicState();;
 		botState.laserCooldownTime = 1;
 
-		let p = shutdownSequence.handleEvent(botState, new Event('channelType', 'channelId', 'lowBattery'));
+		let p = shutdownSequence.handleEvent(botState, {});
 
 		return p.then(res => {
 			assert.equal(res, ResultCodes.RUNNING, 'Behavior Tree Running');
 			assert.equal(botState.commands.length, 1);
 			assert.equal(botState.commands[0], 'motorsStopped');
 
-			return shutdownSequence.handleEvent(botState, new Event('channelType', 'channelId', 'lowBattery'));
+			return shutdownSequence.handleEvent(botState, {});
 		}).then(res => {
 
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree Success');

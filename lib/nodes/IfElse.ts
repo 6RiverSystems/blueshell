@@ -1,8 +1,7 @@
 'use strict';
 
 import {ResultCodes} from '../utils/ResultCodes';
-import {Event} from '../data/Event';
-import {Action} from './Action';
+import {Action} from './actions/Action';
 import {Conditional} from '..//Conditional';
 
 /**
@@ -16,13 +15,14 @@ import {Conditional} from '..//Conditional';
  * if one is not provided, 'FAILURE' is returned.
  *
  */
-export class IfElse<State> extends Action<State> {
+export class IfElse<State, Event> extends Action<State, Event> {
 
-	conditional: Conditional<State>;
-	consequent: Action<State>;
-	alternative: Action<State>;
+	conditional: Conditional<State, Event>;
+	consequent: Action<State, Event>;
+	alternative: Action<State, Event>;
 
-	constructor(name: string, conditional: Conditional<State>, consequent: Action<State>, alternative?: Action<State>) {
+	constructor(name: string, conditional: Conditional<State, Event>, consequent: Action<State, Event>,
+							alternative?: Action<State, Event>) {
 		super(name);
 
 		this.conditional = conditional;

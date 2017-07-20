@@ -1,8 +1,7 @@
 'use strict';
 
 import {ResultCodes} from '../../utils/ResultCodes';
-import {Event} from '../../data/Event';
-import {Action} from '../Action';
+import {Action} from '../actions/Action';
 import {Decorator} from '../Decorator';
 
 //TODO: This is stupid - might as well pass state and event as well
@@ -10,11 +9,11 @@ export interface ResultConditional {
 	(result: ResultCodes): boolean;
 }
 
-export class RepeatWhen<State> extends Decorator<State> {
+export class RepeatWhen<State, Event> extends Decorator<State, Event> {
 
 	conditional: ResultConditional;
 
-	constructor(desc: string, child: Action<State>, conditional: ResultConditional) {
+	constructor(desc: string, child: Action<State, Event>, conditional: ResultConditional) {
 		super('RepeatWhen-' + desc, child);
 		this.conditional = conditional;
 	}

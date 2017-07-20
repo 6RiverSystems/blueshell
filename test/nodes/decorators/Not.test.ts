@@ -3,15 +3,14 @@
 import {assert} from 'chai';
 
 import {
-	Event,
 	Operation,
 	ResultCodes,
 	Not
 } from '../../../lib';
 
-class EchoAction<State> extends Operation<State> {
+class EchoAction extends Operation<any, any> {
 
-	onEvent(state: State, event: Event): Promise<ResultCodes> {
+	onEvent(state: any, event: any): Promise<ResultCodes> {
 		return Promise.resolve(<any>event);
 	}
 }
@@ -38,12 +37,10 @@ describe('Not', function() {
 			};
 		};
 
-		const event = new Event('channelType', 'channelId', 'testEvent');
-
 		let ps: any = [];
 
 		for (let test of tests) {
-			let p = test.action.handleEvent(event, (<any>test).event);
+			let p = test.action.handleEvent({}, (<any>test).event);
 
 			ps.push(p.then(makeVerify(test)));
 		}

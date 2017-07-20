@@ -6,7 +6,6 @@
 import {assert} from 'chai';
 
 import {
-	Event,
 	ResultCodes,
 	Action,
 	Decorator,
@@ -14,7 +13,7 @@ import {
 
 import {BasicState} from './test/Actions';
 
-class TestAction extends Action<BasicState> {
+class TestAction extends Action<BasicState, any> {
 	private preconditionStatus: boolean;
 
 	constructor(name?: string, precond: boolean = true) {
@@ -57,10 +56,10 @@ describe('Action', function() {
 		it('has separate storage for each state', function() {
 			let node = new Action('test');
 
-			let state1: BasicState;
-			let state2: BasicState;
+			let state1: BasicState = new BasicState();
+			let state2: BasicState = new BasicState();
 
-			let storage = (<any>node).getNodeStorage(state1);
+			let storage = node.getNodeStorage(state1);
 
 			storage.testData = 'Node Data';
 
@@ -74,9 +73,9 @@ describe('Action', function() {
 		it('handles events', function() {
 			let action = new TestAction();
 
-			let state: BasicState;
+			let state: BasicState = new BasicState();
 
-			return action.handleEvent(state, new Event('channelType', 'channelId', 'type'))
+			return action.handleEvent(state, {})
 				.then(res => {
 				console.log('TestAction completed', res);
 				assert.equal(res, ResultCodes.SUCCESS);
@@ -87,10 +86,10 @@ describe('Action', function() {
 	describe('#EventCounter', function() {
 		it('Parent Node Counter', function() {
 			let root = new Action('root');
-			let state: BasicState;
+			let state: BasicState = new BasicState();
 
-			return root.handleEvent(state, new Event('channelType', 'channelId', 'type'))
-			.then(() => root.handleEvent(state, new Event('channelType', 'channelId', 'type')))
+			return root.handleEvent(state, {})
+			.then(() => root.handleEvent(state, {}))
 			.then(() => {
 				assert.equal(root.getTreeEventCounter(state), 2);
 				assert.equal(root.getLastEventSeen(state), 2);
@@ -103,12 +102,12 @@ describe('Action', function() {
 			let child = new Action('child');
 			let root = new Decorator('root', child);
 
-			let state: BasicState;
+			let state: BasicState = new BasicState();;
 
 			// Since it has a parent, it should increment
 			// the local node but not the eventCounter
-			return root.handleEvent(state, new Event('channelType', 'channelId', 'type'))
-			.then(() => root.handleEvent(state, new Event('channelType', 'channelId', 'type')))
+			return root.handleEvent(state, {})
+			.then(() => root.handleEvent(state, {}))
 			.then(() => {
 				assert.equal(root.getTreeEventCounter(state), 2);
 				assert.equal(root.getLastEventSeen(state), 2);

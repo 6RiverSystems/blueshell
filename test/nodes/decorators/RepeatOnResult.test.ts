@@ -6,13 +6,12 @@
 import {assert} from 'chai';
 
 import {
-	Event,
 	Operation,
 	ResultCodes,
 	RepeatOnResult
 } from '../../../lib';
 
-class CountUntil extends Operation<number> {
+class CountUntil extends Operation<any, any> {
 
 	limit: number;
 
@@ -30,15 +29,15 @@ class CountUntil extends Operation<number> {
 	}
 }
 
-describe.only('RepeatOnResult', function() {
+describe('RepeatOnResult', function() {
 	it('repeat when child returns running', function() {
 
 		let countUntil = new CountUntil(3);
 		let unEcho = new RepeatOnResult(ResultCodes.RUNNING, countUntil);
 
 		let tests = [
-			{action: unEcho, event: new Event('channelType', 'channelId', 'testEvent'), counter: 1},
-			{action: unEcho, event: new Event('channelType', 'channelId', 'testEvent'), counter: 3}
+			{action: unEcho, event: {}, counter: 1},
+			{action: unEcho, event: {}, counter: 3}
 		];
 
 		let makeVerify = function(test: any) {

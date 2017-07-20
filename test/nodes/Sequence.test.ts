@@ -6,7 +6,6 @@
 import {assert} from 'chai';
 
 import {
-	Event,
 	Operation,
 	ResultCodes,
 	Sequence
@@ -14,7 +13,7 @@ import {
 
 import {BasicState} from './test/Actions';
 
-class ShootFlares extends Operation<BasicState> {
+class ShootFlares extends Operation<BasicState, any> {
 
 	onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
 
@@ -29,7 +28,7 @@ class ShootFlares extends Operation<BasicState> {
 	}
 }
 
-class EvasiveManeuver extends Operation<BasicState> {
+class EvasiveManeuver extends Operation<BasicState, any> {
 
 	onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
 		state.commands.push('turnLeft');
@@ -47,10 +46,10 @@ let droneAi = new Sequence('droneAi',
 describe('Sequence', function() {
 	it('should return success', function() {
 		// With an armed jet
-		let botState: BasicState;
+		let botState: BasicState = new BasicState();;
 		botState.flares = 2;
 
-		let p = droneAi.handleEvent(botState, new Event('channelType', 'channelId', 'underAttack'));
+		let p = droneAi.handleEvent(botState, {});
 
 		return p.then(res => {
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
@@ -61,10 +60,10 @@ describe('Sequence', function() {
 
 	it('should return failure', function() {
 		// With an empty jet
-		let botState: BasicState;
-		botState.flares = 2;
+		let botState: BasicState = new BasicState();;
+		botState.flares = 0;
 
-		let p = droneAi.handleEvent(botState, new Event('channelType', 'channelId', 'underAttack'));
+		let p = droneAi.handleEvent(botState, {});
 
 		return p.then(res => {
 			assert.equal(res, ResultCodes.FAILURE, 'Behavior Tree failure');
