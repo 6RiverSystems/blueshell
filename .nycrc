@@ -1,6 +1,7 @@
 {
 	"reporter": [
 		 "lcov",
+		 "text",
 		 "html"
 	 ],
   "include": [
