@@ -7,6 +7,7 @@ import {assert} from 'chai';
 
 import {
 	ResultCodes,
+	Action,
 	Operation,
 	IfElse
 } from '../../lib';
@@ -44,6 +45,10 @@ describe('IfElse', function() {
 		state.errorReason = undefined;
 
 		let p = ifElse.handleEvent(state);
+
+		const children: any = ifElse.children;
+
+		assert.equal(children[0], successAction);
 
 		return p.then(res => {
 			assert.notOk(state.errorReason);

@@ -14,13 +14,13 @@ import {Decorator} from '../Decorator';
 // when a child returns FAILURE.
 export class ResultSwap<State>extends Decorator<State> {
 
-	_inResult: ResultCodes;
-	_outResult: ResultCodes;
+	private inResult: ResultCodes;
+	private outResult: ResultCodes;
 
 	constructor(inResult: ResultCodes, outResult: ResultCodes, child: Action<State>) {
 		super('ResultSwap_' + inResult + '-' + outResult, child);
-		this._inResult = inResult;
-		this._outResult = outResult;
+		this.inResult = inResult;
+		this.outResult = outResult;
 	}
 
 	onEvent(state: State): Promise<ResultCodes> {
@@ -28,8 +28,8 @@ export class ResultSwap<State>extends Decorator<State> {
 		let p = this.child.handleEvent(state);
 
 		return p.then(res => {
-			if (res === this._inResult) {
-				res = this._outResult;
+			if (res === this.inResult) {
+				res = this.outResult;
 			}
 
 			return res;

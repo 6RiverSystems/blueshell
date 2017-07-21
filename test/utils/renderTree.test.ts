@@ -42,6 +42,15 @@ describe('RenderTree', () => {
 			assert.notOk(a.includes(code));
 		});
 
+		EnumEx.getValues(ResultCodes).forEach((value: number) => {
+			assert.notOk(value === null);
+		});
+
+		EnumEx.getNamesAndValues(ResultCodes).forEach((namesAndValues: any) => {
+			assert.notOk(a.includes(namesAndValues.name));
+			assert.notOk(namesAndValues.value === null);
+		});
+
 		done();
 	});
 
@@ -50,7 +59,7 @@ describe('RenderTree', () => {
 
 		state.overheated = true;
 
-		return waitAi.handleEvent(state, {})
+		return waitAi.handleEvent(state)
 		.catch((err: any) => {
 			console.error(err.stack);
 		})
