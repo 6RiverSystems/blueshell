@@ -9,7 +9,7 @@
     "pretest:eslint": "shx echo eslint .",
     "clean": "shx rm -rf dist",
     "build": "tsc --pretty",
-    "test": "NODE_ENV=test nyc mocha --recursive --compilers ts:ts-node/register --bail",
+    "test": "NODE_ENV=test nyc mocha",
     "coverage": "NODE_ENV=test nyc report --reporter=text-lcov | coveralls",
     "posttest": "nsp check",
     "preversion": "npm test"
@@ -56,25 +56,5 @@
     "@types/archy": "0.0.30",
     "archy": "1.0.0",
     "uuid": "3.1.0"
-  },
-  "nyc": {
-    "include": [
-      "lib/*.ts",
-      "lib/**/*.ts"
-    ],
-    "exclude": [
-      "typings"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "json",
-      "html"
-    ],
-    "all": true
   }
 }
