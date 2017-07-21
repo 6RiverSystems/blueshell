@@ -7,22 +7,22 @@ import {Conditional} from '..//Conditional';
 /**
  * If-Else Conditional Composite Node.
  *
- * If conditional(state, event) returns true,
+ * If conditional(state) returns true,
  * control is passed to the consequent node.
  *
- * If conditional(state, event) returns false,
+ * If conditional(state) returns false,
  * control is passed to the alternative node, or
  * if one is not provided, 'FAILURE' is returned.
  *
  */
-export class IfElse<State, Event> extends Action<State, Event> {
+export class IfElse<State> extends Action<State> {
 
-	conditional: Conditional<State, Event>;
-	consequent: Action<State, Event>;
-	alternative: Action<State, Event>;
+	conditional: Conditional<State>;
+	consequent: Action<State>;
+	alternative: Action<State>;
 
-	constructor(name: string, conditional: Conditional<State, Event>, consequent: Action<State, Event>,
-							alternative?: Action<State, Event>) {
+	constructor(name: string, conditional: Conditional<State>, consequent: Action<State>,
+							alternative?: Action<State>) {
 		super(name);
 
 		this.conditional = conditional;
@@ -40,12 +40,12 @@ export class IfElse<State, Event> extends Action<State, Event> {
 		return children;
 	}
 
-	onEvent(state: State, event: Event): Promise<ResultCodes> {
+	onEvent(state: State): Promise<ResultCodes> {
 
-		if (this.conditional(state, event)) {
-			return this.consequent.handleEvent(state, event);
+		if (this.conditional(state)) {
+			return this.consequent.handleEvent(state);
 		} else if (this.alternative) {
-			return this.alternative.handleEvent(state, event);
+			return this.alternative.handleEvent(state);
 		} else {
 			return Promise.resolve(ResultCodes.FAILURE);
 		}

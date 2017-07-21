@@ -5,8 +5,8 @@
   ],
   "exclude": [
     "lib/**/*.d.ts",
-    "lib/**/*.test.ts",
-    "lib/**/*.test.tsx"
+    "test/**/*.test.ts",
+    "test/**/*.test.tsx"
   ],
   "extension": [
     ".ts",

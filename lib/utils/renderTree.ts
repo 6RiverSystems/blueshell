@@ -7,13 +7,14 @@ import * as archy from 'archy';
 
 import {Action} from '../nodes/actions/Action';
 import {ResultCodes} from './ResultCodes';
+import {Composite} from '../nodes/Composite';
 
 class ArchyTree {
 	label: string;
 	nodes: ArchyTree[] = [];
-};
+}
 
-function buildArchyTree(node: Action<any, any>, state: any): ArchyTree {
+function buildArchyTree(node: Action<any>, state: any): ArchyTree {
 
 	let nodeLabel = node.name;
 
@@ -36,8 +37,10 @@ function buildArchyTree(node: Action<any, any>, state: any): ArchyTree {
 
 	archyTree.label = nodeLabel;
 
-	if (node.children) {
-		for (let child of node.children) {
+	if (node instanceof Composite) {
+		const compositeNode = <Composite<any>>node;
+
+		for (let child of compositeNode.children) {
 			archyTree.nodes.push(buildArchyTree(child, state));
 		}
 	}
@@ -45,13 +48,13 @@ function buildArchyTree(node: Action<any, any>, state: any): ArchyTree {
 	return archyTree;
 }
 
-export function renderTree(tree: Action<any, any>, state?: any) {
+export function renderTree(tree: Action<any>, state?: any) {
 	let a = buildArchyTree(tree, state);
 	let renderedTree = archy(a);
 
 	return renderedTree;
 }
 
-export function toConsole(tree: Action<any, any>, state?: any) {
+export function toConsole(tree: Action<any>, state?: any) {
 	console.log(renderTree(tree, state)); // eslint-disable-line no-console
 }

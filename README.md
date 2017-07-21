@@ -31,9 +31,9 @@ Blueshell is a Promise-based Behavior Tree implementation using modern ES6 synta
 
 * IfElse
   - Accepts a `conditional` function a `consequent` node, and an optional `alternative` node.
-  - If `conditional(state, event)` returns true, will return the result of activating the `consequent` node.
-  - If `conditional(state, event)` returns false, will return the result of activating the `alternative` node, if one is provided.
-  - If `conditional(state, event)` returns false, will return `FAILURE` if no `alternative` node is provided.
+  - If `conditional(state)` returns true, will return the result of activating the `consequent` node.
+  - If `conditional(state)` returns false, will return the result of activating the `alternative` node, if one is provided.
+  - If `conditional(state)` returns false, will return `FAILURE` if no `alternative` node is provided.
 
 ### Decorators
 

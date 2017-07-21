@@ -2,9 +2,8 @@
 
 import {ResultCodes} from '../../utils/ResultCodes';
 
-export class Action<State, Event> {
+export class Action<State> {
 
-	children: Array<Action<State, Event>>;
 	name: string;
 	_parent: string;
 
@@ -13,15 +12,15 @@ export class Action<State, Event> {
 		this._parent = '';
 	}
 
-	handleEvent(state: State, event: Event): Promise<ResultCodes> {
-		return Promise.resolve(this._beforeEvent(state, event))
-		.then(() => this.precondition(state, event))
+	handleEvent(state: State): Promise<ResultCodes> {
+		return Promise.resolve(this._beforeEvent(state))
+		.then(() => this.precondition(state))
 			.then((passed) => {
 				if (!passed) {
 					return ResultCodes.FAILURE;
 				}
 
-				return this.onEvent(state, event);
+				return this.onEvent(state);
 			})
 		.catch(err => {
 			(<any>state).errorReason = err;
@@ -33,12 +32,12 @@ export class Action<State, Event> {
 			return ResultCodes.ERROR;
 		})
 		.then(res => {
-			return this._afterEvent(res, state, event);
+			return this._afterEvent(res, state);
 		});
 	}
 
 	// Return nothing
-	private _beforeEvent(state: State, event: Event) {
+	private _beforeEvent(state: State) {
 
 		let pStorage = this._privateStorage(state);
 		let nodeStorage = this.getNodeStorage(state);
@@ -57,10 +56,10 @@ export class Action<State, Event> {
 	}
 
 	// Logging
-	private _afterEvent(res: any, state: State, event: Event) {
+	private _afterEvent(res: any, state: State) {
 
 		if (this.getDebug(state)) {
-			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console
+			console.log(this.path, ' => ', ' => ', res);  // eslint-disable-line no-console
 		}
 
 		let storage = this.getNodeStorage(state);
@@ -69,23 +68,23 @@ export class Action<State, Event> {
 		storage.lastResult = res;
 
 		if (res !== ResultCodes.RUNNING) {
-			this.deactivate(state, event);
+			this.deactivate(state);
 		}
 
 		return res;
 	}
 
 	// Return true if we should proceed, false otherwise
-	precondition(state: State, event: Event) {
+	precondition(state: State) {
 		return true;
 	}
 
 	// Return results
-	onEvent(state: State, event: Event): Promise<ResultCodes> {
+	onEvent(state: State): Promise<ResultCodes> {
 		return Promise.resolve(ResultCodes.SUCCESS);
 	}
 
-	deactivate(state: State, event: Event) {
+	deactivate(state: State) {
 		//no-op
 	}
 

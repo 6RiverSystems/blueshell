@@ -3,9 +3,9 @@
 import {Action} from './actions/Action';
 import {Selector} from './Selector';
 
-export class LatchedSelector<State, Event> extends Selector<State, Event> {
+export class LatchedSelector<State> extends Selector<State> {
 
-	constructor(name: string, children: Array<Action<State, Event>>) {
+	constructor(name: string, children: Array<Action<State>>) {
 		super(name, children, true);
 	}
 

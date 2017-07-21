@@ -3,11 +3,11 @@
 import {ResultCodes} from '../../utils/ResultCodes';
 import {Decorator} from '../Decorator';
 
-export class Not<State, Event> extends Decorator<State, Event> {
+export class Not<State> extends Decorator<State> {
 
-	onEvent(state: State, event: Event): Promise<ResultCodes> {
+	onEvent(state: State): Promise<ResultCodes> {
 
-		return this.child.handleEvent(state, event)
+		return this.child.handleEvent(state)
 			.then(res => {
 			switch (res) {
 			case ResultCodes.SUCCESS:

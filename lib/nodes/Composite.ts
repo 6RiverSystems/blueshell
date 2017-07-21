@@ -3,11 +3,13 @@
 import {ResultCodes} from '../utils/ResultCodes';
 import {Action} from './actions/Action';
 
-export class Composite<State, Event> extends Action<State, Event> {
+export class Composite<State> extends Action<State> {
+
+	children: Array<Action<State>>;
 
 	latched: boolean;
 
-	constructor(name: string, children: Array<Action<State, Event>>, latched = false) {
+	constructor(name: string, children: Array<Action<State>>, latched = false) {
 		super(name);
 
 		// console.log(`${name} constructed with ${children.length} children`);
@@ -27,7 +29,7 @@ export class Composite<State, Event> extends Action<State, Event> {
 		}
 	}
 
-	onEvent(state: State, event: Event): Promise<ResultCodes> {
+	onEvent(state: State): Promise<ResultCodes> {
 
 		let storage = this.getNodeStorage(state);
 
@@ -42,10 +44,10 @@ export class Composite<State, Event> extends Action<State, Event> {
 			storage.running = undefined;
 		}
 
-		return this.handleChild(state, event, firstChild);
+		return this.handleChild(state, firstChild);
 	}
 
-	handleChild(state: State, event: Event, i: number): Promise<ResultCodes> {
+	handleChild(state: State, i: number): Promise<ResultCodes> {
 		throw new Error('This is an abstract method - please override.');
 	}
 

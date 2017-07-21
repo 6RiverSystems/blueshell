@@ -13,7 +13,7 @@ import {
 
 import {BasicState} from './test/Actions';
 
-class TestAction extends Action<BasicState, any> {
+class TestAction extends Action<BasicState> {
 	private preconditionStatus: boolean;
 
 	constructor(name?: string, precond: boolean = true) {
@@ -75,7 +75,7 @@ describe('Action', function() {
 
 			let state: BasicState = new BasicState();
 
-			return action.handleEvent(state, {})
+			return action.handleEvent(state)
 				.then(res => {
 				console.log('TestAction completed', res);
 				assert.equal(res, ResultCodes.SUCCESS);
@@ -88,8 +88,8 @@ describe('Action', function() {
 			let root = new Action('root');
 			let state: BasicState = new BasicState();
 
-			return root.handleEvent(state, {})
-			.then(() => root.handleEvent(state, {}))
+			return root.handleEvent(state)
+			.then(() => root.handleEvent(state))
 			.then(() => {
 				assert.equal(root.getTreeEventCounter(state), 2);
 				assert.equal(root.getLastEventSeen(state), 2);
@@ -102,12 +102,12 @@ describe('Action', function() {
 			let child = new Action('child');
 			let root = new Decorator('root', child);
 
-			let state: BasicState = new BasicState();;
+			let state: BasicState = new BasicState();
 
 			// Since it has a parent, it should increment
 			// the local node but not the eventCounter
-			return root.handleEvent(state, {})
-			.then(() => root.handleEvent(state, {}))
+			return root.handleEvent(state)
+			.then(() => root.handleEvent(state))
 			.then(() => {
 				assert.equal(root.getTreeEventCounter(state), 2);
 				assert.equal(root.getLastEventSeen(state), 2);

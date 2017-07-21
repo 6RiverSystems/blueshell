@@ -1,5 +1,5 @@
 import {Action} from './actions/Action';
 
-export class Operation<State, Event> extends Action<State, Event> {
+export class Operation<State> extends Action<State> {
 
 }

@@ -11,7 +11,7 @@ import {
 	RepeatOnResult
 } from '../../../lib';
 
-class CountUntil extends Operation<any, any> {
+class CountUntil extends Operation<any> {
 
 	limit: number;
 
@@ -21,7 +21,7 @@ class CountUntil extends Operation<any, any> {
 		this.limit = limit;
 	}
 
-	onEvent(state: number, event: Event): Promise<ResultCodes> {
+	onEvent(state: number): Promise<ResultCodes> {
 
 		(<any>state).number += 1;
 
@@ -52,7 +52,7 @@ describe('RepeatOnResult', function() {
 				number: 0
 			};
 
-			let p = test.action.handleEvent(counter, test.event);
+			let p = test.action.handleEvent(counter);
 
 			p.then(makeVerify(test));
 		}

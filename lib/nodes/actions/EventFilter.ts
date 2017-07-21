@@ -8,10 +8,10 @@ import {Decorator} from '../Decorator';
  *
  *  Otherwise return FAILURE (for use with a Selector).
  */
-export class EventFilter<State, Event> extends Decorator<State, Event> {
+export class EventFilter<State> extends Decorator<State> {
 	private elseResult: ResultCodes;
 
-	constructor(prefix: string, child: Action<State, Event>, elseResult = ResultCodes.FAILURE) {
+	constructor(prefix: string, child: Action<State>, elseResult = ResultCodes.FAILURE) {
 		super(`${prefix}-EventFilter`, child);
 
 		this.elseResult = elseResult;
@@ -23,14 +23,14 @@ export class EventFilter<State, Event> extends Decorator<State, Event> {
 	 * @param {event} event Incoming Event
 	 * @returns {boolean} true if event passes filter
 	 */
-	predicate(state: State, event: Event) {
+	predicate(state: State) {
 		throw new Error('Unimplemented Predicate');
 	}
 
-	onEvent(state: State, event: Event) {
+	onEvent(state: State) {
 
-		if (this.predicate(state, event)) {
-			return this.child.handleEvent(state, event);
+		if (this.predicate(state)) {
+			return this.child.handleEvent(state);
 		} else {
 			return Promise.resolve(this.elseResult);
 		}

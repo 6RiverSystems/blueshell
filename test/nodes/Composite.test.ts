@@ -19,11 +19,10 @@ describe('Composite', function() {
 	context('#resetNodeStorage', function() {
 
 		it('should reset child state', function() {
-			let event = {};
-			let state: BasicState = new BasicState();;
+			let state: BasicState = new BasicState();
 			state.overheated = true;
 
-			return waitAi.handleEvent(state, event)
+			return waitAi.handleEvent(state)
 			.catch((err) => {
 				console.error(err.stack);
 			})
@@ -36,7 +35,7 @@ describe('Composite', function() {
 				// reset state
 				waitAi.resetNodeStorage(state);
 			})
-			.then(() => waitAi.handleEvent(state, event))
+			.then(() => waitAi.handleEvent(state))
 			.then((res) => {
 				// assert state of child again
 				assert.equal(res, ResultCodes.RUNNING);

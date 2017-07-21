@@ -12,20 +12,20 @@ import {Decorator} from '../Decorator';
 //
 // For example, you can use this to have a Sequence continue operation
 // when a child returns FAILURE.
-export class ResultSwap<State>extends Decorator<State, Event> {
+export class ResultSwap<State>extends Decorator<State> {
 
 	_inResult: ResultCodes;
 	_outResult: ResultCodes;
 
-	constructor(inResult: ResultCodes, outResult: ResultCodes, child: Action<State, Event>) {
+	constructor(inResult: ResultCodes, outResult: ResultCodes, child: Action<State>) {
 		super('ResultSwap_' + inResult + '-' + outResult, child);
 		this._inResult = inResult;
 		this._outResult = outResult;
 	}
 
-	onEvent(state: State, event: Event): Promise<ResultCodes> {
+	onEvent(state: State): Promise<ResultCodes> {
 
-		let p = this.child.handleEvent(state, event);
+		let p = this.child.handleEvent(state);
 
 		return p.then(res => {
 			if (res === this._inResult) {

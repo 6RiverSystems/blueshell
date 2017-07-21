@@ -1,5 +1,5 @@
 'use strict';
 
-export interface Conditional<State, Event> {
-	(state: State, event: Event): boolean;
+export interface Conditional<State> {
+	(state: State): boolean;
 }

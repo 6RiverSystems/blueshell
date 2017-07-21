@@ -8,10 +8,9 @@ import {
 	Not
 } from '../../../lib';
 
-class EchoAction extends Operation<any, any> {
-
-	onEvent(state: any, event: any): Promise<ResultCodes> {
-		return Promise.resolve(<any>event);
+class EchoAction extends Operation<any> {
+	onEvent(state: any): Promise<ResultCodes> {
+		return Promise.resolve(state.forcedResult);
 	}
 }
 
@@ -23,12 +22,12 @@ describe('Not', function() {
 		let unEcho = new Not('unEcho', echo);
 
 		let tests: any = [
-			{action: echo, event: ResultCodes.SUCCESS, result: ResultCodes.SUCCESS},
-			{action: echo, event: ResultCodes.FAILURE, result: ResultCodes.FAILURE},
-			{action: echo, event: ResultCodes.RUNNING, result: ResultCodes.RUNNING},
-			{action: unEcho, event: ResultCodes.SUCCESS, result: ResultCodes.FAILURE},
-			{action: unEcho, event: ResultCodes.FAILURE, result: ResultCodes.SUCCESS},
-			{action: unEcho, event: ResultCodes.RUNNING, result: ResultCodes.RUNNING}
+			{action: echo, forcedResult: ResultCodes.SUCCESS, result: ResultCodes.SUCCESS},
+			{action: echo, forcedResult: ResultCodes.FAILURE, result: ResultCodes.FAILURE},
+			{action: echo, forcedResult: ResultCodes.RUNNING, result: ResultCodes.RUNNING},
+			{action: unEcho, forcedResult: ResultCodes.SUCCESS, result: ResultCodes.FAILURE},
+			{action: unEcho, forcedResult: ResultCodes.FAILURE, result: ResultCodes.SUCCESS},
+			{action: unEcho, forcedResult: ResultCodes.RUNNING, result: ResultCodes.RUNNING}
 		];
 
 		let makeVerify = function(test: any) {
@@ -40,7 +39,7 @@ describe('Not', function() {
 		let ps: any = [];
 
 		for (let test of tests) {
-			let p = test.action.handleEvent({}, (<any>test).event);
+			let p = test.action.handleEvent(test);
 
 			ps.push(p.then(makeVerify(test)));
 		}

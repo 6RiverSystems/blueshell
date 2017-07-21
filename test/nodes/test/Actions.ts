@@ -22,9 +22,9 @@ export class BasicState {
 	}
 }
 
-export class Recharge extends Operation<BasicState, any> {
+export class Recharge extends Operation<BasicState> {
 
-	onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
+	onEvent(state: BasicState): Promise<ResultCodes> {
 
 		let result = ResultCodes.SUCCESS;
 
@@ -40,9 +40,9 @@ export class Recharge extends Operation<BasicState, any> {
 	}
 }
 
-export class WaitForCooldown extends Operation<BasicState, any> {
+export class WaitForCooldown extends Operation<BasicState> {
 
-	onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
+	onEvent(state: BasicState): Promise<ResultCodes> {
 		let storage = this.getNodeStorage(state);
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : 1;
@@ -62,9 +62,9 @@ export class WaitForCooldown extends Operation<BasicState, any> {
 	}
 }
 
-export class EmergencyShutdown extends Operation<BasicState, any> {
+export class EmergencyShutdown extends Operation<BasicState> {
 
-	onEvent(state: BasicState, event: Event): Promise<ResultCodes> {
+	onEvent(state: BasicState): Promise<ResultCodes> {
 		state.commands.push('powerOff');
 
 		return Promise.resolve(ResultCodes.SUCCESS);

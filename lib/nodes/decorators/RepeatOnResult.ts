@@ -4,9 +4,9 @@ import {ResultCodes} from '../../utils/ResultCodes';
 import {Action} from '../actions/Action';
 import {RepeatWhen} from './RepeatWhen';
 
-export class RepeatOnResult<State, Event> extends RepeatWhen<State, Event> {
+export class RepeatOnResult<State> extends RepeatWhen<State> {
 
-	constructor(repeatRes: ResultCodes, child: Action<State, Event>) {
+	constructor(repeatRes: ResultCodes, child: Action<State>) {
 		super('ResultEquals-' + repeatRes, child, (res: ResultCodes) => res === repeatRes);
 	}
 

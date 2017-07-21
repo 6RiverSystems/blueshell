@@ -9,22 +9,22 @@ export interface ResultConditional {
 	(result: ResultCodes): boolean;
 }
 
-export class RepeatWhen<State, Event> extends Decorator<State, Event> {
+export class RepeatWhen<State> extends Decorator<State> {
 
 	conditional: ResultConditional;
 
-	constructor(desc: string, child: Action<State, Event>, conditional: ResultConditional) {
+	constructor(desc: string, child: Action<State>, conditional: ResultConditional) {
 		super('RepeatWhen-' + desc, child);
 		this.conditional = conditional;
 	}
 
-	onEvent(state: State, event: Event): Promise<ResultCodes> {
+	onEvent(state: State): Promise<ResultCodes> {
 
-		let p = this.child.handleEvent(state, event);
+		let p = this.child.handleEvent(state);
 
 		return p.then(res => {
 			if (this.conditional(res)) {
-				return this.handleEvent(state, event);
+				return this.handleEvent(state);
 			} else {
 				return res;
 			}
