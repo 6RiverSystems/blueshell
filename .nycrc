@@ -1,4 +1,8 @@
 {
+	"reporter": [
+		 "lcov",
+		 "html"
+	 ],
   "include": [
     "lib/**/*.ts",
     "lib/**/*.tsx"
