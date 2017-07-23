@@ -9,7 +9,7 @@ import {
 } from '../../../lib';
 
 class EchoAction extends Operation<any> {
-	onEvent(state: any): Promise<ResultCodes> {
+	onRun(state: any): Promise<ResultCodes> {
 		return Promise.resolve(state.forcedResult);
 	}
 }
@@ -36,7 +36,7 @@ describe('ResultSwap', function() {
 		let ps: any = [];
 
 		for (let test of tests) {
-			let p = test.action.handleEvent(test);
+			let p = test.action.run(test);
 
 			ps.push(p.then(makeVerify(test)));
 		}

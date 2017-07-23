@@ -30,7 +30,7 @@ describe('LatchedSelector', function() {
 		let botState: BasicState = new BasicState();
 		botState.overheated = false;
 
-		let p = shutdownAi.handleEvent(botState);
+		let p = shutdownAi.run(botState);
 
 		return p.then(res => {
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
@@ -45,30 +45,30 @@ describe('LatchedSelector', function() {
 		botState.overheated = true;
 		botState.batteryLevel = 0;
 
-		let p = waitAi.handleEvent(botState);
+		let p = waitAi.run(botState);
 
 		return p.then(res => {
 			assert.equal(res, ResultCodes.RUNNING, 'Behavior Tree Running');
 
 			botState.batteryLevel = 1;
 
-			return waitAi.handleEvent(botState);
+			return waitAi.run(botState);
 		}).then(res => {
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree Success');
 			assert.equal(botState.commands.length, 0, 'No commands, waiting for cooldown');
 
 			// Ticking the battery level only twice proves we latched
-			// on cooldown and didn't run recharge.
+			// on cooldown and didn't onRun recharge.
 			assert.equal(botState.batteryLevel, 1, 'Ran recharge only once');
 
-			return waitAi.handleEvent(botState);
+			return waitAi.run(botState);
 		}).then(res => {
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree Success');
 			assert.equal(botState.commands.length, 1, 'Only one command');
 			assert.equal(botState.commands[0], 'findDock', 'Searching for dock');
 
 			// Ticking the battery level only twice proves we latched
-			// on cooldown and didn't run recharge.
+			// on cooldown and didn't onRun recharge.
 			assert.equal(botState.batteryLevel, 2, 'Ran recharge twice');
 		});
 	});

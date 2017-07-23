@@ -21,7 +21,7 @@ class CountUntil extends Operation<any> {
 		this.limit = limit;
 	}
 
-	onEvent(state: number): Promise<ResultCodes> {
+	onRun(state: number): Promise<ResultCodes> {
 
 		(<any>state).number += 1;
 
@@ -52,7 +52,7 @@ describe('RepeatOnResult', function() {
 				number: 0
 			};
 
-			let p = test.action.handleEvent(counter);
+			let p = test.action.run(counter);
 
 			p.then(makeVerify(test));
 		}

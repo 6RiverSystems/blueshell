@@ -15,7 +15,7 @@ import {BasicState} from './test/Actions';
 
 class ShootFlares extends Operation<BasicState> {
 
-	onEvent(state: BasicState): Promise<ResultCodes> {
+	onRun(state: BasicState): Promise<ResultCodes> {
 
 		let result = ResultCodes.FAILURE;
 
@@ -30,7 +30,7 @@ class ShootFlares extends Operation<BasicState> {
 
 class EvasiveManeuver extends Operation<BasicState> {
 
-	onEvent(state: BasicState): Promise<ResultCodes> {
+	onRun(state: BasicState): Promise<ResultCodes> {
 		state.commands.push('turnLeft');
 
 		return Promise.resolve(ResultCodes.SUCCESS);
@@ -49,7 +49,7 @@ describe('Sequence', function() {
 		let botState: BasicState = new BasicState();
 		botState.flares = 2;
 
-		let p = droneAi.handleEvent(botState);
+		let p = droneAi.run(botState);
 
 		return p.then(res => {
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
@@ -63,7 +63,7 @@ describe('Sequence', function() {
 		let botState: BasicState = new BasicState();
 		botState.flares = 0;
 
-		let p = droneAi.handleEvent(botState);
+		let p = droneAi.run(botState);
 
 		return p.then(res => {
 			assert.equal(res, ResultCodes.FAILURE, 'Behavior Tree failure');

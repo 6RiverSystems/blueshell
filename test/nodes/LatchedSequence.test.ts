@@ -15,7 +15,7 @@ import {BasicState} from './test/Actions';
 
 class StopMotors extends Operation<BasicState> {
 
-	onEvent(state: BasicState): Promise<ResultCodes> {
+	onRun(state: BasicState): Promise<ResultCodes> {
 
 		state.commands.push('motorsStopped');
 
@@ -25,7 +25,7 @@ class StopMotors extends Operation<BasicState> {
 
 class StopLasers extends Operation<BasicState> {
 
-	onEvent(state: BasicState): Promise<ResultCodes> {
+	onRun(state: BasicState): Promise<ResultCodes> {
 		let storage = this.getNodeStorage(state);
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : state.laserCooldownTime;
@@ -46,7 +46,7 @@ class StopLasers extends Operation<BasicState> {
 
 class Shutdown extends Operation<BasicState> {
 
-	onEvent(state: BasicState): Promise<ResultCodes> {
+	onRun(state: BasicState): Promise<ResultCodes> {
 		state.commands.push('powerOff');
 
 		return Promise.resolve(ResultCodes.SUCCESS);
@@ -62,13 +62,13 @@ let shutdownSequence = new LatchedSequence('shutdownWithWaitAi',
 
 describe('LatchedSelector', function() {
 
-	it('should run correctly', function() {
+	it('should onRun correctly', function() {
 
 		// With a happy bot
 		let botState: BasicState = new BasicState();
 		botState.laserCooldownTime = 0;
 
-		let p = shutdownSequence.handleEvent(botState);
+		let p = shutdownSequence.run(botState);
 
 		return p.then(res => {
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
@@ -84,14 +84,14 @@ describe('LatchedSelector', function() {
 		let botState: BasicState = new BasicState();
 		botState.laserCooldownTime = 1;
 
-		let p = shutdownSequence.handleEvent(botState);
+		let p = shutdownSequence.run(botState);
 
 		return p.then(res => {
 			assert.equal(res, ResultCodes.RUNNING, 'Behavior Tree Running');
 			assert.equal(botState.commands.length, 1);
 			assert.equal(botState.commands[0], 'motorsStopped');
 
-			return shutdownSequence.handleEvent(botState);
+			return shutdownSequence.run(botState);
 		}).then(res => {
 
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree Success');

@@ -7,7 +7,6 @@ import {assert} from 'chai';
 
 import {
 	ResultCodes,
-	Action,
 	Operation,
 	IfElse
 } from '../../lib';
@@ -17,7 +16,7 @@ import {BasicState} from './test/Actions';
 describe('IfElse', function() {
 
 	let successAction = new class extends Operation<BasicState> {
-		onEvent(state: BasicState): Promise<ResultCodes> {
+		onRun(state: BasicState): Promise<ResultCodes> {
 
 			state.success = true;
 
@@ -26,7 +25,7 @@ describe('IfElse', function() {
 	};
 
 	let failureAction = new class extends Operation<BasicState> {
-		onEvent(state: BasicState): Promise<ResultCodes> {
+		onRun(state: BasicState): Promise<ResultCodes> {
 
 			state.success = false;
 
@@ -36,15 +35,15 @@ describe('IfElse', function() {
 
 	it('should return success when conditional is true with no alternative', function() {
 
-		let ifElse = new IfElse('testIfElse',
-			(state) => true,
+		let ifElse = new IfElse<BasicState>('testIfElse',
+			(state: BasicState) => true,
 			successAction
 		);
 
 		let state: BasicState = new BasicState();
 		state.errorReason = undefined;
 
-		let p = ifElse.handleEvent(state);
+		let p = ifElse.run(state);
 
 		const children: any = ifElse.children;
 
@@ -53,7 +52,7 @@ describe('IfElse', function() {
 		return p.then(res => {
 			assert.notOk(state.errorReason);
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
-			assert.isTrue(state.success, 'Expected Action was called');
+			assert.isTrue(state.success, 'Expected Base was called');
 		});
 	});
 
@@ -68,12 +67,12 @@ describe('IfElse', function() {
 		let state: BasicState = new BasicState();
 		state.errorReason = undefined;
 
-		let p = ifElse.handleEvent(state);
+		let p = ifElse.run(state);
 
 		return p.then(res => {
 			assert.notOk(state.errorReason);
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
-			assert.isTrue(state.success, 'Expected Action was called');
+			assert.isTrue(state.success, 'Expected Base was called');
 		});
 	});
 
@@ -88,12 +87,12 @@ describe('IfElse', function() {
 		let state: BasicState = new BasicState();
 		state.errorReason = undefined;
 
-		let p = ifElse.handleEvent(state);
+		let p = ifElse.run(state);
 
 		return p.then(res => {
 			assert.notOk(state.errorReason);
 			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
-			assert.isTrue(state.success, 'Expected Action was called');
+			assert.isTrue(state.success, 'Expected Base was called');
 		});
 	});
 
@@ -107,12 +106,12 @@ describe('IfElse', function() {
 		let state: BasicState = new BasicState();
 		state.errorReason = undefined;
 
-		let p = ifElse.handleEvent(state);
+		let p = ifElse.run(state);
 
 		return p.then(res => {
 			assert.notOk(state.errorReason);
 			assert.equal(res, ResultCodes.FAILURE, 'Behavior Tree success');
-			assert.isNotTrue(state.success, 'Expected Action was called');
+			assert.isNotTrue(state.success, 'Expected Base was called');
 		});
 	});
 });

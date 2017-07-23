@@ -8,5 +8,5 @@ test:
   override:
     - npm test
   post:
-    - npm run coverage
+    - npm onRun coverage
     - mv coverage $CIRCLE_TEST_REPORTS

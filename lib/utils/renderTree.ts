@@ -5,16 +5,16 @@
 
 import * as archy from 'archy';
 
-import {Action} from '../nodes/actions/Action';
+import {Base} from '../nodes/Base';
 import {ResultCodes} from './ResultCodes';
-import {Composite} from '../nodes/Composite';
+import {Composite} from '../nodes/composites/Composite';
 
 class ArchyTree {
 	label: string;
 	nodes: ArchyTree[] = [];
 }
 
-function buildArchyTree(node: Action<any>, state: any): ArchyTree {
+function buildArchyTree(node: Base<any>, state: any): ArchyTree {
 
 	let nodeLabel = node.name;
 
@@ -23,14 +23,9 @@ function buildArchyTree(node: Action<any>, state: any): ArchyTree {
 	}
 
 	if (state) {
-		let eventCounter = node.getTreeEventCounter(state);
-		let lastEventSeen = node.getLastEventSeen(state);
 		let lastResult = node.getLastResult(state);
 
-		if (lastEventSeen === eventCounter && lastResult) {
-			nodeLabel += ' => ' + ResultCodes[lastResult];
-		}
-
+		nodeLabel += ' => ' + ResultCodes[lastResult];
 	}
 
 	let archyTree = new ArchyTree();
@@ -48,13 +43,13 @@ function buildArchyTree(node: Action<any>, state: any): ArchyTree {
 	return archyTree;
 }
 
-export function renderTree(tree: Action<any>, state?: any) {
+export function renderTree(tree: Base<any>, state?: any) {
 	let a = buildArchyTree(tree, state);
 	let renderedTree = archy(a);
 
 	return renderedTree;
 }
 
-export function toConsole(tree: Action<any>, state?: any) {
+export function toConsole(tree: Base<any>, state?: any) {
 	console.log(renderTree(tree, state)); // eslint-disable-line no-console
 }

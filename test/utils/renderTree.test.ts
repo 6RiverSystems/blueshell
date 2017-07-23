@@ -59,7 +59,7 @@ describe('RenderTree', () => {
 
 		state.overheated = true;
 
-		return waitAi.handleEvent(state)
+		return waitAi.run(state)
 		.catch((err: any) => {
 			console.error(err.stack);
 		})

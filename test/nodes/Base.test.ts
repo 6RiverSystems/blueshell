@@ -7,13 +7,13 @@ import {assert} from 'chai';
 
 import {
 	ResultCodes,
-	Action,
+	Base,
 	Decorator,
 } from '../../lib';
 
 import {BasicState} from './test/Actions';
 
-class TestAction extends Action<BasicState> {
+class TestAction extends Base<BasicState> {
 	private preconditionStatus: boolean;
 
 	constructor(name?: string, precond: boolean = true) {
@@ -26,7 +26,7 @@ class TestAction extends Action<BasicState> {
 	}
 }
 
-describe('Action', function() {
+describe('Base', function() {
 	describe('#name', function() {
 		it('has a name', function() {
 			assert.equal(new TestAction().name, 'TestAction');
@@ -36,7 +36,7 @@ describe('Action', function() {
 
 	describe('#path', function() {
 		it('sets a simple path', function() {
-			let node = new Action('test');
+			let node = new Base('test');
 
 			assert.equal(node.path, 'test', 'Node Name');
 		});
@@ -46,15 +46,21 @@ describe('Action', function() {
 			let parent1 = new Decorator('parent1', leaf);
 			let parent2 = new Decorator('parent2_foo', parent1);
 
-			assert.equal(leaf.path, 'parent2_foo_parent1_leaf');
-			assert.equal(parent1.path, 'parent2_foo_parent1');
-			assert.equal(parent2.path, 'parent2_foo');
+			let path = leaf.path;
+			assert.equal(path, 'parent2_foo_parent1_leaf');
+
+			path = parent1.path;
+
+			assert.equal(path, 'parent2_foo_parent1');
+			path = parent2.path;
+
+			assert.equal(path, 'parent2_foo');
 		});
 	});
 
 	describe('#getNodeStorage', function() {
 		it('has separate storage for each state', function() {
-			let node = new Action('test');
+			let node = new Base('test');
 
 			let state1: BasicState = new BasicState();
 			let state2: BasicState = new BasicState();
@@ -69,13 +75,13 @@ describe('Action', function() {
 		});
 	});
 
-	describe('#handleEvent', function() {
+	describe('#run', function() {
 		it('handles events', function() {
 			let action = new TestAction();
 
 			let state: BasicState = new BasicState();
 
-			return action.handleEvent(state)
+			return action.run(state)
 				.then(res => {
 				console.log('TestAction completed', res);
 				assert.equal(res, ResultCodes.SUCCESS);
@@ -85,34 +91,31 @@ describe('Action', function() {
 
 	describe('#EventCounter', function() {
 		it('Parent Node Counter', function() {
-			let root = new Action('root');
+			let root = new Base('root');
 			let state: BasicState = new BasicState();
 
-			return root.handleEvent(state)
-			.then(() => root.handleEvent(state))
+			return root.run(state)
+			.then(() => root.run(state))
 			.then(() => {
 				assert.equal(root.getTreeEventCounter(state), 2);
-				assert.equal(root.getLastEventSeen(state), 2);
 			});
 
 		});
 
 		it('Child Node Counter', function() {
 
-			let child = new Action('child');
+			let child = new Base('child');
 			let root = new Decorator('root', child);
 
 			let state: BasicState = new BasicState();
 
 			// Since it has a parent, it should increment
-			// the local node but not the eventCounter
-			return root.handleEvent(state)
-			.then(() => root.handleEvent(state))
+			// the local node but not the runCounter
+			return root.run(state)
+			.then(() => root.run(state))
 			.then(() => {
 				assert.equal(root.getTreeEventCounter(state), 2);
-				assert.equal(root.getLastEventSeen(state), 2);
 				assert.equal(child.getTreeEventCounter(state), 2);
-				assert.equal(child.getLastEventSeen(state), 2, 'last event seen should be updated');
 			});
 
 		});

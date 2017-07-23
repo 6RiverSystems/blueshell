@@ -1,13 +1,13 @@
 'use strict';
 
-import {ResultCodes} from '../utils/ResultCodes';
+import {ResultCodes} from '../../utils/ResultCodes';
 import {Composite} from './Composite';
 
 export class Selector<State> extends Composite<State> {
 
 	// Recursively sends the event to each child until one of them returns
 	// success or running. If we exhaust all the children, return failure.
-	handleChild(state: State, i: number): Promise<ResultCodes> {
+	protected runChild(state: State, i: number): Promise<ResultCodes> {
 
 		let storage = this.getNodeStorage(state);
 
@@ -18,8 +18,8 @@ export class Selector<State> extends Composite<State> {
 
 		let child = this.children[i];
 
-		return child.handleEvent(state)
-		.then(res => this._afterChild(res, state))
+		return child.run(state)
+		.then(res => this.afterChild(res, state))
 		.then(([res, state]: [ResultCodes, State]) => {
 			if (res !== ResultCodes.FAILURE) {
 
@@ -29,12 +29,12 @@ export class Selector<State> extends Composite<State> {
 
 				return res;
 			} else {
-				return this.handleChild(state, ++i);
+				return this.runChild(state, ++i);
 			}
 		});
 	}
 
-	_afterChild(res: ResultCodes, state: State) {
+	private afterChild(res: ResultCodes, state: State) {
 		return [res, state];
 	}
 }

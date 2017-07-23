@@ -2,7 +2,7 @@
 	"compileOnSave": true,
 	"compilerOptions": {
 		"outDir": "dist",
-		"target": "es6",
+		"target": "es2015",
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"allowJs": false,
@@ -13,8 +13,7 @@
 		"removeComments": false,
 		"preserveConstEnums": true,
 		"noImplicitAny": true,
-		"noImplicitReturns": true,
-		"target": "es2015"
+		"noImplicitReturns": true
 	},
 	"files": [
 		"lib/index.ts"
