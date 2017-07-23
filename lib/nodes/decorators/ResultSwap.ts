@@ -1,6 +1,3 @@
-/**
- * Created by josh on 1/21/16.
- */
 'use strict';
 
 import {ResultCodes} from '../../utils/ResultCodes';

@@ -1,6 +1,3 @@
-/**
- * Created by josh on 3/30/16.
- */
 'use strict';
 
 import {assert} from 'chai';
