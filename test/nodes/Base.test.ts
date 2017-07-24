@@ -2,9 +2,10 @@
 
 import {assert} from 'chai';
 
+import {Base} from '../../lib/nodes/Base';
+
 import {
 	ResultCodes,
-	Base,
 	Decorator,
 } from '../../lib';
 
