@@ -23,18 +23,23 @@ export abstract class Action<State> extends Base<State> {
 		return Promise.resolve(ResultCodes.RUNNING);
 	}
 
-	abstract isCompletionRun(event: any): boolean;
+	isComplete(state: State): boolean {
+		return false;
+	}
 
-	onComplete(state: State) {
+	onComplete(state: State): Promise<void> {
+		return null;
 	}
 
 	runningEvent(state: State): Promise<ResultCodes> {
 
 		let result = ResultCodes.RUNNING;
 
-		if (this.isCompletionRun(event)) {
-			this.onComplete(state);
-			result = ResultCodes.SUCCESS;
+		if (this.isComplete(state)) {
+			this.onComplete(state)
+				.then(() => {
+					return ResultCodes.SUCCESS;
+				});
 		}
 
 		return Promise.resolve(result);
