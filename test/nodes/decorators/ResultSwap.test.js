@@ -57,12 +57,21 @@ describe('ResultSwap', function() {
 
 	});
 
-	it('failure in action should return success', function() {
+	it('should use default name', function() {
 
 		let failureAction = new FailureAction();
 		let resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction);
 
 		assert.equal(resultSwap.name, 'ResultSwap_FAILURE-SUCCESS-failureAction');
+
+	});
+
+	it('should use overridden name', function() {
+
+		let failureAction = new FailureAction();
+		let resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction, 'foo');
+
+		assert.equal(resultSwap.name, 'foo');
 
 	});
 });
