@@ -12,28 +12,28 @@ Blueshell is a Promise-based Behavior Tree implementation using modern ES6 synta
 ### Composites (aka Control Flow Nodes)
 
 * Selector (aka Priority or Fallback)
-  - Sends an event to each child until one of them returns `SUCCESS` or `RUNNING`, then returns that value.
+  - Runs to each child until one of them returns `SUCCESS` or `RUNNING`, then returns that value.
 	- If we exhaust all the children, return `FAILURE`.
 
 * LatchedSelector
-  - Sends an event to each child until one of them returns `SUCCESS` or `RUNNING`, then returns that value.
+  - Runs to each child until one of them returns `SUCCESS` or `RUNNING`, then returns that value.
 	- If we exhaust all the children, return `FAILURE`.
-	- If a child returns `RUNNING`, subsequent events start at that child.
+	- If a child returns `RUNNING`, subsequent runs start at that child.
 
 * Sequence
-  - Sends an event to each child until one of the returns `FAILURE`, or `RUNNING`, then returns that value.
+  - Runs each child until one of the returns `FAILURE`, or `RUNNING`, then returns that value.
   - If all children return `SUCCESS`, return `SUCCESS`.
 
 * LatchedSequence
-  - Sends an event to each child until one of the returns `FAILURE`, or `RUNNING`, then returns that value.
+  - Runs each child until one of the returns `FAILURE`, or `RUNNING`, then returns that value.
   - If all children return `SUCCESS`, return `SUCCESS`.
-  - If a child returns `RUNNING`, subsequent events start at that child.
+  - If a child returns `RUNNING`, subsequent runs start at that child.
 
 * IfElse
   - Accepts a `conditional` function a `consequent` node, and an optional `alternative` node.
-  - If `conditional(state, event)` returns true, will return the result of activating the `consequent` node.
-  - If `conditional(state, event)` returns false, will return the result of activating the `alternative` node, if one is provided.
-  - If `conditional(state, event)` returns false, will return `FAILURE` if no `alternative` node is provided.
+  - If `conditional(state)` returns true, will return the result of activating the `consequent` node.
+  - If `conditional(state)` returns false, will return the result of activating the `alternative` node, if one is provided.
+  - If `conditional(state)` returns false, will return `FAILURE` if no `alternative` node is provided.
 
 ### Decorators
 

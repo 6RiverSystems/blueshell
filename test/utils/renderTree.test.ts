@@ -1,11 +1,13 @@
-/**
- * Created by josh on 3/23/16.
- */
 'use strict';
 
 import {assert} from 'chai';
 
-import * as Blueshell from '../../dist';
+import {
+	ResultCodes,
+	EnumEx,
+	renderTree,
+	toConsole
+} from '../../lib';
 
 import * as TestActions from '../nodes/test/Actions';
 
@@ -14,12 +16,12 @@ let waitAi = TestActions.waitAi;
 describe('RenderTree', () => {
 
 	it('should not crash', (done) => {
-		Blueshell.toConsole(waitAi);
+		toConsole(waitAi);
 		done();
 	});
 
 	it('should generate a tree of nodes without a state', (done) => {
-		let a = Blueshell.renderTree(waitAi);
+		let a = renderTree(waitAi);
 
 		assert.ok(a);
 		assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
@@ -33,8 +35,17 @@ describe('RenderTree', () => {
 
 		assertWordsInString(a, expectedWords);
 
-		Blueshell.EnumEx.getNames(Blueshell.ResultCodes).forEach((code: string) => {
+		EnumEx.getNames(ResultCodes).forEach((code: string) => {
 			assert.notOk(a.includes(code));
+		});
+
+		EnumEx.getValues(ResultCodes).forEach((value: number) => {
+			assert.notOk(value === null);
+		});
+
+		EnumEx.getNamesAndValues(ResultCodes).forEach((namesAndValues: any) => {
+			assert.notOk(a.includes(namesAndValues.name));
+			assert.notOk(namesAndValues.value === null);
 		});
 
 		done();
@@ -42,27 +53,26 @@ describe('RenderTree', () => {
 
 	it('should generate a tree of nodes with state', () => {
 		let state = new TestActions.BasicState(false) as any;
-		let event = {};
 
 		state.overheated = true;
 
-		return waitAi.handleEvent(state, event)
+		return waitAi.run(state)
 		.catch((err: any) => {
 			console.error(err.stack);
 		})
 		.then(() => {
-			let a = Blueshell.renderTree(waitAi, state);
+			let a = renderTree(waitAi, state);
 
 			assert.ok(a);
 			assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
 
 			let expectedWords = [
 				'(LatchedSelector)',
-				Blueshell.ResultCodes[Blueshell.ResultCodes.RUNNING],
+				ResultCodes[ResultCodes.RUNNING],
 				'Recharge',
-				Blueshell.ResultCodes[Blueshell.ResultCodes.FAILURE],
+				ResultCodes[ResultCodes.FAILURE],
 				'WaitForCooldown',
-				Blueshell.ResultCodes[Blueshell.ResultCodes.RUNNING],
+				ResultCodes[ResultCodes.RUNNING],
 				'EmergencyShutdown'
 			];
 

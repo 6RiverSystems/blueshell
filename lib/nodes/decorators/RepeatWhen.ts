@@ -1,33 +1,30 @@
-/**
- * Created by josh on 1/12/16.
- */
 'use strict';
 
-import {Decorator} from '../Decorator';
-import {Base} from '../Base';
 import {ResultCodes} from '../../utils/ResultCodes';
+import {Base} from '../Base';
+import {Decorator} from './Decorator';
 
 //TODO: This is stupid - might as well pass state and event as well
 export interface ResultConditional {
 	(result: ResultCodes): boolean;
 }
 
-export class RepeatWhen extends Decorator {
+export class RepeatWhen<State> extends Decorator<State> {
 
-	conditional: ResultConditional;
+	private conditional: ResultConditional;
 
-	constructor(desc: string, child: Base, conditional: ResultConditional) {
+	constructor(desc: string, child: Base<State>, conditional: ResultConditional) {
 		super('RepeatWhen-' + desc, child);
 		this.conditional = conditional;
 	}
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onRun(state: State): Promise<ResultCodes> {
 
-		let p = this.child.handleEvent(state, event);
+		let p = this.child.onRun(state);
 
 		return p.then(res => {
 			if (this.conditional(res)) {
-				return this.handleEvent(state, event);
+				return this.onRun(state);
 			} else {
 				return res;
 			}

@@ -1,16 +1,17 @@
-/**
- * Created by josh on 1/18/16.
- */
 'use strict';
 
 import {assert} from 'chai';
-import * as Blueshell from '../../dist';
 
-let rc = Blueshell.ResultCodes;
+import {
+	ResultCodes,
+	Selector,
+} from '../../lib';
 
 import * as TestActions from './test/Actions';
 
-let waitAi = new Blueshell.Selector('shutdownWithWaitAi',
+import {BasicState} from './test/Actions';
+
+let waitAi = new Selector('shutdownWithWaitAi',
 	[
 		new TestActions.Recharge(),
 		new TestActions.WaitForCooldown(),
@@ -21,15 +22,13 @@ describe('Selector', function() {
 	it('should return success', function() {
 
 		// With a happy bot
-		let botState = {
-			overheated: false,
-			commands: []
-		};
+		let botState: BasicState = new BasicState();
+		botState.overheated = false;
 
-		let p = waitAi.handleEvent(botState, 'lowBattery');
+		let p = waitAi.run(botState);
 
 		return p.then(res => {
-			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
+			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
 			assert.equal(botState.commands.length, 1, 'Only one command');
 			assert.equal(botState.commands[0], 'findDock', 'Searching for dock');
 		});
@@ -37,28 +36,26 @@ describe('Selector', function() {
 
 	it('should return failure', function() {
 		// With a overheated bot
-		let botState = {
-			overheated: true,
-			commands: [],
-			batteryLevel: 0
-		};
+		let botState: BasicState = new BasicState();
+		botState.overheated = true;
+		botState.batteryLevel = 0;
 
-		let p = waitAi.handleEvent(botState, 'lowBattery 1');
+		let p = waitAi.run(botState);
 
 		return p.then(res => {
-			assert.equal(res, rc.RUNNING, 'Behavior Tree Running');
+			assert.equal(res, ResultCodes.RUNNING, 'Behavior Tree Running');
 			assert.equal(botState.batteryLevel, 1, 'Ran recharge once');
 
-			return waitAi.handleEvent(botState, 'lowBattery 2');
+			return waitAi.run(botState);
 		}).then(res => {
 
-			assert.equal(res, rc.SUCCESS, 'Behavior Tree Success');
+			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree Success');
 			assert.equal(botState.commands.length, 0, 'No commands, waiting for cooldown');
 			assert.equal(botState.batteryLevel, 2, 'Ran recharge again');
 
-			return waitAi.handleEvent(botState, 'lowBattery 3');
+			return waitAi.run(botState);
 		}).then(res => {
-			assert.equal(res, rc.SUCCESS, 'Behavior Tree Success');
+			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree Success');
 			assert.equal(botState.commands.length, 1, 'Only one command');
 			assert.equal(botState.commands[0], 'findDock', 'Searching for dock');
 

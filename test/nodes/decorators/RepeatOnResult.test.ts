@@ -1,49 +1,55 @@
-/**
- * Created by josh on 1/21/16.
- */
 'use strict';
 
 import {assert} from 'chai';
-import * as Blueshell from '../../../dist';
 
-let rc = Blueshell.ResultCodes;
+import {
+	Operation,
+	ResultCodes,
+	RepeatOnResult
+} from '../../../lib';
 
-let RepeatOnResult = Blueshell.decorators.RepeatOnResult;
+class CountUntil extends Operation<any> {
 
-class CountUntil extends Blueshell.Operation {
+	limit: number;
 
-	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
+	constructor(limit: number) {
+		super();
 
-		state.counter += 1;
+		this.limit = limit;
+	}
 
-		return Promise.resolve(state.counter <= event ? rc.RUNNING : rc.SUCCESS);
+	onRun(state: number): Promise<ResultCodes> {
+
+		(<any>state).number += 1;
+
+		return Promise.resolve(state <= this.limit ? ResultCodes.RUNNING : ResultCodes.SUCCESS);
 	}
 }
 
 describe('RepeatOnResult', function() {
 	it('repeat when child returns running', function() {
 
-		let countUntil = new CountUntil();
-		let unEcho = new RepeatOnResult(rc.RUNNING, countUntil);
+		let countUntil = new CountUntil(3);
+		let unEcho = new RepeatOnResult(ResultCodes.RUNNING, countUntil);
 
 		let tests = [
-			{action: unEcho, event: 0, counter: 1},
-			{action: unEcho, event: 2, counter: 3}
+			{action: unEcho, event: {}},
+			{action: unEcho, event: {}}
 		];
 
-		let makeVerify = function(test) {
-			return function(res) {
-				assert.equal(res.state.counter, test.counter, `Counter: ${test.action.name} -> ${test.counter}`);
-				assert.equal(res, rc.SUCCESS, `Result: ${test.action.name} -> ${test.counter}`);
+		let makeVerify = function(test: any) {
+			return function(res: any) {
+				assert.equal(res, ResultCodes.SUCCESS, `Result: ${test.action.name} -> ${test.counter}`);
 			};
 		};
 
 		for (let test of tests) {
 			// isolated per test
-			let state = {
-				counter: 0
+			let counter: any = {
+				number: 0
 			};
-			let p = test.action.handleEvent(state, test.event);
+
+			let p = test.action.run(counter);
 
 			p.then(makeVerify(test));
 		}

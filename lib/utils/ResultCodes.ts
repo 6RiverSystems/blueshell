@@ -10,4 +10,4 @@ export enum ResultCodes {
 	FAILURE,
 	RUNNING,
 	ERROR
-};
+}

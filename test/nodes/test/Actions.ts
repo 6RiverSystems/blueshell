@@ -1,33 +1,37 @@
-/**
- * Created by josh on 1/18/16.
- */
 'use strict';
 
-import * as Blueshell from '../../../dist';
-let rc = Blueshell.ResultCodes;
+import {
+	ResultCodes,
+	Operation,
+	LatchedSelector
+} from '../../../lib';
 
 export class BasicState {
-	commands: any[];
+	commands: string[] = [];
 	__blueshell: any = {};
 	batteryLevel: number;
 	cooldownLevel: number;
 	overheated: boolean;
+	laserCooldownTime: number;
+	flares: number;
+	success: boolean;
+	errorReason: string;
 
 	constructor(debug?: boolean) {
-		this.__blueshell.debug = debug;
+		(<any>this).__debug = debug;
 	}
 }
 
-export class Recharge extends Blueshell.Operation {
+export class Recharge extends Operation<BasicState> {
 
-	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
+	onRun(state: BasicState): Promise<ResultCodes> {
 
-		let result = rc.SUCCESS;
+		let result = ResultCodes.SUCCESS;
 
 		state.batteryLevel = state.batteryLevel !== undefined ? ++state.batteryLevel : 1;
 
 		if (state.overheated) {
-			result = rc.FAILURE;
+			result = ResultCodes.FAILURE;
 		} else {
 			state.commands.push('findDock');
 		}
@@ -36,20 +40,20 @@ export class Recharge extends Blueshell.Operation {
 	}
 }
 
-export class WaitForCooldown extends Blueshell.Operation {
+export class WaitForCooldown extends Operation<BasicState> {
 
-	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
+	onRun(state: BasicState): Promise<ResultCodes> {
 		let storage = this.getNodeStorage(state);
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : 1;
 
-		let result = rc.SUCCESS;
+		let result = ResultCodes.SUCCESS;
 
 		console.log('Storage cooldown is ', storage.cooldown);
 
 		if (storage.cooldown) {
 			state.cooldownLevel = storage.cooldown;
-			result = rc.RUNNING;
+			result = ResultCodes.RUNNING;
 		} else {
 			state.overheated = false;
 		}
@@ -58,16 +62,16 @@ export class WaitForCooldown extends Blueshell.Operation {
 	}
 }
 
-export class EmergencyShutdown extends Blueshell.Operation {
+export class EmergencyShutdown extends Operation<BasicState> {
 
-	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
+	onRun(state: BasicState): Promise<ResultCodes> {
 		state.commands.push('powerOff');
 
-		return Promise.resolve(rc.SUCCESS);
+		return Promise.resolve(ResultCodes.SUCCESS);
 	}
 }
 
-let waitAi = new Blueshell.LatchedSelector('shutdownWithWaitAi',
+let waitAi = new LatchedSelector('shutdownWithWaitAi',
 	[
 		new Recharge(),
 		new WaitForCooldown(),

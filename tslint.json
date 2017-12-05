@@ -6,7 +6,7 @@
 		"class-name": true,
 		"indent": [true, "tabs"],
 		"max-line-length": [true, 150],
-		"no-consecutive-blank-lines": true,
+		"no-consecutive-blank-lines": [true, 1],
 		"no-trailing-whitespace": true,
 		"no-duplicate-key": true,
 		"no-duplicate-variable": true,

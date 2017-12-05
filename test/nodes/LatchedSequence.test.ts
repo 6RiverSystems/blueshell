@@ -1,36 +1,38 @@
-/**
- * Created by josh on 1/15/16.
- */
 'use strict';
 
 import {assert} from 'chai';
-import * as Blueshell from '../../dist';
 
-type ResultCodes = Blueshell.ResultCodes;
+import {
+	Operation,
+	LatchedSequence,
+	ResultCodes,
+} from '../../lib';
 
-class StopMotors extends Blueshell.Operation {
+import {BasicState} from './test/Actions';
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+class StopMotors extends Operation<BasicState> {
+
+	onRun(state: BasicState): Promise<ResultCodes> {
 
 		state.commands.push('motorsStopped');
 
-		return Promise.resolve(Blueshell.ResultCodes.SUCCESS);
+		return Promise.resolve(ResultCodes.SUCCESS);
 	}
 }
 
-class StopLasers extends Blueshell.Operation {
+class StopLasers extends Operation<BasicState> {
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onRun(state: BasicState): Promise<ResultCodes> {
 		let storage = this.getNodeStorage(state);
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : state.laserCooldownTime;
 
-		let result = Blueshell.ResultCodes.SUCCESS;
+		let result = ResultCodes.SUCCESS;
 
 		console.log('Storage cooldown is ', storage.cooldown);
 
 		if (storage.cooldown > 0) {
-			result = Blueshell.ResultCodes.RUNNING;
+			result = ResultCodes.RUNNING;
 		} else {
 			state.commands.push('lasersCooled');
 		}
@@ -39,16 +41,16 @@ class StopLasers extends Blueshell.Operation {
 	}
 }
 
-class Shutdown extends Blueshell.Operation {
+class Shutdown extends Operation<BasicState> {
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onRun(state: BasicState): Promise<ResultCodes> {
 		state.commands.push('powerOff');
 
-		return Promise.resolve(Blueshell.ResultCodes.SUCCESS);
+		return Promise.resolve(ResultCodes.SUCCESS);
 	}
 }
 
-let shutdownSequence = new Blueshell.LatchedSequence('shutdownWithWaitAi',
+let shutdownSequence = new LatchedSequence('shutdownWithWaitAi',
 	[
 		new StopMotors(),
 		new StopLasers(),
@@ -57,18 +59,16 @@ let shutdownSequence = new Blueshell.LatchedSequence('shutdownWithWaitAi',
 
 describe('LatchedSelector', function() {
 
-	it('should run correctly', function() {
+	it('should onRun correctly', function() {
 
 		// With a happy bot
-		let botState = {
-			laserCooldownTime: 0,
-			commands: []
-		};
+		let botState: BasicState = new BasicState();
+		botState.laserCooldownTime = 0;
 
-		let p = shutdownSequence.handleEvent(botState, 'lowBattery');
+		let p = shutdownSequence.run(botState);
 
 		return p.then(res => {
-			assert.equal(res, Blueshell.ResultCodes.SUCCESS, 'Behavior Tree success');
+			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
 			assert.equal(botState.commands.length, 3, 'Need Three Commands');
 			assert.equal(botState.commands[0], 'motorsStopped');
 			assert.equal(botState.commands[1], 'lasersCooled');
@@ -78,22 +78,20 @@ describe('LatchedSelector', function() {
 
 	it('should loop correctly', function() {
 		// With a happy bot
-		let botState = {
-			laserCooldownTime: 1,
-			commands: []
-		};
+		let botState: BasicState = new BasicState();
+		botState.laserCooldownTime = 1;
 
-		let p = shutdownSequence.handleEvent(botState, 'lowBattery 1');
+		let p = shutdownSequence.run(botState);
 
 		return p.then(res => {
-			assert.equal(res, Blueshell.ResultCodes.RUNNING, 'Behavior Tree Running');
+			assert.equal(res, ResultCodes.RUNNING, 'Behavior Tree Running');
 			assert.equal(botState.commands.length, 1);
 			assert.equal(botState.commands[0], 'motorsStopped');
 
-			return shutdownSequence.handleEvent(botState, 'lowBattery 2');
+			return shutdownSequence.run(botState);
 		}).then(res => {
 
-			assert.equal(res, Blueshell.ResultCodes.SUCCESS, 'Behavior Tree Success');
+			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree Success');
 			assert.equal(botState.commands.length, 3, 'Need Three Commands');
 			assert.equal(botState.commands[0], 'motorsStopped');
 			assert.equal(botState.commands[1], 'lasersCooled');

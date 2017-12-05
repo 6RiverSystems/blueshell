@@ -1,20 +1,23 @@
 'use strict';
 
-import {Base} from './nodes/Base';
+export {Base} from './nodes/Base';
 
-type Action = Base;
+export {Action} from './nodes/actions/Action';
 
-export {Base, Action};
+export {Operation} from './nodes/composites/Operation';
+export {Composite} from './nodes/composites/Composite';
+export {Decorator} from './nodes/decorators/Decorator';
+export {Selector} from './nodes/composites/Selector';
+export {Sequence} from './nodes/composites/Sequence';
+export {LatchedSelector} from './nodes/composites/LatchedSelector';
+export {LatchedSequence} from './nodes/composites/LatchedSequence';
+export {IfElse} from './nodes/composites/IfElse';
 
-export {Operation} from './nodes/Operation';
-export {Composite} from './nodes/Composite';
-export {Decorator} from './nodes/Decorator';
-export {Selector} from './nodes/Selector';
-export {Sequence} from './nodes/Sequence';
-export {LatchedSelector} from './nodes/LatchedSelector';
-export {LatchedSequence} from './nodes/LatchedSequence';
-export {IfElse} from './nodes/IfElse';
-
-export {decorators} from './nodes/decorators';
+export {
+	Not,
+	RepeatWhen,
+	RepeatOnResult,
+	ResultSwap
+} from './nodes/decorators';
 
 export {ResultCodes, renderTree, toConsole, EnumEx} from './utils';

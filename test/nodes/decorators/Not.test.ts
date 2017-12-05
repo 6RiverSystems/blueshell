@@ -1,19 +1,16 @@
-/**
- * Created by josh on 1/12/16.
- */
 'use strict';
 
 import {assert} from 'chai';
-import * as Blueshell from '../../../dist';
 
-let rc = Blueshell.ResultCodes;
+import {
+	Operation,
+	ResultCodes,
+	Not
+} from '../../../lib';
 
-let Not = Blueshell.decorators.Not;
-
-class EchoAction extends Blueshell.Operation {
-
-	onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
-		return event;
+class EchoAction extends Operation<any> {
+	onRun(state: any): Promise<ResultCodes> {
+		return Promise.resolve(state.forcedResult);
 	}
 }
 
@@ -24,25 +21,25 @@ describe('Not', function() {
 		let echo = new EchoAction();
 		let unEcho = new Not('unEcho', echo);
 
-		let tests = [
-			{action: echo, event: rc.SUCCESS, result: rc.SUCCESS},
-			{action: echo, event: rc.FAILURE, result: rc.FAILURE},
-			{action: echo, event: rc.RUNNING, result: rc.RUNNING},
-			{action: unEcho, event: rc.SUCCESS, result: rc.FAILURE},
-			{action: unEcho, event: rc.FAILURE, result: rc.SUCCESS},
-			{action: unEcho, event: rc.RUNNING, result: rc.RUNNING}
+		let tests: any = [
+			{action: echo, forcedResult: ResultCodes.SUCCESS, result: ResultCodes.SUCCESS},
+			{action: echo, forcedResult: ResultCodes.FAILURE, result: ResultCodes.FAILURE},
+			{action: echo, forcedResult: ResultCodes.RUNNING, result: ResultCodes.RUNNING},
+			{action: unEcho, forcedResult: ResultCodes.SUCCESS, result: ResultCodes.FAILURE},
+			{action: unEcho, forcedResult: ResultCodes.FAILURE, result: ResultCodes.SUCCESS},
+			{action: unEcho, forcedResult: ResultCodes.RUNNING, result: ResultCodes.RUNNING}
 		];
 
-		let makeVerify = function(test) {
-			return function(res) {
+		let makeVerify = function(test: any) {
+			return function(res: any) {
 				assert.equal(res, test.result, `${test.action.name} -> ${test.result}`);
 			};
 		};
 
-		let ps = [];
+		let ps: any = [];
 
 		for (let test of tests) {
-			let p = test.action.handleEvent({}, test.event);
+			let p = test.action.run(test);
 
 			ps.push(p.then(makeVerify(test)));
 		}

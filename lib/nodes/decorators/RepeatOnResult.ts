@@ -1,16 +1,13 @@
-/**
- * Created by josh on 1/12/16.
- */
 'use strict';
 
-import {RepeatWhen} from './RepeatWhen';
-import {Base} from '../Base';
 import {ResultCodes} from '../../utils/ResultCodes';
+import {Base} from '../Base';
+import {RepeatWhen} from './RepeatWhen';
 
-export class RepeatOnResult extends RepeatWhen {
+export class RepeatOnResult<State> extends RepeatWhen<State> {
 
-	constructor(repeatRes: ResultCodes, child: Base) {
-		super('ResultEquals-' + repeatRes, child, (res) => res === repeatRes);
+	constructor(repeatRes: ResultCodes, child: Base<State>) {
+		super('ResultEquals-' + repeatRes, child, (res: ResultCodes) => res === repeatRes);
 	}
 
 }

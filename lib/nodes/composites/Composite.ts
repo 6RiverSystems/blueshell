@@ -1,13 +1,15 @@
 'use strict';
 
-import {Base} from './Base';
-import {ResultCodes} from '../utils/ResultCodes';
+import {ResultCodes} from '../../utils/ResultCodes';
+import {Base} from '../Base';
 
-export class Composite extends Base {
+export class Composite<State> extends Base<State> {
+
+	children: Array<Base<State>>;
 
 	latched: boolean;
 
-	constructor(name: string, children: Array<Base>, latched = false) {
+	constructor(name: string, children: Array<Base<State>>, latched = false) {
 		super(name);
 
 		// console.log(`${name} constructed with ${children.length} children`);
@@ -27,7 +29,7 @@ export class Composite extends Base {
 		}
 	}
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onRun(state: State): Promise<ResultCodes> {
 
 		let storage = this.getNodeStorage(state);
 
@@ -42,14 +44,14 @@ export class Composite extends Base {
 			storage.running = undefined;
 		}
 
-		return this.handleChild(state, event, firstChild);
+		return this.runChild(state, firstChild);
 	}
 
-	handleChild(state: any, event: any, i: number): Promise<ResultCodes> {
+	protected runChild(state: State, i: number): Promise<ResultCodes> {
 		throw new Error('This is an abstract method - please override.');
 	}
 
-	resetNodeStorage(state: any) {
+	resetNodeStorage(state: State) {
 		super.resetNodeStorage(state);
 
 		for (let child of this.children) {

@@ -1,18 +1,14 @@
-/**
- * Created by josh on 1/12/16.
- */
 'use strict';
 
-import {Decorator} from '../Decorator';
 import {ResultCodes} from '../../utils/ResultCodes';
+import {Decorator} from './Decorator';
 
-export class Not extends Decorator {
+export class Not<State> extends Decorator<State> {
 
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onRun(state: State): Promise<ResultCodes> {
 
-		let p = this.child.handleEvent(state, event);
-
-		return p.then(res => {
+		return this.child.onRun(state)
+			.then((res: ResultCodes) => {
 			switch (res) {
 			case ResultCodes.SUCCESS:
 				res = ResultCodes.FAILURE;

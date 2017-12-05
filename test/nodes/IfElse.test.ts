@@ -1,117 +1,114 @@
-/**
- * Created by josh on 1/10/16.
- */
 'use strict';
 
 import {assert} from 'chai';
-import * as Blueshell from '../../dist';
 
-let rc = Blueshell.ResultCodes;
+import {
+	ResultCodes,
+	Operation,
+	IfElse
+} from '../../lib';
+
+import {BasicState} from './test/Actions';
 
 describe('IfElse', function() {
 
-	let successAction = new class extends Blueshell.Operation {
-		onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
+	let successAction = new class extends Operation<BasicState> {
+		onRun(state: BasicState): Promise<ResultCodes> {
 
 			state.success = true;
 
-			return Promise.resolve(rc.SUCCESS);
+			return Promise.resolve(ResultCodes.SUCCESS);
 		}
 	};
 
-	let failureAction = new class extends Blueshell.Operation {
-		onEvent(state: any, event: any): Promise<Blueshell.ResultCodes> {
+	let failureAction = new class extends Operation<BasicState> {
+		onRun(state: BasicState): Promise<ResultCodes> {
 
 			state.success = false;
 
-			return Promise.resolve(rc.FAILURE);
+			return Promise.resolve(ResultCodes.FAILURE);
 		}
 	};
 
 	it('should return success when conditional is true with no alternative', function() {
 
-		let ifElse = new Blueshell.IfElse('testIfElse',
-			(state, event) => true,
+		let ifElse = new IfElse<BasicState>('testIfElse',
+			(state: BasicState) => true,
 			successAction
 		);
 
-		let state = {
-			errorReason: undefined,
-			success: false
-		};
+		let state: BasicState = new BasicState();
+		state.errorReason = undefined;
 
-		let p = ifElse.handleEvent(state, 'testEvent');
+		let p = ifElse.run(state);
+
+		const children: any = ifElse.children;
+
+		assert.equal(children[0], successAction);
 
 		return p.then(res => {
 			assert.notOk(state.errorReason);
-			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
-			assert.isTrue(state.success, 'Expected Action was called');
+			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
+			assert.isTrue(state.success, 'Expected Base was called');
 		});
 	});
 
 	it('should return success when conditional is true with an alternative', function() {
 
-		let ifElse = new Blueshell.IfElse('testIfElse',
-			(state, event) => true,
+		let ifElse = new IfElse('testIfElse',
+			(state) => true,
 			successAction,
 			failureAction
 		);
 
-		let state = {
-			errorReason: undefined,
-			success: false
-		};
+		let state: BasicState = new BasicState();
+		state.errorReason = undefined;
 
-		let p = ifElse.handleEvent(state, 'testEvent');
+		let p = ifElse.run(state);
 
 		return p.then(res => {
 			assert.notOk(state.errorReason);
-			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
-			assert.isTrue(state.success, 'Expected Action was called');
+			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
+			assert.isTrue(state.success, 'Expected Base was called');
 		});
 	});
 
 	it('should return success when conditional is false', function() {
 
-		let ifElse = new Blueshell.IfElse('testIfElse',
-			(state, event) => false,
+		let ifElse = new IfElse('testIfElse',
+			(state) => false,
 			failureAction,
 			successAction
 		);
 
-		let state = {
-			errorReason: undefined,
-			success: false
-		};
+		let state: BasicState = new BasicState();
+		state.errorReason = undefined;
 
-		let p = ifElse.handleEvent(state, 'testEvent');
+		let p = ifElse.run(state);
 
 		return p.then(res => {
 			assert.notOk(state.errorReason);
-			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
-			assert.isTrue(state.success, 'Expected Action was called');
+			assert.equal(res, ResultCodes.SUCCESS, 'Behavior Tree success');
+			assert.isTrue(state.success, 'Expected Base was called');
 		});
 	});
 
-
 	it('should return failure when conditional is false and there is no alternative', function() {
 
-		let ifElse = new Blueshell.IfElse('testIfElse',
-			(state, event) => false,
+		let ifElse = new IfElse('testIfElse',
+			(state) => false,
 			successAction
 		);
 
-		let state = {
-			errorReason: undefined,
-			success: false
-		};
+		let state: BasicState = new BasicState();
+		state.errorReason = undefined;
 
-		let p = ifElse.handleEvent(state, 'testEvent');
+		let p = ifElse.run(state);
 
 		return p.then(res => {
 			assert.notOk(state.errorReason);
-			assert.equal(res, rc.FAILURE, 'Behavior Tree success');
-			assert.isNotTrue(state.success, 'Expected Action was called');
+			assert.equal(res, ResultCodes.FAILURE, 'Behavior Tree success');
+			assert.isNotTrue(state.success, 'Expected Base was called');
 		});
 	});
 });

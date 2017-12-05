@@ -1,14 +1,11 @@
-/**
- * Created by josh on 1/10/16.
- */
 'use strict';
 
 import {ResultCodes} from '../utils/ResultCodes';
 
-export class Base {
+export class Base<State> {
 
-	children: Array<Base>;
 	name: string;
+
 	_parent: string;
 
 	constructor(name?: string) {
@@ -16,14 +13,18 @@ export class Base {
 		this._parent = '';
 	}
 
-	handleEvent(state: any, event: any): Promise<ResultCodes> {
+	run(state: State): Promise<ResultCodes> {
+		return Promise.resolve(this._beforeRun(state))
+		.then(() => this.precondition(state))
+			.then((passed) => {
+				if (!passed) {
+					return ResultCodes.FAILURE;
+				}
 
-		return Promise.resolve(this._beforeEvent(state, event))
-		.then(() => {
-			return this.onEvent(state, event);
-		})
+				return this.onRun(state);
+			})
 		.catch(err => {
-			state.errorReason = err;
+			(<any>state).errorReason = err;
 
 			if (this.getDebug(state)) {
 				console.error('Error: ', err.stack); // eslint-disable-line no-console
@@ -32,34 +33,28 @@ export class Base {
 			return ResultCodes.ERROR;
 		})
 		.then(res => {
-			return this._afterEvent(res, state, event);
+			return this._afterRun(res, state);
 		});
 	}
 
 	// Return nothing
-	private _beforeEvent(state: any, event: any) {
+	private _beforeRun(state: State) {
 
 		let pStorage = this._privateStorage(state);
-		let nodeStorage = this.getNodeStorage(state);
 
 		// If this is the root node, increment the event counter
 		if (!this._parent) {
-			pStorage.eventCounter = ++pStorage.eventCounter || 1;
+			pStorage.runCounter = ++pStorage.runCounter || 1;
 		}
-
-		// Record the last event we've seen
-		//console.log('%s: incrementing event counter %s, %s',
-		//	this.path, nodeStorage.lastEventSeen,  pStorage.eventCounter);
-		nodeStorage.lastEventSeen = pStorage.eventCounter;
 
 		return {};
 	}
 
 	// Logging
-	private _afterEvent(res: any, state: any, event: any) {
+	private _afterRun(res: any, state: State) {
 
 		if (this.getDebug(state)) {
-			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console
+			console.log(this.path, ' => ', ' => ', res);  // eslint-disable-line no-console
 		}
 
 		let storage = this.getNodeStorage(state);
@@ -67,12 +62,29 @@ export class Base {
 		// Cache our results for the next iteration
 		storage.lastResult = res;
 
+		if (res !== ResultCodes.RUNNING) {
+			this.deactivate(state);
+		}
+
 		return res;
 	}
 
+	// Return true if we should proceed, false otherwise
+	precondition(state: State): boolean {
+		return true;
+	}
+
+	activate(state: State) {
+		//no-op
+	}
+
 	// Return results
-	onEvent(state: any, event: any): Promise<ResultCodes> {
+	onRun(state: State): Promise<ResultCodes> {
 		return Promise.resolve(ResultCodes.SUCCESS);
+	}
+
+	deactivate(state: State) {
+		//no-op
 	}
 
 	set parent(path: string) {
@@ -86,41 +98,39 @@ export class Base {
 	/*
 	 * Returns storage unique to this node, keyed on the node's path.
 	 */
-	getNodeStorage(state: any) {
-		let path = this.path;
-		let blueshell = this._privateStorage(state);
+	getNodeStorage(state: State) {
+		const path = this.path;
+		const blueshell = this._privateStorage(state);
 
 		blueshell[path] = blueshell[path] || {};
 		return blueshell[path];
 	}
 
-	resetNodeStorage(state: any) {
-		let path = this.path;
-		let blueshell = this._privateStorage(state);
+	resetNodeStorage(state: State) {
+		const path = this.path;
+		const blueshell = this._privateStorage(state);
 
 		blueshell[path] = {};
 		return blueshell[path];
 	}
 
-	private _privateStorage(state: any) {
-		state.__blueshell = state.__blueshell || {};
+	private _privateStorage(state: State) {
+		const mutableState = state as any;
 
-		return state.__blueshell;
+		mutableState.__blueshell = mutableState.__blueshell || {};
+
+		return mutableState.__blueshell;
 	}
 
-	getDebug(state: any) {
+	getDebug(state: State) {
 		return this._privateStorage(state).debug;
 	}
 
-	getTreeEventCounter(state: any) {
-		return this._privateStorage(state).eventCounter;
+	getTreeEventCounter(state: State) {
+		return this._privateStorage(state).runCounter;
 	}
 
-	getLastEventSeen(state: any) {
-		return this.getNodeStorage(state).lastEventSeen;
-	}
-
-	getLastResult(state: any) {
+	getLastResult(state: State) {
 		return this.getNodeStorage(state).lastResult;
 	}
 }
