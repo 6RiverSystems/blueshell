@@ -74,6 +74,10 @@ export class Base<State> {
 		return true;
 	}
 
+	activate(state: State) {
+		//no-op
+	}
+
 	// Return results
 	onRun(state: State): Promise<ResultCodes> {
 		return Promise.resolve(ResultCodes.SUCCESS);

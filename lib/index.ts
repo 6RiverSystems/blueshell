@@ -1,5 +1,7 @@
 'use strict';
 
+export {Base} from './nodes/Base';
+
 export {Action} from './nodes/actions/Action';
 
 export {Operation} from './nodes/composites/Operation';
