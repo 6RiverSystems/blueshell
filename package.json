@@ -34,6 +34,7 @@
     "@types/chai": "4.0.6",
     "@types/mocha": "2.2.44",
     "@types/uuid": "3.4.3",
+    "@types/archy": "0.0.31",
     "chai": "4.1.2",
     "coveralls": "3.0.0",
     "eslint": "4.12.1",
@@ -53,8 +54,6 @@
     "typescript": "2.6.2"
   },
   "dependencies": {
-    "@sixriver/mfp_lib_js": "^1.16.1",
-    "@types/archy": "0.0.31",
     "archy": "1.0.0",
     "uuid": "3.1.0"
   }
