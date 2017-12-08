@@ -5,7 +5,7 @@
   "main": "dist/index",
   "typings": "dist/index",
   "scripts": {
-    "prepare": "tsc --pretty",
+    "prepublish": "tsc --pretty",
     "pretest": "npm-run-all pretest:eslint",
     "pretest:eslint": "shx echo eslint .",
     "clean": "shx rm -rf dist",
