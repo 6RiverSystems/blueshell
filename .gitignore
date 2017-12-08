@@ -14,9 +14,7 @@
 .idea
 .project
 .strong-pm
-coverage
 node_modules
 npm-debug.log
-dist
-dist-test
-.coveralls.yml
+coverage/
+dist/
