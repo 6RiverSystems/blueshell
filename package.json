@@ -2,9 +2,10 @@
   "name": "blueshell",
   "version": "0.0.0-development",
   "description": "A Behavior Tree implementation in modern Javascript",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "dist/index",
+  "typings": "dist/index",
   "scripts": {
+    "prepare": "tsc --pretty",
     "pretest": "npm-run-all pretest:eslint",
     "pretest:eslint": "shx echo eslint .",
     "clean": "shx rm -rf dist",
