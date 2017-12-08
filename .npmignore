@@ -1,0 +1,13 @@
+.idea/
+coverage/
+dist-test/
+lib/
+test/
+.editorconfig
+.eslintignore
+.eslintrc.json
+.istanbul.yml
+.npmignore
+circle.yml
+tsconfig.json
+tslint.json
