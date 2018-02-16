@@ -8,52 +8,85 @@ import {
 	Retry,
 } from '../../../lib';
 
-class CountUntil extends Operation<any> {
+class ResultReturner extends Operation<any> {
 
-	limit: number;
+	result: ResultCodes;
 
-	constructor(limit: number) {
+	constructor(result: ResultCodes) {
 		super();
 
-		this.limit = limit;
+		this.result = result;
 	}
 
 	onRun(state: number): Promise<ResultCodes> {
 
 		(<any>state).number += 1;
 
-		return Promise.resolve(state <= this.limit ? ResultCodes.RUNNING : ResultCodes.FAILURE);
+		return Promise.resolve(this.result);
 	}
 }
 
-describe('Retry', function() {
+describe('Retry ', function() {
 	it('retry on failure', function() {
+		let countUntil = new ResultReturner(ResultCodes.FAILURE);
 
-		let countUntil = new CountUntil(0);
 		let retry = new Retry(countUntil, 2);
 
-		let tests = [
-			{action: retry, event: {}},
-			{action: retry, event: {}}
-		];
-
-		let makeVerify = function(test: any, counter: any) {
+		let makeVerify = function(counter: any) {
 			return function(res: any) {
-				assert.equal(res, ResultCodes.FAILURE, `Result: ${test.action.name} -> ${counter.number}`);
+				assert.equal(res, ResultCodes.FAILURE);
 				assert.equal(counter.number, 3);
 			};
 		};
 
-		for (let test of tests) {
-			// isolated per test
-			let counter: any = {
-				number: 0
+		let counter: any = {
+			number: 0
+		};
+
+		let p = retry.run(counter);
+
+		p.then(makeVerify(counter));
+	});
+
+	it('do not retry on success', function() {
+		let countUntil = new ResultReturner(ResultCodes.SUCCESS);
+
+		let retry = new Retry(countUntil, 2);
+
+		let makeVerify = function(counter: any) {
+			return function(res: any) {
+				assert.equal(res, ResultCodes.SUCCESS);
+				assert.equal(counter.number, 1);
 			};
+		};
 
-			let p = test.action.run(counter);
+		let counter: any = {
+			number: 0
+		};
 
-			p.then(makeVerify(test, counter));
-		}
+		let p = retry.run(counter);
 
+		p.then(makeVerify(counter));
+	});
+
+	it('do not retry on running', function() {
+		let countUntil = new ResultReturner(ResultCodes.RUNNING);
+
+		let retry = new Retry(countUntil, 2);
+
+		let makeVerify = function(counter: any) {
+			return function(res: any) {
+				assert.equal(res, ResultCodes.RUNNING);
+				assert.equal(counter.number, 1);
+			};
+		};
+
+		let counter: any = {
+			number: 0
+		};
+
+		let p = retry.run(counter);
+
+		p.then(makeVerify(counter));
 	});
 });
