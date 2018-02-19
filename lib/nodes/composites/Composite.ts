@@ -35,9 +35,7 @@ export class Composite<State> extends Base<State> {
 
 		let firstChild = 0;
 
-		// Support for latched composites - ignored if not latched
-		// wrapped for clarity - not programmatically necessary
-		if (this.latched) {
+		if (this.shouldLatch(state)) {
 			firstChild = storage.running !== undefined ? storage.running : 0;
 
 			// Reset running
@@ -49,6 +47,10 @@ export class Composite<State> extends Base<State> {
 
 	protected runChild(state: State, i: number): Promise<ResultCodes> {
 		throw new Error('This is an abstract method - please override.');
+	}
+
+	shouldLatch(state: State) {
+		return this.latched;
 	}
 
 	resetNodeStorage(state: State) {
