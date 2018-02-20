@@ -37,10 +37,10 @@ export class Composite<State> extends Base<State> {
 
 		if (this.shouldLatch(state)) {
 			firstChild = storage.running !== undefined ? storage.running : 0;
-
-			// Reset running
-			storage.running = undefined;
 		}
+
+		// Reset running
+		storage.running = undefined;
 
 		return this.runChild(state, firstChild);
 	}
