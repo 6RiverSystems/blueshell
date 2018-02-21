@@ -7,7 +7,7 @@ import {RepeatWhenNTimes} from './RepeatWhenNTimes';
 export class Retry<State> extends RepeatWhenNTimes<State> {
 
 	constructor(child: Base<State>, numRetries: number) {
-		super('Retry-' + numRetries, child, (res: ResultCodes) => res === ResultCodes.FAILURE, numRetries);
+		super(`Retry-${numRetries}`, child, (res: ResultCodes) => res === ResultCodes.FAILURE, numRetries);
 	}
 
 }
