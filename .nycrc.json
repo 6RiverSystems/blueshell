@@ -1,0 +1,19 @@
+{
+	"extension": [
+		".ts",
+		".tsx"
+	],
+	"include": [
+		"lib/**/*.js",
+		"lib/**/*.ts"
+	],
+  "exclude": [
+		"**/*.d.ts"
+  ],
+	"reporter": [
+		"html"
+	],
+	"temp-directory": "./coverage/.nyc_output",
+  "report-dir": "./coverage/.nyc_output",
+	"all": true
+}

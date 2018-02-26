@@ -4,7 +4,7 @@ let Base = require('./Base');
 
 class Composite extends Base {
 
-	constructor(name, children, latched) {
+	constructor(name: string, children, latched) {
 		super(name);
 
 		// console.log(`${name} constructed with ${children.length} children`);

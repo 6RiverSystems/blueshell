@@ -1,2 +1,11 @@
+--require ts-node/register
+--require source-map-support/register
+--require ./test/prepare.js
+
+--full-trace
+--check-leaks
+
 --recursive
---timeout=4000
+--timeout=10000
+
+test/bootstrap.js test/**/*.spec.js test/**/*.spec.ts

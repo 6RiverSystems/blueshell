@@ -1,18 +1,17 @@
 /**
  * Created by josh on 1/10/16.
  */
-'use strict';
+import {Observable} from 'rxjs';
 
-let rc = require('./../utils/resultCodes');
+const rc = require('../utils/resultCodes');
 
-class Base {
+export class Base<S, E> {
 
-	constructor(name) {
-		this.name = name || this.constructor.name;
+	constructor(public readonly name: string = this.constructor.name) {
 		this._parent = '';
 	}
 
-	handleEvent(state, event) {
+	handleEvent(state: S, event: E): Observable<any> {
 
 		return Promise.resolve(this._beforeEvent(state, event))
 		.then(() => this.precondition(state, event))

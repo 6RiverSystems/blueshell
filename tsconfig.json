@@ -1,0 +1,33 @@
+{
+	"compileOnSave": true,
+	"compilerOptions": {
+		"outDir": "dist",
+		"target": "es2017",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"allowJs": false,
+		"allowUnreachableCode": false,
+		"strict": true,
+		"sourceMap": true,
+		"declaration": false,
+		"forceConsistentCasingInFileNames": true,
+		"removeComments": false,
+		"preserveConstEnums": true,
+		"noImplicitReturns": true,
+		"types": [
+			"node",
+			"reflect-metadata",
+			"mocha",
+			"chai"
+		],
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
+	},
+	"exclude": [
+		"node_modules",
+		"scripts",
+		"coverage",
+		"dist",
+		"test"
+	]
+}
