@@ -1,23 +1,30 @@
 /**
  * Created by josh on 1/10/16.
  */
+
 'use strict';
+
+import {BlueshellState} from '../../lib/nodes/BlueshellState';
 
 const assert = require('chai').assert;
 
-const rc = require('../../lib/utils/resultCodes');
-const Behavior = require('../../lib');
+import {resultCodes as rc} from '../../lib/utils/resultCodes';
+import * as Behavior from '../../lib';
 const Base = Behavior.Action;
 const Decorator = Behavior.Decorator;
 
-class TestAction extends Base {
-	constructor(name, precond = true) {
+class TestState implements BlueshellState {
+	public errorReason: Error;
+	public __blueshell: any;
+}
+
+class TestAction extends Base<TestState, string> {
+	constructor(name?: string, private preconditionStatus = true) {
 		super(name);
-		this.preconditionStatus = precond;
 	}
 
-	precondition() {
-		return this.preconditionStatus;
+	precondition(): Promise<boolean> {
+		return Promise.resolve(this.preconditionStatus);
 	}
 }
 
@@ -51,8 +58,8 @@ describe('Base', function() {
 		it('has separate storage for each state', function() {
 			const node = new Base('test');
 
-			const state1 = {};
-			const state2 = {};
+			const state1 = new TestState();
+			const state2 = new TestState();
 
 			const storage = node.getNodeStorage(state1);
 
@@ -68,7 +75,7 @@ describe('Base', function() {
 		it('handles events', function() {
 			const action = new TestAction();
 
-			const p = action.handleEvent({}, 'testEvent');
+			const p = action.handleEvent(new TestState(), 'testEvent');
 
 			return p.then((res) => {
 				console.log('TestAction completed', res);
@@ -81,7 +88,7 @@ describe('Base', function() {
 		it('should return FAILURE if the precondition fails', function() {
 			const action = new TestAction('will fail', false);
 
-			const p = action.handleEvent({}, 'testEvent');
+			const p = action.handleEvent(new TestState(), 'testEvent');
 
 			return p.then((res) => {
 				console.log('TestAction completed', res);
@@ -98,7 +105,7 @@ describe('Base', function() {
 
 			const action = new PromiseAction();
 
-			const p = action.handleEvent({}, 'testEvent');
+			const p = action.handleEvent(new TestState(), 'testEvent');
 
 			return p.then((res) => {
 				console.log('TestAction completed', res);
@@ -110,7 +117,7 @@ describe('Base', function() {
 	describe('#EventCounter', function() {
 		it('Parent Node Counter', function() {
 			const root = new Base('root');
-			const state = {};
+			const state = new TestState();
 
 			return root.handleEvent(state, {})
 			.then(() => root.handleEvent(state, {}))
@@ -124,7 +131,7 @@ describe('Base', function() {
 			const child = new Base('child');
 			const root = new Behavior.Decorator('root', child);
 
-			const state = {};
+			const state = new TestState();
 
 			// Since it has a parent, it should increment
 			// the local node but not the eventCounter

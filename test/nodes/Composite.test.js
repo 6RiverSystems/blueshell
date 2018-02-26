@@ -7,7 +7,7 @@ const assert = require('chai').assert;
 
 const rc = require('../../lib/utils/resultCodes');
 
-const TestActions = require('../nodes/test/Actions');
+const TestActions = require('./test/Actions');
 
 const waitAi = TestActions.waitAi;
 

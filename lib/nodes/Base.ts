@@ -96,7 +96,7 @@ export class Base<S extends BlueshellState, E> {
 	/*
 	 * Returns storage unique to this node, keyed on the node's path.
 	 */
-	protected getNodeStorage(state: S) {
+	public getNodeStorage(state: S) {
 		let path = this.path;
 		let blueshell = this._privateStorage(state);
 
