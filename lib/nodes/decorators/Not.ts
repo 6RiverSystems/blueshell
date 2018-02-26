@@ -1,17 +1,17 @@
 /**
  * Created by josh on 1/12/16.
  */
-'use strict';
+import {BlueshellState} from '../BlueshellState';
 
-let rc = require('../../utils/resultCodes');
-let Decorator = require('../Decorator');
+import {resultCodes as rc} from '../../utils/resultCodes';
+import {Decorator} from '../Decorator';
 
-class Not extends Decorator {
+export class Not<S extends BlueshellState, E> extends Decorator<S, E> {
 
-	onEvent(state, event) {
+	onEvent(state: S, event: E): Promise<string> {
 		let p = this.child.handleEvent(state, event);
 
-		return p.then(res => {
+		return p.then((res: string) => {
 			switch (res) {
 			case rc.SUCCESS:
 				res = rc.FAILURE;
@@ -27,5 +27,3 @@ class Not extends Decorator {
 		});
 	}
 }
-
-module.exports = Not;

@@ -1,16 +1,13 @@
 /**
  * Created by josh on 1/10/16.
  */
-'use strict';
+import {BlueshellState} from './BlueshellState';
+import {Selector} from './Selector';
+import {Base} from './Base';
 
-let Selector = require('./Selector');
+export class LatchedSelector<S extends BlueshellState, E> extends Selector<S, E> {
 
-class LatchedSelector extends Selector {
-
-	constructor(name, children) {
+	constructor(name: string, children: Base<S, E>[]) {
 		super(name, children, true);
 	}
-
 }
-
-module.exports = LatchedSelector;

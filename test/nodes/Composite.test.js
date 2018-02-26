@@ -3,22 +3,19 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+const assert = require('chai').assert;
 
-let rc = require('../../lib/utils/resultCodes');
-let Behavior = require('../../lib');
+const rc = require('../../lib/utils/resultCodes');
 
-let TestActions = require('../nodes/test/Actions');
+const TestActions = require('../nodes/test/Actions');
 
-let waitAi = TestActions.waitAi;
+const waitAi = TestActions.waitAi;
 
 describe('Composite', function() {
-
 	context('#resetNodeStorage', function() {
-
 		it('should reset child state', function() {
-			let event = {};
-			let state = TestActions.initialState(false);
+			const event = {};
+			const state = TestActions.initialState(false);
 
 			state.overheated = true;
 
@@ -44,7 +41,6 @@ describe('Composite', function() {
 				// Normally would be 0
 				assert.equal(state.cooldownLevel, 1);
 			});
-
 		});
 	});
 });

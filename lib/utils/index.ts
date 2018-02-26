@@ -1,12 +1,10 @@
 /**
  * Created by jpollak on 3/23/16.
  */
-'use strict';
+import {renderTree} from './renderTree';
+import {resultCodes} from './resultCodes';
 
-let renderTree = require('./renderTree');
-let resultCodes = require('./resultCodes');
-
-module.exports = {
+export {
 	renderTree,
 	resultCodes
 };

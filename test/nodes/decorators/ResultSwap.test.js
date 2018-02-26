@@ -1,14 +1,13 @@
 'use strict';
 
-let assert = require('chai').assert;
+const assert = require('chai').assert;
 
-let rc = require('../../../lib/utils/resultCodes');
-let Behavior = require('../../../lib');
-let Action = Behavior.Action;
-let ResultSwap = Behavior.decorators.ResultSwap;
+const rc = require('../../../lib/utils/resultCodes');
+const Behavior = require('../../../lib');
+const Action = Behavior.Action;
+const ResultSwap = Behavior.decorators.ResultSwap;
 
 class SuccessAction extends Action {
-
 	constructor() {
 		super('successAction');
 	}
@@ -19,7 +18,6 @@ class SuccessAction extends Action {
 }
 
 class FailureAction extends Action {
-
 	constructor() {
 		super('failureAction');
 	}
@@ -30,48 +28,39 @@ class FailureAction extends Action {
 }
 
 describe('ResultSwap', function() {
-
 	it('success in action should return success', function() {
-
-		let successAction = new SuccessAction();
-		let resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, successAction);
+		const successAction = new SuccessAction();
+		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, successAction);
 
 		return resultSwap
 		.handleEvent({}, {})
 		.then((response) => {
 			assert.equal(response, rc.SUCCESS);
 		});
-
 	});
 
 	it('failure in action should return success', function() {
-
-		let failureAction = new FailureAction();
-		let resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction);
+		const failureAction = new FailureAction();
+		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction);
 
 		return resultSwap
 		.handleEvent({}, {})
 		.then((response) => {
 			assert.equal(response, rc.SUCCESS);
 		});
-
 	});
 
 	it('should use default name', function() {
-
-		let failureAction = new FailureAction();
-		let resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction);
+		const failureAction = new FailureAction();
+		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction);
 
 		assert.equal(resultSwap.name, 'ResultSwap_FAILURE-SUCCESS-failureAction');
-
 	});
 
 	it('should use overridden name', function() {
-
-		let failureAction = new FailureAction();
-		let resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction, 'foo');
+		const failureAction = new FailureAction();
+		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction, 'foo');
 
 		assert.equal(resultSwap.name, 'foo');
-
 	});
 });

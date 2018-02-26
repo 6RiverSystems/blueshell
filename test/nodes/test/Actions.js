@@ -3,22 +3,20 @@
  */
 'use strict';
 
-let rc = require('../../../lib/utils/resultCodes');
-let Behavior = require('../../../lib');
+const rc = require('../../../lib/utils/resultCodes');
+const Behavior = require('../../../lib');
 
 function initialState(debug) {
 	return {
 		commands: [],
 		__blueshell: {
-			debug
-		}
+			debug,
+		},
 	};
 }
 
 class Recharge extends Behavior.Action {
-
 	onEvent(state, event) {
-
 		let result = rc.SUCCESS;
 
 		state.batteryLevel = state.batteryLevel !== undefined ? ++state.batteryLevel : 1;
@@ -34,9 +32,8 @@ class Recharge extends Behavior.Action {
 }
 
 class WaitForCooldown extends Behavior.Action {
-
 	onEvent(state, event) {
-		let storage = this.getNodeStorage(state);
+		const storage = this.getNodeStorage(state);
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : 1;
 
@@ -56,7 +53,6 @@ class WaitForCooldown extends Behavior.Action {
 }
 
 class EmergencyShutdown extends Behavior.Action {
-
 	onEvent(state, event) {
 		state.commands.push('powerOff');
 
@@ -64,11 +60,11 @@ class EmergencyShutdown extends Behavior.Action {
 	}
 }
 
-let waitAi = new Behavior.LatchedSelector('shutdownWithWaitAi',
+const waitAi = new Behavior.LatchedSelector('shutdownWithWaitAi',
 	[
 		new Recharge(),
 		new WaitForCooldown(),
-		new EmergencyShutdown()
+		new EmergencyShutdown(),
 	]);
 
 module.exports = {
@@ -76,5 +72,5 @@ module.exports = {
 	WaitForCooldown,
 	EmergencyShutdown,
 	initialState,
-	waitAi
+	waitAi,
 };

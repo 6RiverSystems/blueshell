@@ -1,17 +1,15 @@
 /**
  * Created by josh on 1/12/16.
  */
-'use strict';
+import {BlueshellState} from '../BlueshellState';
+import {Base} from '../Base';
+import {RepeatWhen} from './RepeatWhen';
 
-const RepeatWhen = require('./RepeatWhen');
+export class RepeatOnResult<S extends BlueshellState, E> extends RepeatWhen<S, E> {
 
-class RepeatOnResult extends RepeatWhen {
-
-	constructor(repeatRes, child) {
+	constructor(repeatRes: string, child: Base<S, E>) {
 		super('ResultEquals-' + repeatRes, child,
 			(state, event, res) => res === repeatRes);
 	}
 
 }
-
-module.exports = RepeatOnResult;

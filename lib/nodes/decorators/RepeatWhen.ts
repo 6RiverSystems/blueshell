@@ -1,18 +1,23 @@
 /**
  * Created by josh on 1/12/16.
  */
-'use strict';
+import {BlueshellState} from '../BlueshellState';
+import {Base} from '../Base';
+import {Decorator} from '../Decorator';
 
-let Decorator = require('../Decorator');
+interface Conditional<S, E> {
+	(state: S, event: E, res: string): boolean;
+}
 
-class RepeatWhen extends Decorator {
+export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 
-	constructor(desc, child, conditional) {
+	constructor(desc: string,
+	            child: Base<S, E>,
+	            private conditional: Conditional<S, E>) {
 		super('RepeatWhen-' + desc, child);
-		this.conditional = conditional;
 	}
 
-	onEvent(state, event) {
+	onEvent(state: S, event: E): Promise<string> {
 		let p = this.child.handleEvent(state, event);
 
 		return p.then(res => {
@@ -24,5 +29,3 @@ class RepeatWhen extends Decorator {
 		});
 	}
 }
-
-module.exports = RepeatWhen;

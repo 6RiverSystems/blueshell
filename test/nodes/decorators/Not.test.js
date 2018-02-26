@@ -3,51 +3,47 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+const assert = require('chai').assert;
 
-let rc = require('../../../lib/utils/resultCodes');
-let Behavior = require('../../../lib');
-let Action = Behavior.Action;
-let Not = Behavior.decorators.Not;
+const rc = require('../../../lib/utils/resultCodes');
+const Behavior = require('../../../lib');
+const Action = Behavior.Action;
+const Not = Behavior.decorators.Not;
 
 class EchoAction extends Action {
-
 	onEvent(state, event) {
 		return event;
 	}
 }
 
 describe('Not', function() {
-
 	it('should negate the result code', function() {
+		const echo = new EchoAction();
+		const unEcho = new Not('unEcho', echo);
 
-		let echo = new EchoAction();
-		let unEcho = new Not('unEcho', echo);
-
-		let tests = [
+		const tests = [
 			{action: echo, event: rc.SUCCESS, result: rc.SUCCESS},
 			{action: echo, event: rc.FAILURE, result: rc.FAILURE},
 			{action: echo, event: rc.RUNNING, result: rc.RUNNING},
 			{action: unEcho, event: rc.SUCCESS, result: rc.FAILURE},
 			{action: unEcho, event: rc.FAILURE, result: rc.SUCCESS},
-			{action: unEcho, event: rc.RUNNING, result: rc.RUNNING}
+			{action: unEcho, event: rc.RUNNING, result: rc.RUNNING},
 		];
 
-		let makeVerify = function(test) {
+		const makeVerify = function(test) {
 			return function(res) {
 				assert.equal(res, test.result, `${test.action.name} -> ${test.result}`);
 			};
 		};
 
-		let ps = [];
+		const ps = [];
 
-		for (let test of tests) {
-			let p = test.action.handleEvent({}, test.event);
+		for (const test of tests) {
+			const p = test.action.handleEvent({}, test.event);
 
 			ps.push(p.then(makeVerify(test)));
 		}
 
 		return Promise.all(ps);
-
 	});
 });

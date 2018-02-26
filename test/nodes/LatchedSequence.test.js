@@ -3,15 +3,13 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+const assert = require('chai').assert;
 
-let rc = require('../../lib/utils/resultCodes');
-let Behavior = require('../../lib');
+const rc = require('../../lib/utils/resultCodes');
+const Behavior = require('../../lib');
 
 class StopMotors extends Behavior.Action {
-
 	onEvent(state, event) {
-
 		state.commands.push('motorsStopped');
 
 		return rc.SUCCESS;
@@ -19,9 +17,8 @@ class StopMotors extends Behavior.Action {
 }
 
 class StopLasers extends Behavior.Action {
-
 	onEvent(state, event) {
-		let storage = this.getNodeStorage(state);
+		const storage = this.getNodeStorage(state);
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : state.laserCooldownTime;
 
@@ -40,7 +37,6 @@ class StopLasers extends Behavior.Action {
 }
 
 class Shutdown extends Behavior.Action {
-
 	onEvent(state, event) {
 		state.commands.push('powerOff');
 
@@ -48,26 +44,24 @@ class Shutdown extends Behavior.Action {
 	}
 }
 
-let shutdownSequence = new Behavior.LatchedSequence('shutdownWithWaitAi',
+const shutdownSequence = new Behavior.LatchedSequence('shutdownWithWaitAi',
 	[
 		new StopMotors(),
 		new StopLasers(),
-		new Shutdown()
+		new Shutdown(),
 	], true);
 
 describe('LatchedSelector', function() {
-
 	it('should run correctly', function() {
-
 		// With a happy bot
-		let botState = {
+		const botState = {
 			laserCooldownTime: 0,
-			commands: []
+			commands: [],
 		};
 
-		let p = shutdownSequence.handleEvent(botState, 'lowBattery');
+		const p = shutdownSequence.handleEvent(botState, 'lowBattery');
 
-		return p.then(res => {
+		return p.then((res) => {
 			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
 			assert.equal(botState.commands.length, 3, 'Need Three Commands');
 			assert.equal(botState.commands[0], 'motorsStopped');
@@ -78,21 +72,20 @@ describe('LatchedSelector', function() {
 
 	it('should loop correctly', function() {
 		// With a happy bot
-		let botState = {
+		const botState = {
 			laserCooldownTime: 1,
-			commands: []
+			commands: [],
 		};
 
-		let p = shutdownSequence.handleEvent(botState, 'lowBattery 1');
+		const p = shutdownSequence.handleEvent(botState, 'lowBattery 1');
 
-		return p.then(res => {
+		return p.then((res) => {
 			assert.equal(res, rc.RUNNING, 'Behavior Tree Running');
 			assert.equal(botState.commands.length, 1);
 			assert.equal(botState.commands[0], 'motorsStopped');
 
 			return shutdownSequence.handleEvent(botState, 'lowBattery 2');
-		}).then(res => {
-
+		}).then((res) => {
 			assert.equal(res, rc.SUCCESS, 'Behavior Tree Success');
 			assert.equal(botState.commands.length, 3, 'Need Three Commands');
 			assert.equal(botState.commands[0], 'motorsStopped');

@@ -1,16 +1,16 @@
 /**
  * Created by josh on 1/18/16.
  */
-'use strict';
+import {Composite} from './Composite';
+import {BlueshellState} from './BlueshellState';
 
-let rc = require('./../utils/resultCodes');
-let Composite = require('./Composite');
+import {resultCodes as rc} from '../utils/resultCodes';
 
-class Selector extends Composite {
+export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 
 	// Recursively sends the event to each child until one of them returns
 	// success or running. If we exhaust all the children, return failure.
-	handleChild(state, event, i) {
+	handleChild(state: S, event: E, i: number): Promise<string> {
 
 		let storage = this.getNodeStorage(state);
 
@@ -23,7 +23,7 @@ class Selector extends Composite {
 
 		return child.handleEvent(state, event)
 		.then(res => this._afterChild(res, state, event))
-		.then(([res, state_, event_]) => {
+		.then(({res, state: state_, event: event_}) => {
 			if (res !== rc.FAILURE) {
 
 				if (this.latched && res === rc.RUNNING) {
@@ -37,10 +37,7 @@ class Selector extends Composite {
 		});
 	}
 
-	_afterChild(res, state, event) {
-		return [res, state, event];
+	_afterChild(res: string, state: S, event: E) {
+		return {res, state, event};
 	}
-
 }
-
-module.exports = Selector;

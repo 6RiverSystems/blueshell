@@ -1,10 +1,10 @@
-'use strict';
+import {BlueshellState} from './BlueshellState';
+import {Base} from './Base';
+import {Composite} from './Composite';
 
-let Composite = require('./Composite');
+export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 
-class Decorator extends Composite {
-
-	constructor(name, child) {
+	constructor(name: string, child: Base<S, E>) {
 		super(name, [child]);
 	}
 
@@ -12,11 +12,8 @@ class Decorator extends Composite {
 		return this.children[0];
 	}
 
-	onEvent(state, event) {
+	onEvent(state: S, event: E): Promise<string> {
 		// Passthrough
 		return this.child.handleEvent(state, event);
 	}
-
 }
-
-module.exports = Decorator;

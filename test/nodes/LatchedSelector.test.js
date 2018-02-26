@@ -3,34 +3,32 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+const assert = require('chai').assert;
 
-let rc = require('../../lib/utils/resultCodes');
-let Behavior = require('../../lib');
+const rc = require('../../lib/utils/resultCodes');
+const Behavior = require('../../lib');
 
-let TestActions = require('./test/Actions');
+const TestActions = require('./test/Actions');
 
-let shutdownAi = new Behavior.LatchedSelector('shutdownAi',
+const shutdownAi = new Behavior.LatchedSelector('shutdownAi',
 	[
 		new TestActions.Recharge(),
-		new TestActions.EmergencyShutdown()
+		new TestActions.EmergencyShutdown(),
 	]);
 
-let waitAi = TestActions.waitAi;
+const waitAi = TestActions.waitAi;
 
 describe('LatchedSelector', function() {
-
 	it('should return success', function() {
-
 		// With a happy bot
-		let botState = {
+		const botState = {
 			overheated: false,
-			commands: []
+			commands: [],
 		};
 
-		let p = shutdownAi.handleEvent(botState, 'lowBattery');
+		const p = shutdownAi.handleEvent(botState, 'lowBattery');
 
-		return p.then(res => {
+		return p.then((res) => {
 			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
 			assert.equal(botState.commands.length, 1, 'Only one command');
 			assert.equal(botState.commands[0], 'findDock', 'Searching for dock');
@@ -39,19 +37,19 @@ describe('LatchedSelector', function() {
 
 	it('should return failure', function() {
 		// With a happy bot
-		let botState = {
+		const botState = {
 			overheated: true,
-			commands: []
+			commands: [],
 		};
 
-		let p = waitAi.handleEvent(botState, 'lowBattery 1');
+		const p = waitAi.handleEvent(botState, 'lowBattery 1');
 
-		return p.then(res => {
+		return p.then((res) => {
 			assert.equal(res, rc.RUNNING, 'Behavior Tree Running');
 			assert.equal(botState.batteryLevel, 1, 'Ran recharge only once');
 
 			return waitAi.handleEvent(botState, 'lowBattery 2');
-		}).then(res => {
+		}).then((res) => {
 			assert.equal(res, rc.SUCCESS, 'Behavior Tree Success');
 			assert.equal(botState.commands.length, 0, 'No commands, waiting for cooldown');
 
@@ -60,7 +58,7 @@ describe('LatchedSelector', function() {
 			assert.equal(botState.batteryLevel, 1, 'Ran recharge only once');
 
 			return waitAi.handleEvent(botState, 'lowBattery 3');
-		}).then(res => {
+		}).then((res) => {
 			assert.equal(res, rc.SUCCESS, 'Behavior Tree Success');
 			assert.equal(botState.commands.length, 1, 'Only one command');
 			assert.equal(botState.commands[0], 'findDock', 'Searching for dock');

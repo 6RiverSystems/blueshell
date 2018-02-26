@@ -3,34 +3,32 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+const assert = require('chai').assert;
 
-let rc = require('../../lib/utils/resultCodes');
-let Behavior = require('../../lib');
-let renderTree = require('../../lib/utils/renderTree');
+const rc = require('../../lib/utils/resultCodes');
+const renderTree = require('../../lib/utils/renderTree');
 
-let TestActions = require('../nodes/test/Actions');
+const TestActions = require('../nodes/test/Actions');
 
-let waitAi = TestActions.waitAi;
+const waitAi = TestActions.waitAi;
 
 describe('renderTree', function() {
-
 	it('should not crash', function(done) {
 		renderTree.toConsole(waitAi);
 		done();
 	});
 
 	it('should generate a tree of nodes without a state', function(done) {
-		let a = renderTree(waitAi);
+		const a = renderTree(waitAi);
 
 		assert.ok(a);
 		assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
 
-		let expectedWords = [
+		const expectedWords = [
 			'(LatchedSelector)',
 			'Recharge',
 			'WaitForCooldown',
-			'EmergencyShutdown'
+			'EmergencyShutdown',
 		];
 
 		assertWordsInString(a, expectedWords);
@@ -43,8 +41,8 @@ describe('renderTree', function() {
 	});
 
 	it('should generate a tree of nodes with state', function() {
-		let state = TestActions.initialState(false);
-		let event = {};
+		const state = TestActions.initialState(false);
+		const event = {};
 
 		state.overheated = true;
 
@@ -53,31 +51,29 @@ describe('renderTree', function() {
 			console.error(err.stack);
 		})
 		.then(() => {
-			let a = renderTree(waitAi, state);
+			const a = renderTree(waitAi, state);
 
 			assert.ok(a);
 			assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
 
-			let expectedWords = [
+			const expectedWords = [
 				'(LatchedSelector)',
 				rc.RUNNING,
 				'Recharge',
 				rc.FAILURE,
 				'WaitForCooldown',
 				rc.RUNNING,
-				'EmergencyShutdown'
+				'EmergencyShutdown',
 			];
 
 			assertWordsInString(a, expectedWords);
 		});
 	});
-
 });
 
 function assertWordsInString(s, words) {
-
-	for (let word of words) {
-		let wordPos = s.indexOf(word);
+	for (const word of words) {
+		const wordPos = s.indexOf(word);
 
 		assert.isAbove(wordPos, 0, 'Expected to find ' + word);
 

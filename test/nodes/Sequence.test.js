@@ -3,15 +3,13 @@
  */
 'use strict';
 
-let assert = require('chai').assert;
+const assert = require('chai').assert;
 
-let rc = require('../../lib/utils/resultCodes');
-let Behavior = require('../../lib');
+const rc = require('../../lib/utils/resultCodes');
+const Behavior = require('../../lib');
 
 class ShootFlares extends Behavior.Action {
-
 	onEvent(state, event) {
-
 		let result = rc.FAILURE;
 
 		if (state.flares > 0) {
@@ -24,7 +22,6 @@ class ShootFlares extends Behavior.Action {
 }
 
 class EvasiveManeuver extends Behavior.Action {
-
 	onEvent(state, event) {
 		state.commands.push('turnLeft');
 
@@ -32,22 +29,22 @@ class EvasiveManeuver extends Behavior.Action {
 	}
 }
 
-let droneAi = new Behavior.Sequence('droneAi',
+const droneAi = new Behavior.Sequence('droneAi',
 	[
 		new ShootFlares(),
-		new EvasiveManeuver()
+		new EvasiveManeuver(),
 	]);
 
 describe('Sequence', function() {
 	it('should return success', function() {
 		// With an armed jet
-		let jetState = {
+		const jetState = {
 			flares: 2,
-			commands: []
+			commands: [],
 		};
-		let p = droneAi.handleEvent(jetState, 'underAttack');
+		const p = droneAi.handleEvent(jetState, 'underAttack');
 
-		return p.then(res => {
+		return p.then((res) => {
 			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
 			assert.equal(jetState.flares, 1, 'Used Flares');
 			assert.equal(jetState.commands[0], 'turnLeft', 'Turning Left');
@@ -56,17 +53,16 @@ describe('Sequence', function() {
 
 	it('should return failure', function() {
 		// With an empty jet
-		let emptyJet = {
+		const emptyJet = {
 			flares: 0,
-			commands: []
+			commands: [],
 		};
-		let p = droneAi.handleEvent(emptyJet, 'underAttack');
+		const p = droneAi.handleEvent(emptyJet, 'underAttack');
 
-		return p.then(res => {
+		return p.then((res) => {
 			assert.equal(res, rc.FAILURE, 'Behavior Tree failure');
 			assert.equal(emptyJet.flares, 0, 'Used Flares');
 			assert.equal(emptyJet.commands.length, 0, 'No Commands');
 		});
-
 	});
 });

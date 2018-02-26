@@ -1,11 +1,13 @@
 /**
  * Created by jpollak on 3/23/16.
  */
-'use strict';
+import {Base} from '../nodes/Base';
+import {BlueshellState} from '../nodes/BlueshellState';
 
-let archy = require('archy');
+import * as archy from 'archy';
+import {Data} from 'archy';
 
-function buildArchyTree(node, state) {
+function buildArchyTree<S extends BlueshellState, E>(node: Base<S, E>, state: S): Data {
 
 	let nodeLabel = node.name;
 
@@ -24,31 +26,35 @@ function buildArchyTree(node, state) {
 
 	}
 
-	let archyTree = {
+	const archyTree = {
 		label: nodeLabel,
-		nodes: []
+		nodes: new Array<Data | string>(),
 	};
 
-	if (node.children) {
-		for (let child of node.children) {
-			archyTree.nodes.push(buildArchyTree(child, state));
+	if ((<any>node).children) {
+		for (let child of (<any>node).children) {
+			archyTree.nodes.push(buildArchyTree(<Base<S,E>>child, state));
 		}
 	}
 
 	return archyTree;
 }
 
-function renderTree(tree, state) {
+interface BlueshellRenderer {
+	<S extends BlueshellState, E>(tree: Base<S, E>, state: S): string;
+
+	toConsole?<S extends BlueshellState, E>(tree: Base<S, E>, state: S): any;
+}
+
+export const renderTree: BlueshellRenderer = function <S extends BlueshellState, E>(tree: Base<S, E>, state: S): string {
 	let a = buildArchyTree(tree, state);
 	let renderedTree = archy(a);
 
 	return renderedTree;
 }
 
-function toConsole(tree, state) {
+function toConsole<S extends BlueshellState, E>(tree: Base<S, E>, state: S) {
 	console.log(renderTree(tree, state)); // eslint-disable-line no-console
 }
 
 renderTree.toConsole = toConsole;
-
-module.exports = renderTree;

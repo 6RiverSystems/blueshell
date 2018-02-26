@@ -1,16 +1,18 @@
 /**
  * Created by josh on 1/10/16.
  */
+
 'use strict';
 
-let rc = require('./../utils/resultCodes');
-let Composite = require('./Composite');
+import {BlueshellState} from './BlueshellState';
+import {resultCodes as rc} from '../utils/resultCodes';
+import {Composite} from './Composite';
 
-class Sequence extends Composite {
+export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 
 	// Recursively executes children until one of them returns
 	// failure. If we call all the children successfully, return success.
-	handleChild(state, event, i) {
+	handleChild(state: S, event: E, i: number): Promise<string> {
 
 		let storage = this.getNodeStorage(state);
 
@@ -23,7 +25,7 @@ class Sequence extends Composite {
 
 		return child.handleEvent(state, event)
 		.then(res => this._afterChild(res, state, event))
-		.then(([res, state_, event_]) => {
+		.then(({res, state: state_, event: event_}) => {
 			if (res === rc.SUCCESS) {
 				// Call the next child
 				return this.handleChild(state_, event_, ++i);
@@ -37,8 +39,8 @@ class Sequence extends Composite {
 		});
 	}
 
-	_afterChild(res, state, event) {
-		return [res, state, event];
+	_afterChild(res: string, state: S, event: E) {
+		return {res, state, event};
 	}
 }
 

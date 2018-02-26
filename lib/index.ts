@@ -1,23 +1,25 @@
-'use strict';
+import {Base} from './nodes/Base';
+import {Composite} from './nodes/Composite';
+import {Decorator} from './nodes/Decorator';
+import {Sequence} from './nodes/Sequence';
+import {Selector} from './nodes/Selector';
+import {LatchedSelector} from './nodes/LatchedSelector';
+import {LatchedSequence} from './nodes/LatchedSequence';
+import {IfElse} from './nodes/IfElse';
+// import {resultCodes} from './utils/resultCodes';
 
-let Base = require('./nodes/Base');
-let Composite = require('./nodes/Composite');
-let Decorator = require('./nodes/Decorator');
-let Selector = require('./nodes/Selector');
-let Sequence = require('./nodes/Sequence');
-let LatchedSelector = require('./nodes/LatchedSelector');
-let LatchedSequence = require('./nodes/LatchedSequence');
-let IfElse = require('./nodes/IfElse');
+import * as utils from './utils';
+import * as decorators from './nodes/decorators';
 
-let decorators = require('./nodes/decorators');
+const Action = Base;
+const Condition = Base;
+const resultCodes = utils.resultCodes;
 
-let utils = require('./utils');
-
-module.exports = {
+export {
 	// Base types to be extended
-	Action: Base,
+	Action,
 	Composite,
-	Condition: Base,
+	Condition,
 	Decorator,
 
 	// Decorators
@@ -34,6 +36,6 @@ module.exports = {
 	utils,
 
 	// Result Codes
-	resultCodes: utils.resultCodes
+	resultCodes,
 
 };
