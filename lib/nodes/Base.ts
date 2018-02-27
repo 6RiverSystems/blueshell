@@ -60,7 +60,7 @@ export class Base<S extends BlueshellState, E> {
 	}
 
 	// Logging
-	_afterEvent(res: string, state: S, event: E): string {
+	_afterEvent(res: string, state: S, event: E): string|Promise<string> {
 
 		if (this.getDebug(state)) {
 			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console

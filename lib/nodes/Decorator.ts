@@ -12,7 +12,7 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 		return this.children[0];
 	}
 
-	onEvent(state: S, event: E): Promise<string> {
+	onEvent(state: S, event: E): string|Promise<string> {
 		// Passthrough
 		return this.child.handleEvent(state, event);
 	}

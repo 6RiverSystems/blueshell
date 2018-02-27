@@ -22,7 +22,7 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 		let child = this.children[i];
 
 		return child.handleEvent(state, event)
-		.then(res => this._afterChild(res, state, event))
+		.then((res) => this._afterChild(res, state, event))
 		.then(({res, state: state_, event: event_}) => {
 			if (res !== rc.FAILURE) {
 

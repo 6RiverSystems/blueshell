@@ -1,14 +1,7 @@
 /**
  * Created by josh on 1/21/16.
  */
-import {Not} from './Not';
-import {RepeatWhen} from './RepeatWhen';
-import {RepeatOnResult} from './RepeatOnResult';
-import {ResultSwap} from './ResultSwap';
-
-export {
-	Not,
-	RepeatWhen,
-	RepeatOnResult,
-	ResultSwap
-};
+export {Not} from './Not';
+export {RepeatWhen} from './RepeatWhen';
+export {RepeatOnResult} from './RepeatOnResult';
+export {ResultSwap} from './ResultSwap';

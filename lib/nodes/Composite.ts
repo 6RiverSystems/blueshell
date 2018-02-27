@@ -29,7 +29,7 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 		return this._latched;
 	}
 
-	onEvent(state: S, event: E): Promise<string> {
+	onEvent(state: S, event: E): string|Promise<string> {
 
 		let storage = this.getNodeStorage(state);
 
