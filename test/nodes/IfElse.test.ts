@@ -1,44 +1,46 @@
 /**
  * Created by josh on 1/10/16.
  */
-'use strict';
+import {assert} from 'chai';
 
-let assert = require('chai').assert;
+import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
-let rc = require('../../lib/utils/resultCodes');
-let Behavior = require('../../lib');
+import * as Behavior from '../../lib';
+import {BlueshellState} from '../../lib/nodes/BlueshellState';
+
+class TestState implements BlueshellState {
+	public success: boolean = false;
+	public errorReason?: Error;
+	public __blueshell: any;
+}
 
 describe('IfElse', function() {
-
-	let successAction = new class extends Behavior.Action {
-		onEvent(state, event) {
-
+	const successAction = new (class extends Behavior.Action<TestState, string> {
+		onEvent(state: TestState, event: string) {
 			state.success = true;
 
 			return rc.SUCCESS;
 		}
-	};
+	})();
 
-	let failureAction = new class extends Behavior.Action {
-		onEvent(state, event) {
-
+	const failureAction = new (class extends Behavior.Action<TestState, string> {
+		onEvent(state: TestState, event: string) {
 			state.success = false;
 
 			return rc.FAILURE;
 		}
-	};
+	})();
 
 	it('should return success when conditional is true with no alternative', function() {
-
-		let ifElse = new Behavior.IfElse('testIfElse',
+		const ifElse = new Behavior.IfElse('testIfElse',
 			(state, event) => true,
 			successAction
 		);
 
-		let state = {};
-		let p = ifElse.handleEvent(state, 'testEvent');
+		const state = new TestState();
+		const p = ifElse.handleEvent(state, 'testEvent');
 
-		return p.then(res => {
+		return p.then((res) => {
 			assert.notOk(state.errorReason);
 			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
 			assert.isTrue(state.success, 'Expected Action was called');
@@ -46,17 +48,16 @@ describe('IfElse', function() {
 	});
 
 	it('should return success when conditional is true with an alternative', function() {
-
-		let ifElse = new Behavior.IfElse('testIfElse',
+		const ifElse = new Behavior.IfElse('testIfElse',
 			(state, event) => true,
 			successAction,
 			failureAction
 		);
 
-		let state = {};
-		let p = ifElse.handleEvent(state, 'testEvent');
+		const state = new TestState();
+		const p = ifElse.handleEvent(state, 'testEvent');
 
-		return p.then(res => {
+		return p.then((res) => {
 			assert.notOk(state.errorReason);
 			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
 			assert.isTrue(state.success, 'Expected Action was called');
@@ -64,17 +65,16 @@ describe('IfElse', function() {
 	});
 
 	it('should return success when conditional is false', function() {
-
-		let ifElse = new Behavior.IfElse('testIfElse',
+		const ifElse = new Behavior.IfElse('testIfElse',
 			(state, event) => false,
 			failureAction,
 			successAction
 		);
 
-		let state = {};
-		let p = ifElse.handleEvent(state, 'testEvent');
+		const state = new TestState();
+		const p = ifElse.handleEvent(state, 'testEvent');
 
-		return p.then(res => {
+		return p.then((res) => {
 			assert.notOk(state.errorReason);
 			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
 			assert.isTrue(state.success, 'Expected Action was called');
@@ -83,16 +83,15 @@ describe('IfElse', function() {
 
 
 	it('should return failure when conditional is false and there is no alternative', function() {
-
-		let ifElse = new Behavior.IfElse('testIfElse',
+		const ifElse = new Behavior.IfElse('testIfElse',
 			(state, event) => false,
 			successAction
 		);
 
-		let state = {};
-		let p = ifElse.handleEvent(state, 'testEvent');
+		const state = new TestState();
+		const p = ifElse.handleEvent(state, 'testEvent');
 
-		return p.then(res => {
+		return p.then((res) => {
 			assert.notOk(state.errorReason);
 			assert.equal(res, rc.FAILURE, 'Behavior Tree success');
 			assert.isNotTrue(state.success, 'Expected Action was called');

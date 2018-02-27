@@ -1,31 +1,32 @@
 /**
  * Created by jpollak on 5/29/16.
  */
-'use strict';
+import {Base} from './Base';
+import {BlueshellState} from './BlueshellState';
+import {resultCodes as rc} from '../utils/resultCodes';
 
-let rc = require('./../utils/resultCodes');
-let Base = require('./Base');
-
+export interface Conditional<S, E> {
+	(state: S, event: E): boolean;
+}
 
 /**
  * If-Else Conditional Composite Node.
  *
- * If conditional(state, event) returns true,
+ * If conditional(state: S, event: E) returns true,
  * control is passed to the consequent node.
  *
- * If conditional(state, event) returns false,
+ * If conditional(state: S, event: E) returns false,
  * control is passed to the alternative node, or
  * if one is not provided, 'FAILURE' is returned.
  *
  */
-class IfElse extends Base {
+export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
 
-	constructor(name, conditional, consequent, alternative) {
+	constructor(name: string,
+	            private conditional: Conditional<S, E>,
+	            private consequent: any,
+	            private alternative?: any) {
 		super(name);
-
-		this.conditional = conditional;
-		this.consequent = consequent;
-		this.alternative = alternative;
 	}
 
 	get children() {
@@ -38,7 +39,7 @@ class IfElse extends Base {
 		return children;
 	}
 
-	onEvent(state, event) {
+	onEvent(state: S, event: E) {
 
 		if (this.conditional(state, event)) {
 			return this.consequent.handleEvent(state, event);
@@ -48,7 +49,4 @@ class IfElse extends Base {
 			return rc.FAILURE;
 		}
 	}
-
 }
-
-module.exports = IfElse;

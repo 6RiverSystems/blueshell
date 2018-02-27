@@ -1,30 +1,35 @@
-'use strict';
+import {Base} from './Base';
+import {BlueshellState} from './BlueshellState';
 
-let Base = require('./Base');
+export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 
-class Composite extends Base {
-
-	constructor(name, children, latched) {
+	constructor(name: string,
+	            private _children: Base<S, E>[],
+	            private _latched: boolean = false) {
 		super(name);
-
-		// console.log(`${name} constructed with ${children.length} children`);
-		this.children = children;
-		this.latched = latched;
 
 		for (let child of this.children) {
 			child.parent = this.name;
 		}
 	}
 
-	set parent(parent) {
-		this._parent = parent;
+	set parent(parent: string) {
+		super.parent = parent;
 
 		for (let child of this.children) {
 			child.parent = parent + '_' + this.name;
 		}
 	}
 
-	onEvent(state, event) {
+	get children() {
+		return this._children;
+	}
+
+	get latched() {
+		return this._latched;
+	}
+
+	onEvent(state: S, event: E): string|Promise<string> {
 
 		let storage = this.getNodeStorage(state);
 
@@ -42,19 +47,15 @@ class Composite extends Base {
 		return this.handleChild(state, event, firstChild);
 	}
 
-	handleChild(state, event, i) {
+	handleChild(state: S, event: E, i: number): Promise<string> {
 		throw new Error('This is an abstract method - please override.');
 	}
 
-	resetNodeStorage(state) {
+	resetNodeStorage(state: S) {
 		super.resetNodeStorage(state);
 
 		for (let child of this.children) {
 			child.resetNodeStorage(state);
 		}
 	}
-
-
 }
-
-module.exports = Composite;

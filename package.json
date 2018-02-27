@@ -2,13 +2,26 @@
   "name": "blueshell",
   "version": "0.0.0-development",
   "description": "A Behavior Tree implementation in modern Javascript",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
   "scripts": {
-    "pretest": "eslint .",
-    "test": "NODE_ENV=test NODE_PATH=$NODE_PATH:./ istanbul cover node_modules/.bin/_mocha -- ${MOCHA_OPTS}",
-    "test:no-cover": "NODE_ENV=test NODE_PATH=$NODE_PATH:./ mocha",
-    "test:debug": "npm run test:no-cover -- --debug-brk",
-    "posttest": "nsp check",
+    "clean": "npm-run-all clean:js",
+    "clean:js": "shx rm -rf dist",
+    "compile": "npm-run-all compile:js",
+    "compile:js": "tsc --pretty",
+    "compile:watch": "tsc --pretty --watch",
+    "pretest": "npm-run-all pretest:eslint",
+    "pretest:eslint": "eslint .",
+    "pretest:nsp": "nsp check",
+    "test": "NODE_ENV=test nyc mocha ${MOCHA_OPTS}",
+    "test:no-cover": "NODE_ENV=test mocha",
+    "test:debug": "npm run test:no-cover -- --debug-brk test",
+    "coverage": "NODE_ENV=test nyc report --reporter=text-lcov | coveralls",
+    "prepublish": "npm-run-all clean compile",
     "commitmsg": "validate-commit-msg"
   },
   "repository": {
@@ -19,7 +32,10 @@
     "behavior-tree",
     "finite",
     "state",
-    "machines"
+    "machines",
+    "redux",
+    "immutable",
+    "reactive"
   ],
   "author": "Joshua Chaitin-Pollak",
   "license": "ISC",
@@ -28,21 +44,33 @@
   },
   "homepage": "https://github.com/6RiverSystems/blueshell#readme",
   "devDependencies": {
-    "chai": "^3.5.0",
-    "cz-conventional-changelog": "^2.0.0",
-    "eslint": "3.19.0",
-    "eslint-config-defaults": "~9.0.0",
-    "husky": "^0.13.4",
-    "istanbul": "^0.4.4",
-    "mocha": "^3.0.0",
-    "mocha-junit-reporter": "^1.13.0",
-    "nsp": "^2.2.1",
-    "proxyquire": "^1.7.3",
-    "sinon": "^2.2.0",
-    "validate-commit-msg": "^2.12.2"
+    "@types/archy": "0.0.31",
+    "@types/chai": "^4.0.4",
+    "@types/mocha": "^2.2.43",
+    "@types/node": "^9.4.6",
+    "@types/reflect-metadata": "^0.1.0",
+    "chai": "^4.1.2",
+    "cz-conventional-changelog": "^2.1.0",
+    "eslint": "^4.18.1",
+    "eslint-config-6river": "^1.1.0",
+    "eslint-plugin-mocha": "^4.11.0",
+    "eslint-plugin-typescript": "^0.9.0",
+    "husky": "^0.14.3",
+    "mocha": "^5.0.1",
+    "mocha-junit-reporter": "^1.17.0",
+    "npm-run-all": "^4.1.2",
+    "nsp": "^3.2.1",
+    "nyc": "^11.4.1",
+    "shx": "^0.2.2",
+    "sinon": "^4.4.2",
+    "ts-node": "^5.0.0",
+    "typescript": "^2.7.2",
+    "typescript-eslint-parser": "^14.0.0",
+    "validate-commit-msg": "^2.14.0"
   },
   "dependencies": {
-    "archy": "^1.0.0"
+    "archy": "^1.0.0",
+    "source-map-support": "^0.5.3"
   },
   "config": {
     "validate-commit-msg": {
