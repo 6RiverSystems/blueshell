@@ -12,7 +12,6 @@ export class Composite<State> extends Base<State> {
 	constructor(name: string, children: Array<Base<State>>, latched = false) {
 		super(name);
 
-		// console.log(`${name} constructed with ${children.length} children`);
 		this.children = children;
 		this.latched = latched;
 
