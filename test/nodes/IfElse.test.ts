@@ -1,29 +1,35 @@
 /**
  * Created by josh on 1/10/16.
  */
-'use strict';
+import {assert} from 'chai';
 
-const assert = require('chai').assert;
+import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
-const rc = require('../../lib/utils/resultCodes');
-const Behavior = require('../../lib');
+import * as Behavior from '../../lib';
+import {BlueshellState} from '../../lib/nodes/BlueshellState';
+
+class TestState implements BlueshellState {
+	public success: boolean = false;
+	public errorReason?: Error;
+	public __blueshell: any;
+}
 
 describe('IfElse', function() {
-	const successAction = new class extends Behavior.Action {
-		onEvent(state, event) {
+	const successAction = new (class extends Behavior.Action<TestState, string> {
+		onEvent(state: TestState, event: string) {
 			state.success = true;
 
 			return rc.SUCCESS;
 		}
-	};
+	})();
 
-	const failureAction = new class extends Behavior.Action {
-		onEvent(state, event) {
+	const failureAction = new (class extends Behavior.Action<TestState, string> {
+		onEvent(state: TestState, event: string) {
 			state.success = false;
 
 			return rc.FAILURE;
 		}
-	};
+	})();
 
 	it('should return success when conditional is true with no alternative', function() {
 		const ifElse = new Behavior.IfElse('testIfElse',
@@ -31,7 +37,7 @@ describe('IfElse', function() {
 			successAction
 		);
 
-		const state = {};
+		const state = new TestState();
 		const p = ifElse.handleEvent(state, 'testEvent');
 
 		return p.then((res) => {
@@ -48,7 +54,7 @@ describe('IfElse', function() {
 			failureAction
 		);
 
-		const state = {};
+		const state = new TestState();
 		const p = ifElse.handleEvent(state, 'testEvent');
 
 		return p.then((res) => {
@@ -65,7 +71,7 @@ describe('IfElse', function() {
 			successAction
 		);
 
-		const state = {};
+		const state = new TestState();
 		const p = ifElse.handleEvent(state, 'testEvent');
 
 		return p.then((res) => {
@@ -82,7 +88,7 @@ describe('IfElse', function() {
 			successAction
 		);
 
-		const state = {};
+		const state = new TestState();
 		const p = ifElse.handleEvent(state, 'testEvent');
 
 		return p.then((res) => {

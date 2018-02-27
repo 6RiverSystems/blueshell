@@ -1,23 +1,24 @@
 /**
  * Created by josh on 1/15/16.
  */
-'use strict';
+import {assert} from 'chai';
 
-const assert = require('chai').assert;
+import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
-const rc = require('../../lib/utils/resultCodes');
-const Behavior = require('../../lib');
+import * as Behavior from '../../lib';
 
-class StopMotors extends Behavior.Action {
-	onEvent(state, event) {
+import {RobotState} from './test/RobotActions';
+
+class StopMotors extends Behavior.Action<RobotState, string> {
+	onEvent(state: RobotState, event: string) {
 		state.commands.push('motorsStopped');
 
 		return rc.SUCCESS;
 	}
 }
 
-class StopLasers extends Behavior.Action {
-	onEvent(state, event) {
+class StopLasers extends Behavior.Action<RobotState, string> {
+	onEvent(state: RobotState, event: string) {
 		const storage = this.getNodeStorage(state);
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : state.laserCooldownTime;
@@ -36,8 +37,8 @@ class StopLasers extends Behavior.Action {
 	}
 }
 
-class Shutdown extends Behavior.Action {
-	onEvent(state, event) {
+class Shutdown extends Behavior.Action<RobotState, string> {
+	onEvent(state: RobotState, event: string) {
 		state.commands.push('powerOff');
 
 		return rc.SUCCESS;
@@ -49,15 +50,13 @@ const shutdownSequence = new Behavior.LatchedSequence('shutdownWithWaitAi',
 		new StopMotors(),
 		new StopLasers(),
 		new Shutdown(),
-	], true);
+	]);
 
 describe('LatchedSelector', function() {
 	it('should run correctly', function() {
 		// With a happy bot
-		const botState = {
-			laserCooldownTime: 0,
-			commands: [],
-		};
+		const botState = new RobotState();
+		botState.laserCooldownTime = 0;
 
 		const p = shutdownSequence.handleEvent(botState, 'lowBattery');
 
@@ -72,10 +71,8 @@ describe('LatchedSelector', function() {
 
 	it('should loop correctly', function() {
 		// With a happy bot
-		const botState = {
-			laserCooldownTime: 1,
-			commands: [],
-		};
+		const botState = new RobotState();
+		botState.laserCooldownTime = 1;
 
 		const p = shutdownSequence.handleEvent(botState, 'lowBattery 1');
 

@@ -5,6 +5,10 @@ import {Base} from './Base';
 import {BlueshellState} from './BlueshellState';
 import {resultCodes as rc} from '../utils/resultCodes';
 
+interface Conditional<S, E> {
+	(state: S, event: E): boolean;
+}
+
 /**
  * If-Else Conditional Composite Node.
  *
@@ -19,9 +23,9 @@ import {resultCodes as rc} from '../utils/resultCodes';
 export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
 
 	constructor(name: string,
-	            private conditional: any,
+	            private conditional: Conditional<S, E>,
 	            private consequent: any,
-	            private alternative: any) {
+	            private alternative?: any) {
 		super(name);
 	}
 

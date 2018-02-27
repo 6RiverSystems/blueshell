@@ -1,15 +1,15 @@
 /**
  * Created by josh on 1/10/16.
  */
-'use strict';
+import {assert} from 'chai';
 
-const assert = require('chai').assert;
+import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
-const rc = require('../../lib/utils/resultCodes');
-const Behavior = require('../../lib');
+import * as Behavior from '../../lib';
+import {DroneState} from './test/DroneActions';
 
-class ShootFlares extends Behavior.Action {
-	onEvent(state, event) {
+class ShootFlares extends Behavior.Action<DroneState, string> {
+	onEvent(state: DroneState, event: string) {
 		let result = rc.FAILURE;
 
 		if (state.flares > 0) {
@@ -21,8 +21,8 @@ class ShootFlares extends Behavior.Action {
 	}
 }
 
-class EvasiveManeuver extends Behavior.Action {
-	onEvent(state, event) {
+class EvasiveManeuver extends Behavior.Action<DroneState, string>  {
+	onEvent(state: DroneState, event: string) {
 		state.commands.push('turnLeft');
 
 		return rc.SUCCESS;
@@ -38,10 +38,9 @@ const droneAi = new Behavior.Sequence('droneAi',
 describe('Sequence', function() {
 	it('should return success', function() {
 		// With an armed jet
-		const jetState = {
-			flares: 2,
-			commands: [],
-		};
+		const jetState = new DroneState();
+		jetState.flares = 2;
+
 		const p = droneAi.handleEvent(jetState, 'underAttack');
 
 		return p.then((res) => {
@@ -53,16 +52,15 @@ describe('Sequence', function() {
 
 	it('should return failure', function() {
 		// With an empty jet
-		const emptyJet = {
-			flares: 0,
-			commands: [],
-		};
-		const p = droneAi.handleEvent(emptyJet, 'underAttack');
+		const emptyDrone = new DroneState();
+		emptyDrone.flares = 0;
+
+		const p = droneAi.handleEvent(emptyDrone, 'underAttack');
 
 		return p.then((res) => {
 			assert.equal(res, rc.FAILURE, 'Behavior Tree failure');
-			assert.equal(emptyJet.flares, 0, 'Used Flares');
-			assert.equal(emptyJet.commands.length, 0, 'No Commands');
+			assert.equal(emptyDrone.flares, 0, 'Used Flares');
+			assert.equal(emptyDrone.commands.length, 0, 'No Commands');
 		});
 	});
 });

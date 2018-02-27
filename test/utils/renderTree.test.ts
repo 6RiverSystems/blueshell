@@ -1,25 +1,21 @@
 /**
  * Created by josh on 3/23/16.
  */
-'use strict';
+import {assert} from 'chai';
 
-const assert = require('chai').assert;
+import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
-const rc = require('../../lib/utils/resultCodes');
-const renderTree = require('../../lib/utils/renderTree');
-
-const TestActions = require('../nodes/test/Actions');
-
-const waitAi = TestActions.waitAi;
+import {renderTree} from '../../lib';
+import {RobotState, waitAi} from '../nodes/test/RobotActions';
 
 describe('renderTree', function() {
 	it('should not crash', function(done) {
-		renderTree.toConsole(waitAi);
+		renderTree!.toConsole(waitAi);
 		done();
 	});
 
 	it('should generate a tree of nodes without a state', function(done) {
-		const a = renderTree(waitAi);
+		const a = renderTree.toString(waitAi);
 
 		assert.ok(a);
 		assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
@@ -41,8 +37,8 @@ describe('renderTree', function() {
 	});
 
 	it('should generate a tree of nodes with state', function() {
-		const state = TestActions.initialState(false);
-		const event = {};
+		const state = new RobotState();
+		const event = 'testEvent';
 
 		state.overheated = true;
 
@@ -51,7 +47,7 @@ describe('renderTree', function() {
 			console.error(err.stack);
 		})
 		.then(() => {
-			const a = renderTree(waitAi, state);
+			const a = renderTree.toString(waitAi, state);
 
 			assert.ok(a);
 			assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
@@ -71,7 +67,7 @@ describe('renderTree', function() {
 	});
 });
 
-function assertWordsInString(s, words) {
+function assertWordsInString(s: string, words: string[]) {
 	for (const word of words) {
 		const wordPos = s.indexOf(word);
 

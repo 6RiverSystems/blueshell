@@ -1,23 +1,21 @@
 /**
  * Created by josh on 1/21/16.
  */
-'use strict';
+import {assert} from 'chai';
 
-const assert = require('chai').assert;
+import {resultCodes as rc} from '../../../lib/utils/resultCodes';
 
-const rc = require('../../../lib/utils/resultCodes');
-const Behavior = require('../../../lib');
+import * as Behavior from '../../../lib';
+import {DroneState} from '../test/DroneActions';
+
 const Action = Behavior.Action;
 const RepeatOnResult = Behavior.decorators.RepeatOnResult;
 
-class CountUntil extends Action {
-	onEvent(state, event) {
-		state.counter += 1;
+class CountUntil extends Action<DroneState, number> {
+	onEvent(state: DroneState, event: number): string {
+		state.flares += 1;
 
-		return {
-			result: state.counter <= event ? rc.RUNNING : rc.SUCCESS,
-			state,
-		};
+		return state.flares <= event ? rc.RUNNING : rc.SUCCESS;
 	}
 }
 
@@ -31,21 +29,20 @@ describe('RepeatOnResult', function() {
 			{action: unEcho, event: 2, counter: 3},
 		];
 
-		const makeVerify = function(test) {
-			return function(res) {
-				assert.equal(res.state.counter, test.counter, `Counter: ${test.action.name} -> ${test.counter}`);
+		const makeVerify = function(test: any, state: DroneState) {
+			return function(res: string) {
+				assert.equal(state.flares, test.counter, `Flare Count: ${test.action.name} -> ${test.counter}`);
 				assert.equal(res, rc.SUCCESS, `Result: ${test.action.name} -> ${test.counter}`);
 			};
 		};
 
 		for (const test of tests) {
 			// isolated per test
-			const state = {
-				counter: 0,
-			};
+			const state = new DroneState();
+
 			const p = test.action.handleEvent(state, test.event);
 
-			p.then(makeVerify(test));
+			p.then(makeVerify(test, state));
 		}
 	});
 });

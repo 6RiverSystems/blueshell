@@ -1,28 +1,31 @@
-'use strict';
+import {assert} from 'chai';
 
-const assert = require('chai').assert;
+import {resultCodes as rc} from '../../../lib/utils/resultCodes';
 
-const rc = require('../../../lib/utils/resultCodes');
-const Behavior = require('../../../lib');
+import * as Behavior from '../../../lib';
+import {DroneState} from '../test/DroneActions';
+
 const Action = Behavior.Action;
+const RepeatOnResult = Behavior.decorators.RepeatOnResult;
+
 const ResultSwap = Behavior.decorators.ResultSwap;
 
-class SuccessAction extends Action {
+class SuccessAction extends Action<DroneState, string> {
 	constructor() {
 		super('successAction');
 	}
 
-	onEvent(state, event) {
+	onEvent(state: DroneState, event: string): string {
 		return rc.SUCCESS;
 	}
 }
 
-class FailureAction extends Action {
+class FailureAction extends Action<DroneState, string> {
 	constructor() {
 		super('failureAction');
 	}
 
-	onEvent(state, event) {
+	onEvent(state: DroneState, event: string): string {
 		return rc.FAILURE;
 	}
 }
@@ -33,7 +36,7 @@ describe('ResultSwap', function() {
 		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, successAction);
 
 		return resultSwap
-		.handleEvent({}, {})
+		.handleEvent(new DroneState(), '')
 		.then((response) => {
 			assert.equal(response, rc.SUCCESS);
 		});
@@ -44,7 +47,7 @@ describe('ResultSwap', function() {
 		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction);
 
 		return resultSwap
-		.handleEvent({}, {})
+		.handleEvent(new DroneState(), '')
 		.then((response) => {
 			assert.equal(response, rc.SUCCESS);
 		});

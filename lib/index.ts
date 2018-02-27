@@ -9,10 +9,15 @@ import {IfElse} from './nodes/IfElse';
 import {resultCodes} from './utils/resultCodes';
 
 import * as decorators from './nodes/decorators';
-import {renderTree} from './utils/renderTree';
+import {toString, toConsole} from './utils/renderTree';
 
 const Action = Base;
 const Condition = Base;
+
+const renderTree = {
+		toString,
+		toConsole,
+};
 
 export {
 	// Base types to be extended
@@ -34,5 +39,4 @@ export {
 	// Result Codes
 	resultCodes,
 	renderTree,
-
 };

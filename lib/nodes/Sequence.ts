@@ -1,12 +1,9 @@
 /**
  * Created by josh on 1/10/16.
  */
-
-'use strict';
-
+import {Composite} from './Composite';
 import {BlueshellState} from './BlueshellState';
 import {resultCodes as rc} from '../utils/resultCodes';
-import {Composite} from './Composite';
 
 export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 
@@ -43,5 +40,3 @@ export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 		return {res, state, event};
 	}
 }
-
-module.exports = Sequence;

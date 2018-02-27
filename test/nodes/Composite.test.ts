@@ -1,29 +1,26 @@
 /**
  * Created by josh on 3/30/16.
  */
-'use strict';
 
-const assert = require('chai').assert;
+import {assert} from 'chai';
 
-const rc = require('../../lib/utils/resultCodes');
-
-const TestActions = require('./test/Actions');
-
-const waitAi = TestActions.waitAi;
+import {resultCodes as rc} from '../../lib/utils/resultCodes';
+import {RobotState, waitAi} from './test/RobotActions';
 
 describe('Composite', function() {
 	context('#resetNodeStorage', function() {
 		it('should reset child state', function() {
-			const event = {};
-			const state = TestActions.initialState(false);
+			const event = '';
+			const state = new RobotState(false);
 
 			state.overheated = true;
 
 			return waitAi.handleEvent(state, event)
-			.catch((err) => {
+			.catch((err: Error) => {
 				console.error(err.stack);
+				throw err;
 			})
-			.then((res) => {
+			.then((res: string) => {
 				// assert state of child
 				assert.equal(res, rc.RUNNING);
 				assert.equal(state.batteryLevel, 1);
@@ -33,7 +30,7 @@ describe('Composite', function() {
 				waitAi.resetNodeStorage(state);
 			})
 			.then(() => waitAi.handleEvent(state, event))
-			.then((res) => {
+			.then((res: string) => {
 				// assert state of child again
 				assert.equal(res, rc.RUNNING);
 				assert.equal(state.batteryLevel, 2);

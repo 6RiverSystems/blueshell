@@ -1,13 +1,14 @@
 /**
  * Created by josh on 1/18/16.
  */
-'use strict';
+import {assert} from 'chai';
 
-const assert = require('chai').assert;
+import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
-const rc = require('../../lib/utils/resultCodes');
-const Behavior = require('../../lib');
-const TestActions = require('./test/Actions');
+import * as Behavior from '../../lib';
+
+import * as TestActions from './test/RobotActions';
+import {RobotState} from './test/RobotActions';
 
 const waitAi = new Behavior.Selector('shutdownWithWaitAi',
 	[
@@ -19,10 +20,7 @@ const waitAi = new Behavior.Selector('shutdownWithWaitAi',
 describe('Selector', function() {
 	it('should return success', function() {
 		// With a happy bot
-		const botState = {
-			overheated: false,
-			commands: [],
-		};
+		const botState = new RobotState();
 
 		const p = waitAi.handleEvent(botState, 'lowBattery');
 
@@ -35,10 +33,8 @@ describe('Selector', function() {
 
 	it('should return failure', function() {
 		// With a overheated bot
-		const botState = {
-			overheated: true,
-			commands: [],
-		};
+		const botState = new RobotState();
+		botState.overheated = true;
 
 		const p = waitAi.handleEvent(botState, 'lowBattery 1');
 

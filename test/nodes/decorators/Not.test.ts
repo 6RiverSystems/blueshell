@@ -1,17 +1,18 @@
 /**
  * Created by josh on 1/12/16.
  */
-'use strict';
+import {assert} from 'chai';
 
-const assert = require('chai').assert;
+import {resultCodes as rc} from '../../../lib/utils/resultCodes';
 
-const rc = require('../../../lib/utils/resultCodes');
-const Behavior = require('../../../lib');
+import * as Behavior from '../../../lib';
+import {DroneState} from '../test/DroneActions';
+
 const Action = Behavior.Action;
 const Not = Behavior.decorators.Not;
 
-class EchoAction extends Action {
-	onEvent(state, event) {
+class EchoAction extends Action<DroneState, string> {
+	onEvent(state: DroneState, event: string) {
 		return event;
 	}
 }
@@ -30,8 +31,8 @@ describe('Not', function() {
 			{action: unEcho, event: rc.RUNNING, result: rc.RUNNING},
 		];
 
-		const makeVerify = function(test) {
-			return function(res) {
+		const makeVerify = function(test: any, state: DroneState) {
+			return function(res: string) {
 				assert.equal(res, test.result, `${test.action.name} -> ${test.result}`);
 			};
 		};
@@ -39,9 +40,10 @@ describe('Not', function() {
 		const ps = [];
 
 		for (const test of tests) {
-			const p = test.action.handleEvent({}, test.event);
+			const state = new DroneState();
+			const p = test.action.handleEvent(state, test.event);
 
-			ps.push(p.then(makeVerify(test)));
+			ps.push(p.then(makeVerify(test, state)));
 		}
 
 		return Promise.all(ps);

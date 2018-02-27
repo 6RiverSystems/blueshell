@@ -1,4 +1,4 @@
 export interface BlueshellState {
-	errorReason: Error;
+	errorReason?: Error;
 	__blueshell: any;
 }

@@ -1,20 +1,16 @@
 /**
  * Created by josh on 1/10/16.
  */
-
-'use strict';
-
-import {BlueshellState} from '../../lib/nodes/BlueshellState';
-
-const assert = require('chai').assert;
-
-import {resultCodes as rc} from '../../lib/utils/resultCodes';
+import {assert} from 'chai';
 import * as Behavior from '../../lib';
+import {BlueshellState} from '../../lib/nodes/BlueshellState';
+import {resultCodes as rc} from '../../lib/utils/resultCodes';
+
 const Base = Behavior.Action;
 const Decorator = Behavior.Decorator;
 
 class TestState implements BlueshellState {
-	public errorReason: Error;
+	public errorReason?: Error;
 	public __blueshell: any;
 }
 

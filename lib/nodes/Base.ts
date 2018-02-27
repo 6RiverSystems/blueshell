@@ -75,12 +75,12 @@ export class Base<S extends BlueshellState, E> {
 	}
 
 	// Return true if we should proceed, false otherwise
-	precondition(state: S, event: E): boolean {
+	precondition(state: S, event: E): boolean|Promise<boolean> {
 		return true;
 	}
 
 	// Return results
-	onEvent(state: S, event: E): Promise<string> {
+	onEvent(state: S, event: E): string|Promise<string> {
 
 		return Promise.resolve(rc.SUCCESS);
 	}

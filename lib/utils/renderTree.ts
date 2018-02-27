@@ -7,7 +7,7 @@ import {BlueshellState} from '../nodes/BlueshellState';
 import * as archy from 'archy';
 import {Data} from 'archy';
 
-function buildArchyTree<S extends BlueshellState, E>(node: Base<S, E>, state: S): Data {
+function buildArchyTree<S extends BlueshellState, E>(node: Base<S, E>, state?: S): Data {
 
 	let nodeLabel = node.name;
 
@@ -40,21 +40,13 @@ function buildArchyTree<S extends BlueshellState, E>(node: Base<S, E>, state: S)
 	return archyTree;
 }
 
-interface BlueshellRenderer {
-	<S extends BlueshellState, E>(tree: Base<S, E>, state: S): string;
-
-	toConsole?<S extends BlueshellState, E>(tree: Base<S, E>, state: S): any;
-}
-
-export const renderTree: BlueshellRenderer = function <S extends BlueshellState, E>(tree: Base<S, E>, state: S): string {
+export function toString<S extends BlueshellState, E>(tree: Base<S, E>, state?: S): string {
 	let a = buildArchyTree(tree, state);
 	let renderedTree = archy(a);
 
 	return renderedTree;
 }
 
-function toConsole<S extends BlueshellState, E>(tree: Base<S, E>, state: S) {
-	console.log(renderTree(tree, state)); // eslint-disable-line no-console
+export function toConsole<S extends BlueshellState, E>(tree: Base<S, E>, state?: S) {
+	console.log(toString(tree, state)); // eslint-disable-line no-console
 }
-
-renderTree.toConsole = toConsole;
