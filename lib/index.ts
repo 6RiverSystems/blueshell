@@ -12,8 +12,8 @@ import * as decorators from './nodes/decorators';
 
 import {toString, toConsole} from './utils/renderTree';
 
-export const Action = Base;
-export const Condition = Base;
+export {Base as Action};
+export {Base as Condition};
 
 export {decorators};
 
