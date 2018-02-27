@@ -1,5 +1,3 @@
 {
-	"rules": {
-		"no-console": [1]
-	}
+	"extends": "6river/mocha",
 }

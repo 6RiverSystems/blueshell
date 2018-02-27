@@ -1,18 +1,21 @@
 /**
  * Created by josh on 1/10/16.
  */
-'use strict';
+import {BlueshellState} from './BlueshellState';
+import {resultCodes as rc} from '../utils/resultCodes';
 
-let rc = require('./../utils/resultCodes');
+export class Base<S extends BlueshellState, E> {
+	private _parent: string;
 
-class Base {
+	constructor(public readonly name: string = '') {
+		if (!this.name) {
+			this.name = this.constructor.name;
+		}
 
-	constructor(name) {
-		this.name = name || this.constructor.name;
 		this._parent = '';
 	}
 
-	handleEvent(state, event) {
+	handleEvent(state: S, event: E): Promise<string> {
 
 		return Promise.resolve(this._beforeEvent(state, event))
 		.then(() => this.precondition(state, event))
@@ -38,7 +41,7 @@ class Base {
 	}
 
 	// Return nothing
-	_beforeEvent(state, event) {
+	_beforeEvent(state: S, event: E) {
 
 		let pStorage = this._privateStorage(state);
 		let nodeStorage = this.getNodeStorage(state);
@@ -57,7 +60,7 @@ class Base {
 	}
 
 	// Logging
-	_afterEvent(res, state, event) {
+	_afterEvent(res: string, state: S, event: E): string|Promise<string> {
 
 		if (this.getDebug(state)) {
 			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console
@@ -72,17 +75,17 @@ class Base {
 	}
 
 	// Return true if we should proceed, false otherwise
-	precondition(state, event) {
+	precondition(state: S, event: E): boolean|Promise<boolean> {
 		return true;
 	}
 
 	// Return results
-	onEvent(state, event) {
+	onEvent(state: S, event: E): string|Promise<string> {
 
-		return rc.SUCCESS;
+		return Promise.resolve(rc.SUCCESS);
 	}
 
-	set parent(path) {
+	set parent(path: string) {
 		this._parent = path;
 	}
 
@@ -93,7 +96,7 @@ class Base {
 	/*
 	 * Returns storage unique to this node, keyed on the node's path.
 	 */
-	getNodeStorage(state) {
+	public getNodeStorage(state: S) {
 		let path = this.path;
 		let blueshell = this._privateStorage(state);
 
@@ -101,7 +104,7 @@ class Base {
 		return blueshell[path];
 	}
 
-	resetNodeStorage(state) {
+	resetNodeStorage(state: S) {
 		let path = this.path;
 		let blueshell = this._privateStorage(state);
 
@@ -109,27 +112,25 @@ class Base {
 		return blueshell[path];
 	}
 
-	_privateStorage(state) {
+	_privateStorage(state: S) {
 		state.__blueshell = state.__blueshell || {};
 
 		return state.__blueshell;
 	}
 
-	getDebug(state) {
+	getDebug(state: S) {
 		return this._privateStorage(state).debug;
 	}
 
-	getTreeEventCounter(state) {
+	getTreeEventCounter(state: S) {
 		return this._privateStorage(state).eventCounter;
 	}
 
-	getLastEventSeen(state) {
+	getLastEventSeen(state: S) {
 		return this.getNodeStorage(state).lastEventSeen;
 	}
 
-	getLastResult(state) {
+	getLastResult(state: S) {
 		return this.getNodeStorage(state).lastResult;
 	}
 }
-
-module.exports = Base;

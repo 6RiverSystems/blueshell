@@ -1,27 +1,25 @@
 /**
  * Created by josh on 1/15/16.
  */
-'use strict';
+import {assert} from 'chai';
 
-let assert = require('chai').assert;
+import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
-let rc = require('../../lib/utils/resultCodes');
-let Behavior = require('../../lib');
+import * as Behavior from '../../lib';
 
-class StopMotors extends Behavior.Action {
+import {RobotState} from './test/RobotActions';
 
-	onEvent(state, event) {
-
+class StopMotors extends Behavior.Action<RobotState, string> {
+	onEvent(state: RobotState, event: string) {
 		state.commands.push('motorsStopped');
 
 		return rc.SUCCESS;
 	}
 }
 
-class StopLasers extends Behavior.Action {
-
-	onEvent(state, event) {
-		let storage = this.getNodeStorage(state);
+class StopLasers extends Behavior.Action<RobotState, string> {
+	onEvent(state: RobotState, event: string) {
+		const storage = this.getNodeStorage(state);
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : state.laserCooldownTime;
 
@@ -39,35 +37,30 @@ class StopLasers extends Behavior.Action {
 	}
 }
 
-class Shutdown extends Behavior.Action {
-
-	onEvent(state, event) {
+class Shutdown extends Behavior.Action<RobotState, string> {
+	onEvent(state: RobotState, event: string) {
 		state.commands.push('powerOff');
 
 		return rc.SUCCESS;
 	}
 }
 
-let shutdownSequence = new Behavior.LatchedSequence('shutdownWithWaitAi',
+const shutdownSequence = new Behavior.LatchedSequence('shutdownWithWaitAi',
 	[
 		new StopMotors(),
 		new StopLasers(),
-		new Shutdown()
-	], true);
+		new Shutdown(),
+	]);
 
 describe('LatchedSelector', function() {
-
 	it('should run correctly', function() {
-
 		// With a happy bot
-		let botState = {
-			laserCooldownTime: 0,
-			commands: []
-		};
+		const botState = new RobotState();
+		botState.laserCooldownTime = 0;
 
-		let p = shutdownSequence.handleEvent(botState, 'lowBattery');
+		const p = shutdownSequence.handleEvent(botState, 'lowBattery');
 
-		return p.then(res => {
+		return p.then((res) => {
 			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
 			assert.equal(botState.commands.length, 3, 'Need Three Commands');
 			assert.equal(botState.commands[0], 'motorsStopped');
@@ -78,21 +71,18 @@ describe('LatchedSelector', function() {
 
 	it('should loop correctly', function() {
 		// With a happy bot
-		let botState = {
-			laserCooldownTime: 1,
-			commands: []
-		};
+		const botState = new RobotState();
+		botState.laserCooldownTime = 1;
 
-		let p = shutdownSequence.handleEvent(botState, 'lowBattery 1');
+		const p = shutdownSequence.handleEvent(botState, 'lowBattery 1');
 
-		return p.then(res => {
+		return p.then((res) => {
 			assert.equal(res, rc.RUNNING, 'Behavior Tree Running');
 			assert.equal(botState.commands.length, 1);
 			assert.equal(botState.commands[0], 'motorsStopped');
 
 			return shutdownSequence.handleEvent(botState, 'lowBattery 2');
-		}).then(res => {
-
+		}).then((res) => {
 			assert.equal(res, rc.SUCCESS, 'Behavior Tree Success');
 			assert.equal(botState.commands.length, 3, 'Need Three Commands');
 			assert.equal(botState.commands[0], 'motorsStopped');

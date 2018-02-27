@@ -1,32 +1,26 @@
 /**
  * Created by josh on 3/30/16.
  */
-'use strict';
 
-let assert = require('chai').assert;
+import {assert} from 'chai';
 
-let rc = require('../../lib/utils/resultCodes');
-let Behavior = require('../../lib');
-
-let TestActions = require('../nodes/test/Actions');
-
-let waitAi = TestActions.waitAi;
+import {resultCodes as rc} from '../../lib/utils/resultCodes';
+import {RobotState, waitAi} from './test/RobotActions';
 
 describe('Composite', function() {
-
 	context('#resetNodeStorage', function() {
-
 		it('should reset child state', function() {
-			let event = {};
-			let state = TestActions.initialState(false);
+			const event = '';
+			const state = new RobotState(false);
 
 			state.overheated = true;
 
 			return waitAi.handleEvent(state, event)
-			.catch((err) => {
+			.catch((err: Error) => {
 				console.error(err.stack);
+				throw err;
 			})
-			.then((res) => {
+			.then((res: string) => {
 				// assert state of child
 				assert.equal(res, rc.RUNNING);
 				assert.equal(state.batteryLevel, 1);
@@ -36,7 +30,7 @@ describe('Composite', function() {
 				waitAi.resetNodeStorage(state);
 			})
 			.then(() => waitAi.handleEvent(state, event))
-			.then((res) => {
+			.then((res: string) => {
 				// assert state of child again
 				assert.equal(res, rc.RUNNING);
 				assert.equal(state.batteryLevel, 2);
@@ -44,7 +38,6 @@ describe('Composite', function() {
 				// Normally would be 0
 				assert.equal(state.cooldownLevel, 1);
 			});
-
 		});
 	});
 });
