@@ -9,7 +9,7 @@
 		"allowUnreachableCode": false,
 		"strict": true,
 		"sourceMap": true,
-		"declaration": false,
+		"declaration": true,
 		"forceConsistentCasingInFileNames": true,
 		"removeComments": false,
 		"preserveConstEnums": true,

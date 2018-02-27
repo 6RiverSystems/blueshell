@@ -5,7 +5,7 @@ import {Base} from './Base';
 import {BlueshellState} from './BlueshellState';
 import {resultCodes as rc} from '../utils/resultCodes';
 
-interface Conditional<S, E> {
+export interface Conditional<S, E> {
 	(state: S, event: E): boolean;
 }
 

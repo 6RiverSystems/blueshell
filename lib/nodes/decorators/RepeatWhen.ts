@@ -5,7 +5,7 @@ import {BlueshellState} from '../BlueshellState';
 import {Base} from '../Base';
 import {Decorator} from '../Decorator';
 
-interface Conditional<S, E> {
+export interface Conditional<S, E> {
 	(state: S, event: E, res: string): boolean;
 }
 
