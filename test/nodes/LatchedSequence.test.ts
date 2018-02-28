@@ -58,15 +58,13 @@ describe('LatchedSelector', function() {
 		const botState = new RobotState();
 		botState.laserCooldownTime = 0;
 
-		const p = shutdownSequence.handleEvent(botState, 'lowBattery');
+		const res = shutdownSequence.handleEvent(botState, 'lowBattery');
 
-		return p.then((res) => {
-			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
-			assert.equal(botState.commands.length, 3, 'Need Three Commands');
-			assert.equal(botState.commands[0], 'motorsStopped');
-			assert.equal(botState.commands[1], 'lasersCooled');
-			assert.equal(botState.commands[2], 'powerOff');
-		});
+		assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
+		assert.equal(botState.commands.length, 3, 'Need Three Commands');
+		assert.equal(botState.commands[0], 'motorsStopped');
+		assert.equal(botState.commands[1], 'lasersCooled');
+		assert.equal(botState.commands[2], 'powerOff');
 	});
 
 	it('should loop correctly', function() {
@@ -74,20 +72,18 @@ describe('LatchedSelector', function() {
 		const botState = new RobotState();
 		botState.laserCooldownTime = 1;
 
-		const p = shutdownSequence.handleEvent(botState, 'lowBattery 1');
+		let res = shutdownSequence.handleEvent(botState, 'lowBattery 1');
 
-		return p.then((res) => {
-			assert.equal(res, rc.RUNNING, 'Behavior Tree Running');
-			assert.equal(botState.commands.length, 1);
-			assert.equal(botState.commands[0], 'motorsStopped');
+		assert.equal(res, rc.RUNNING, 'Behavior Tree Running');
+		assert.equal(botState.commands.length, 1);
+		assert.equal(botState.commands[0], 'motorsStopped');
 
-			return shutdownSequence.handleEvent(botState, 'lowBattery 2');
-		}).then((res) => {
-			assert.equal(res, rc.SUCCESS, 'Behavior Tree Success');
-			assert.equal(botState.commands.length, 3, 'Need Three Commands');
-			assert.equal(botState.commands[0], 'motorsStopped');
-			assert.equal(botState.commands[1], 'lasersCooled');
-			assert.equal(botState.commands[2], 'powerOff');
-		});
+		res = shutdownSequence.handleEvent(botState, 'lowBattery 2');
+
+		assert.equal(res, rc.SUCCESS, 'Behavior Tree Success');
+		assert.equal(botState.commands.length, 3, 'Need Three Commands');
+		assert.equal(botState.commands[0], 'motorsStopped');
+		assert.equal(botState.commands[1], 'lasersCooled');
+		assert.equal(botState.commands[2], 'powerOff');
 	});
 });

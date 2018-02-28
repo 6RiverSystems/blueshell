@@ -15,18 +15,21 @@ export class Base<S extends BlueshellState, E> {
 		this._parent = '';
 	}
 
-	handleEvent(state: S, event: E): Promise<string> {
+	handleEvent(state: S, event: E): string {
 
-		return Promise.resolve(this._beforeEvent(state, event))
-		.then(() => this.precondition(state, event))
-		.then((passed) => {
-			if (!passed) {
-				return rc.FAILURE;
-			}
+		this._beforeEvent(state, event)
+		const passed = this.precondition(state, event);
 
-			return this.onEvent(state, event);
-		})
-		.catch(err => {
+		if (!passed) {
+			return rc.FAILURE;
+		}
+
+		try {
+			const result = this.onEvent(state, event);
+
+			return this._afterEvent(result, state, event);
+		}
+		catch(err) {
 			state.errorReason = err;
 
 			if (this.getDebug(state)) {
@@ -34,10 +37,7 @@ export class Base<S extends BlueshellState, E> {
 			}
 
 			return rc.ERROR;
-		})
-		.then(res => {
-			return this._afterEvent(res, state, event);
-		});
+		}
 	}
 
 	// Return nothing
@@ -60,7 +60,7 @@ export class Base<S extends BlueshellState, E> {
 	}
 
 	// Logging
-	_afterEvent(res: string, state: S, event: E): string|Promise<string> {
+	_afterEvent(res: string, state: S, event: E): string {
 
 		if (this.getDebug(state)) {
 			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console
@@ -75,14 +75,14 @@ export class Base<S extends BlueshellState, E> {
 	}
 
 	// Return true if we should proceed, false otherwise
-	precondition(state: S, event: E): boolean|Promise<boolean> {
+	precondition(state: S, event: E): boolean {
 		return true;
 	}
 
 	// Return results
-	onEvent(state: S, event: E): string|Promise<string> {
+	onEvent(state: S, event: E): string {
 
-		return Promise.resolve(rc.SUCCESS);
+		return rc.SUCCESS;
 	}
 
 	set parent(path: string) {

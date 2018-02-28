@@ -8,22 +8,20 @@ import {Decorator} from '../Decorator';
 
 export class Not<S extends BlueshellState, E> extends Decorator<S, E> {
 
-	onEvent(state: S, event: E): Promise<string> {
-		let p = this.child.handleEvent(state, event);
+	onEvent(state: S, event: E): string {
+		let res = this.child.handleEvent(state, event);
 
-		return p.then((res: string) => {
-			switch (res) {
-			case rc.SUCCESS:
-				res = rc.FAILURE;
-				break;
-			case rc.FAILURE:
-				res = rc.SUCCESS;
-				break;
-			default:
-				// no-op
-			}
+		switch (res) {
+		case rc.SUCCESS:
+			res = rc.FAILURE;
+			break;
+		case rc.FAILURE:
+			res = rc.SUCCESS;
+			break;
+		default:
+			// no-op
+		}
 
-			return res;
-		});
+		return res;
 	}
 }

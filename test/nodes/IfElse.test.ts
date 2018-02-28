@@ -38,13 +38,11 @@ describe('IfElse', function() {
 		);
 
 		const state = new TestState();
-		const p = ifElse.handleEvent(state, 'testEvent');
+		const res = ifElse.handleEvent(state, 'testEvent');
 
-		return p.then((res) => {
-			assert.notOk(state.errorReason);
-			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
-			assert.isTrue(state.success, 'Expected Action was called');
-		});
+		assert.notOk(state.errorReason);
+		assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
+		assert.isTrue(state.success, 'Expected Action was called');
 	});
 
 	it('should return success when conditional is true with an alternative', function() {
@@ -55,13 +53,11 @@ describe('IfElse', function() {
 		);
 
 		const state = new TestState();
-		const p = ifElse.handleEvent(state, 'testEvent');
+		const res = ifElse.handleEvent(state, 'testEvent');
 
-		return p.then((res) => {
-			assert.notOk(state.errorReason);
-			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
-			assert.isTrue(state.success, 'Expected Action was called');
-		});
+		assert.notOk(state.errorReason);
+		assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
+		assert.isTrue(state.success, 'Expected Action was called');
 	});
 
 	it('should return success when conditional is false', function() {
@@ -72,13 +68,11 @@ describe('IfElse', function() {
 		);
 
 		const state = new TestState();
-		const p = ifElse.handleEvent(state, 'testEvent');
+		const res = ifElse.handleEvent(state, 'testEvent');
 
-		return p.then((res) => {
-			assert.notOk(state.errorReason);
-			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
-			assert.isTrue(state.success, 'Expected Action was called');
-		});
+		assert.notOk(state.errorReason);
+		assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
+		assert.isTrue(state.success, 'Expected Action was called');
 	});
 
 
@@ -89,12 +83,10 @@ describe('IfElse', function() {
 		);
 
 		const state = new TestState();
-		const p = ifElse.handleEvent(state, 'testEvent');
+		const res = ifElse.handleEvent(state, 'testEvent');
 
-		return p.then((res) => {
-			assert.notOk(state.errorReason);
-			assert.equal(res, rc.FAILURE, 'Behavior Tree success');
-			assert.isNotTrue(state.success, 'Expected Action was called');
-		});
+		assert.notOk(state.errorReason);
+		assert.equal(res, rc.FAILURE, 'Behavior Tree success');
+		assert.isNotTrue(state.success, 'Expected Action was called');
 	});
 });

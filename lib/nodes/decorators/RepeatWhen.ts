@@ -17,15 +17,13 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 		super('RepeatWhen-' + desc, child);
 	}
 
-	onEvent(state: S, event: E): Promise<string> {
-		let p = this.child.handleEvent(state, event);
+	onEvent(state: S, event: E): string {
+		const res = this.child.handleEvent(state, event);
 
-		return p.then(res => {
-			if (this.conditional(state, event, res)) {
-				return this.handleEvent(state, event);
-			} else {
-				return res;
-			}
-		});
+		if (this.conditional(state, event, res)) {
+			return this.handleEvent(state, event);
+		} else {
+			return res;
+		}
 	}
 }

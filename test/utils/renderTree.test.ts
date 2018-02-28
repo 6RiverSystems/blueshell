@@ -42,28 +42,23 @@ describe('renderTree', function() {
 
 		state.overheated = true;
 
-		return waitAi.handleEvent(state, event)
-		.catch((err) => {
-			console.error(err.stack);
-		})
-		.then(() => {
-			const a = renderTree.toString(waitAi, state);
+		const res = waitAi.handleEvent(state, event)
+		const a = renderTree.toString(waitAi, state);
 
-			assert.ok(a);
-			assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
+		assert.ok(a);
+		assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
 
-			const expectedWords = [
-				'(LatchedSelector)',
-				rc.RUNNING,
-				'Recharge',
-				rc.FAILURE,
-				'WaitForCooldown',
-				rc.RUNNING,
-				'EmergencyShutdown',
-			];
+		const expectedWords = [
+			'(LatchedSelector)',
+			rc.RUNNING,
+			'Recharge',
+			rc.FAILURE,
+			'WaitForCooldown',
+			rc.RUNNING,
+			'EmergencyShutdown',
+		];
 
-			assertWordsInString(a, expectedWords);
-		});
+		assertWordsInString(a, expectedWords);
 	});
 });
 

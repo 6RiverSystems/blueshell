@@ -10,31 +10,32 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 
 	// Recursively sends the event to each child until one of them returns
 	// success or running. If we exhaust all the children, return failure.
-	handleChild(state: S, event: E, i: number): Promise<string> {
+	handleChild(state: S, event: E, i: number): string {
 
 		let storage = this.getNodeStorage(state);
 
 		// If we finished all processing without success return failure.
 		if (i >= this.children.length) {
-			return Promise.resolve(rc.FAILURE);
+			return rc.FAILURE;
 		}
 
 		let child = this.children[i];
 
-		return child.handleEvent(state, event)
-		.then((res) => this._afterChild(res, state, event))
-		.then(({res, state: state_, event: event_}) => {
-			if (res !== rc.FAILURE) {
+		const res = child.handleEvent(state, event);
 
-				if (this.latched && res === rc.RUNNING) {
-					storage.running = i;
-				}
+		const {res: res_, state: state_, event: event_} =
+			this._afterChild(res, state, event);
 
-				return res;
-			} else {
-				return this.handleChild(state_, event_, ++i);
+		if (res_ !== rc.FAILURE) {
+
+			if (this.latched && res_ === rc.RUNNING) {
+				storage.running = i;
 			}
-		});
+
+			return res_;
+		} else {
+			return this.handleChild(state_, event_, ++i);
+		}
 	}
 
 	_afterChild(res: string, state: S, event: E) {

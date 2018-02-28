@@ -35,22 +35,18 @@ describe('ResultSwap', function() {
 		const successAction = new SuccessAction();
 		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, successAction);
 
-		return resultSwap
-		.handleEvent(new DroneState(), '')
-		.then((response) => {
-			assert.equal(response, rc.SUCCESS);
-		});
+		const response = resultSwap.handleEvent(new DroneState(), '')
+
+		assert.equal(response, rc.SUCCESS);
 	});
 
 	it('failure in action should return success', function() {
 		const failureAction = new FailureAction();
 		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction);
 
-		return resultSwap
-		.handleEvent(new DroneState(), '')
-		.then((response) => {
-			assert.equal(response, rc.SUCCESS);
-		});
+		const response = resultSwap.handleEvent(new DroneState(), '');
+
+		assert.equal(response, rc.SUCCESS);
 	});
 
 	it('should use default name', function() {

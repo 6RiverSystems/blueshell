@@ -29,7 +29,7 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 		return this._latched;
 	}
 
-	onEvent(state: S, event: E): string|Promise<string> {
+	onEvent(state: S, event: E): string {
 
 		let storage = this.getNodeStorage(state);
 
@@ -47,7 +47,7 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 		return this.handleChild(state, event, firstChild);
 	}
 
-	handleChild(state: S, event: E, i: number): Promise<string> {
+	handleChild(state: S, event: E, i: number): string {
 		throw new Error('This is an abstract method - please override.');
 	}
 

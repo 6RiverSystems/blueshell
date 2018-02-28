@@ -20,14 +20,13 @@ export class ResultSwap<S extends BlueshellState, E> extends Decorator<S, E> {
 	}
 
 	onEvent(state: S, event: E) {
-		let p = this.child.handleEvent(state, event);
+		let res = this.child.handleEvent(state, event);
 
-		return p.then(res => {
-			if (res === this._inResult) {
-				res = this._outResult;
-			}
 
-			return res;
-		});
+		if (res === this._inResult) {
+			res = this._outResult;
+		}
+
+		return res;
 	}
 }

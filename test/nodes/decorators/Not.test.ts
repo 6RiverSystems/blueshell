@@ -37,15 +37,12 @@ describe('Not', function() {
 			};
 		};
 
-		const ps = [];
-
 		for (const test of tests) {
 			const state = new DroneState();
 			const p = test.action.handleEvent(state, test.event);
 
-			ps.push(p.then(makeVerify(test, state)));
+			makeVerify(test, state);
 		}
 
-		return Promise.all(ps);
 	});
 });
