@@ -15,8 +15,10 @@ export {IfElse} from './nodes/composites/IfElse';
 
 export {
 	Not,
+	RepeatWhenNTimes,
 	RepeatWhen,
 	RepeatOnResult,
+	Retry,
 	ResultSwap
 } from './nodes/decorators';
 
