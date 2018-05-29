@@ -4,9 +4,17 @@
 import {BlueshellState} from './BlueshellState';
 import {resultCodes as rc} from '../utils/resultCodes';
 
+/**
+ * Base class of all Nodes.
+ * @author Joshua Chaitin-Pollak
+ */
 export class Base<S extends BlueshellState, E> {
 	private _parent: string;
 
+	/**
+	 * @constructor
+	 * @param name The name of the Node. If no name is given, the name of the Class will be used.
+	 */
 	constructor(public readonly name: string = '') {
 		if (!this.name) {
 			this.name = this.constructor.name;
@@ -15,8 +23,13 @@ export class Base<S extends BlueshellState, E> {
 		this._parent = '';
 	}
 
+	/**
+	 * Handles the Event, and invokes `onEvent(state, event)`
+	 * @param state The state when the event occured.
+	 * @param event The event to handle.
+	 * @protected
+	 */
 	handleEvent(state: S, event: E): Promise<string> {
-
 		return Promise.resolve(this._beforeEvent(state, event))
 		.then(() => this.precondition(state, event))
 		.then((passed) => {
@@ -40,9 +53,13 @@ export class Base<S extends BlueshellState, E> {
 		});
 	}
 
-	// Return nothing
+	/**
+	 * Return nothing
+	 * @ignore
+	 * @param state
+	 * @param event
+	 */
 	_beforeEvent(state: S, event: E) {
-
 		let pStorage = this._privateStorage(state);
 		let nodeStorage = this.getNodeStorage(state);
 
@@ -59,9 +76,14 @@ export class Base<S extends BlueshellState, E> {
 		return {};
 	}
 
-	// Logging
+	/**
+	 * Logging
+	 * @ignore
+	 * @param res
+	 * @param state
+	 * @param event
+	 */
 	_afterEvent(res: string, state: S, event: E): string|Promise<string> {
-
 		if (this.getDebug(state)) {
 			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console
 		}
@@ -74,14 +96,22 @@ export class Base<S extends BlueshellState, E> {
 		return res;
 	}
 
-	// Return true if we should proceed, false otherwise
+	/**
+	 * Return true if this Node should proceed handling the event. false otherwise.
+	 * @param state
+	 * @param event
+	 */
 	precondition(state: S, event: E): boolean|Promise<boolean> {
 		return true;
 	}
 
-	// Return results
+	/**
+	 * Invoked when there is a new event.
+	 * @param state
+	 * @param event
+	 * @return Result. Must be rc.SUCCESS, rc.FAILURE, or rc.RUNNING
+	 */
 	onEvent(state: S, event: E): string|Promise<string> {
-
 		return Promise.resolve(rc.SUCCESS);
 	}
 
@@ -93,8 +123,9 @@ export class Base<S extends BlueshellState, E> {
 		return (this._parent ? this._parent + '_' : '') + this.name;
 	}
 
-	/*
-	 * Returns storage unique to this node, keyed on the node's path.
+	/**
+	 * Returns storage unique to this Node, keyed on the Node's path.
+	 * @param state
 	 */
 	public getNodeStorage(state: S) {
 		let path = this.path;
@@ -104,6 +135,10 @@ export class Base<S extends BlueshellState, E> {
 		return blueshell[path];
 	}
 
+	/**
+	 * Resets the storage unique to this Node, via the Node's path.
+	 * @param state
+	 */
 	resetNodeStorage(state: S) {
 		let path = this.path;
 		let blueshell = this._privateStorage(state);
@@ -112,6 +147,10 @@ export class Base<S extends BlueshellState, E> {
 		return blueshell[path];
 	}
 
+	/**
+	 * @ignore
+	 * @param state
+	 */
 	_privateStorage(state: S) {
 		state.__blueshell = state.__blueshell || {};
 
@@ -126,10 +165,18 @@ export class Base<S extends BlueshellState, E> {
 		return this._privateStorage(state).eventCounter;
 	}
 
+	/**
+	 * Getter for the previous event seen.
+	 * @param state
+	 */
 	getLastEventSeen(state: S) {
 		return this.getNodeStorage(state).lastEventSeen;
 	}
 
+	/**
+	 * Getter for the result of the last handled Event.
+	 * @param state
+	 */
 	getLastResult(state: S) {
 		return this.getNodeStorage(state).lastResult;
 	}

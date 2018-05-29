@@ -12,13 +12,15 @@ export interface Conditional<S, E> {
 /**
  * If-Else Conditional Composite Node.
  *
- * If conditional(state: S, event: E) returns true,
+ * If `conditional(state: S, event: E)` returns true,
  * control is passed to the consequent node.
  *
- * If conditional(state: S, event: E) returns false,
+ * If `conditional(state: S, event: E)` returns false,
  * control is passed to the alternative node, or
  * if one is not provided, 'FAILURE' is returned.
  *
+ * 5/29/16
+ * @author Joshua Chaitin-Pollak
  */
 export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
 
@@ -29,6 +31,9 @@ export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
 		super(name);
 	}
 
+	/**
+	 * Returns the children of this node, i.e. the `consequent` and the optional `alternative`.
+	 */
 	get children() {
 		let children = [this.consequent];
 
@@ -39,6 +44,15 @@ export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
 		return children;
 	}
 
+	/**
+	 * If `conditional` resolves to `true`, then the `consequent` node handles the event.
+	 * Otherwise, the `alternative` node handles the event.
+	 * If no `alternative` is provided, this node resolves to `FAILURE`
+	 * @override
+	 * @param state The state when the event occured.
+	 * @param event The event to handle.
+	 * @param i The child index.
+	 */
 	onEvent(state: S, event: E) {
 
 		if (this.conditional(state, event)) {
