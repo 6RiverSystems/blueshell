@@ -3,10 +3,14 @@
  */
 import {assert} from 'chai';
 
+import {Base} from '../../lib/nodes/Base';
+
 import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
 import {renderTree} from '../../lib';
 import {RobotState, waitAi} from '../nodes/test/RobotActions';
+import { BlueshellState } from '../../lib/nodes/BlueshellState';
+import { generateDigraphString } from '../../lib/utils/renderTree';
 
 describe('renderTree', function() {
 	it('should not crash', function(done) {
@@ -65,7 +69,16 @@ describe('renderTree', function() {
 			assertWordsInString(a, expectedWords);
 		});
 	});
+
+	it('should generate a digraph string', function(done) {
+		console.log(generateDigraphString(waitAi));
+		done();
+	});
 });
+
+function printNode<S extends BlueshellState, E>(node: Base<S, E>, state?: S): void {
+	console.log(`Visited: ${node.name}`);
+}
 
 function assertWordsInString(s: string, words: string[]) {
 	for (const word of words) {
