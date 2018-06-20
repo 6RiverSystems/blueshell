@@ -6,5 +6,5 @@ export const resultCodes = {
 	SUCCESS: 'SUCCESS',
 	FAILURE: 'FAILURE',
 	RUNNING: 'RUNNING',
-	ERROR: 'ERROR'
+	ERROR: 'ERROR',
 };
