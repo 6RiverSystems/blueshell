@@ -36,4 +36,8 @@ export class Not<S extends BlueshellState, E> extends Decorator<S, E> {
 			return res;
 		});
 	}
+
+	get symbol(): string {
+		return '∼';
+	}
 }

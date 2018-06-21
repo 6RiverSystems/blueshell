@@ -42,4 +42,8 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 			}
 		});
 	}
+
+	get symbol(): string {
+		return '↻';
+	}
 }

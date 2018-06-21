@@ -7,7 +7,6 @@ import {assert} from 'chai';
 import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
 import {renderTree, LatchedSelector} from '../../lib';
-import {serializeSymbolLegend, serializeShapeLegend, serializeColorLegend} from '../../lib/utils/dotTree';
 import {RobotState, waitAi} from '../nodes/test/RobotActions';
 
 describe('renderTree', function() {
@@ -75,9 +74,6 @@ describe('renderTree', function() {
 	context('dot notation tree', function() {
 		it('should not crash', function(done) {
 			renderTree!.toDotConsole(waitAi);
-			console.log(serializeSymbolLegend());
-			console.log(serializeShapeLegend());
-			console.log(serializeSymbolLegend());
 			done();
 		});
 		it('should generate a dot string without state', function(done) {

@@ -52,4 +52,8 @@ export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 	_afterChild(res: string, state: S, event: E) {
 		return {res, state, event};
 	}
+
+	get symbol(): string {
+		return '→';
+	}
 }
