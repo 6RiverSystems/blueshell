@@ -6,7 +6,8 @@ import {assert} from 'chai';
 
 import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
-import {renderTree} from '../../lib';
+import {renderTree, LatchedSelector} from '../../lib';
+import {serializeSymbolLegend, serializeShapeLegend, serializeColorLegend} from '../../lib/utils/dotTree';
 import {RobotState, waitAi} from '../nodes/test/RobotActions';
 
 describe('renderTree', function() {
@@ -72,6 +73,13 @@ describe('renderTree', function() {
 	});
 
 	context('dot notation tree', function() {
+		it('should not crash', function(done) {
+			renderTree!.toDotConsole(waitAi);
+			console.log(serializeSymbolLegend());
+			console.log(serializeShapeLegend());
+			console.log(serializeSymbolLegend());
+			done();
+		});
 		it('should generate a dot string without state', function(done) {
 			const dotString = renderTree.toDotString(waitAi);
 
@@ -121,6 +129,13 @@ describe('renderTree', function() {
 				console.log(result);
 			});
 		});
+
+		it('should generate a digraph with custom node', function(done) {
+			const customLSelector = new CustomLatchedSelector();
+			const dotString = renderTree.toDotString(customLSelector);
+			console.log(dotString);
+			done();
+		});
 	});
 });
 
@@ -131,5 +146,11 @@ function assertWordsInString(s: string, words: string[]) {
 		assert.isAbove(wordPos, 0, 'Expected to find ' + word);
 
 		s = s.substring(wordPos + 1);
+	}
+}
+
+class CustomLatchedSelector extends LatchedSelector<RobotState, string> {
+	constructor() {
+		super('Custom', []);
 	}
 }
