@@ -1,26 +1,24 @@
 import {Base} from '../nodes/Base';
 import {BlueshellState} from '../nodes/BlueshellState';
-import {resultCodes as rc} from '../../lib/utils/resultCodes';
+import {resultCodes as rc} from './resultCodes';
 import {Decorator} from '../nodes/Decorator';
 import {Composite} from '../nodes/Composite';
-import {Selector} from '../nodes/Selector';
-import {LatchedSelector} from '../nodes/LatchedSelector';
-import {Sequence} from '../nodes/Sequence';
-import {LatchedSequence} from '../nodes/LatchedSequence';
-import {IfElse} from '../nodes/IfElse';
-import {RepeatWhen, Not, RepeatOnResult, ResultSwap} from '../nodes/decorators';
 
-const NodeStyle = 'style=filled';
+import {v4} from 'uuid';
+
+const DefaultStyle = 'style="filled,bold"';
 
 const DecoratorShape = 'shape=ellipse';
 const CompositeShape = 'shape=diamond height=1';
-const DefaultShape = 'shape=rectangle';
+const DefaultShape = 'shape=box';
 
-const SuccessColor = 'colorscheme=set14 fillcolor=3';
-const FailureColor = 'colorscheme=set14 fillcolor=4';
-const RunningColor = 'colorscheme=set14 fillcolor=2';
-const ErrorColor = 'colorscheme=set14 fillcolor=1';
-const DefaultColor = 'colorscheme=X11 fillcolor=gray90';
+const SuccessColor = 'fillcolor="#4daf4a"';
+const FailureColor = 'fillcolor=#984ea3';
+const RunningColor = 'fillcolor="#377eb8"';
+const ErrorColor = 'fillcolor="#e41a1c"';
+const DefaultColor = 'fillcolor="#e5e5e5"';
+
+const DefaultEdgeColor ='color="#000000"';
 
 function getShape<S extends BlueshellState, E>(node: Base<S, E>): string {
 	if (node instanceof Decorator) {
@@ -28,7 +26,7 @@ function getShape<S extends BlueshellState, E>(node: Base<S, E>): string {
 	} else if (node instanceof Composite) {
 		return CompositeShape;
 	} else {
-		return DefaultShape;
+		return '';
 	}
 }
 
@@ -51,23 +49,27 @@ function getColor<S extends BlueshellState, E>(node: Base<S, E>, state?: S): str
 			}
 		}
 	}
-	return DefaultColor;
+	return '';
 }
 
 function getNodeId<S extends BlueshellState, E>(node: Base<S, E>): string {
-	let id = node.name;
-	if (id !== node.constructor.name) {
-		id += '_' + node.constructor.name + '_';
+	const cheat: any = node;
+	if (!cheat.magicTreeId) {
+		cheat.magicTreeId = `n${v4().replace(/\-/g, '')}`;
 	}
-	return id;
+	return cheat.magicTreeId;
 }
 
 function getLabel<S extends BlueshellState, E>(node: Base<S, E>): string {
 	if (node.symbol) {
-		return `label=<${node.name}<BR/><B>${node.symbol}</B>>`;
+		return `label="${node.name}\\n${node.symbol}"`;
 	} else {
-		return `label=${node.name}`;
+		return `label="${node.name}"`;
 	}
+}
+
+function getTooltip<S extends BlueshellState, E>(node: Base<S, E>): string {
+	return `tooltip="${node.constructor.name}"`;
 }
 
 export function serializeDotTree<S extends BlueshellState, E>(root: Base<S, E>, state?: S): any {
@@ -76,16 +78,22 @@ export function serializeDotTree<S extends BlueshellState, E>(root: Base<S, E>, 
 	}
 
 	const nodesToVisit: Base<S, E>[] = [];
-	let resultingString = 'digraph G {\n';
+
+	let resultingString = `digraph G {
+	node [${DefaultShape} ${DefaultColor} ${DefaultStyle}]
+	edge [${DefaultEdgeColor}]
+`;
+
 	nodesToVisit.push(root);
 
 	while (nodesToVisit.length) {
 		const currentNode = nodesToVisit.pop();
 
 		const nodeId = getNodeId(currentNode!);
+
 		resultingString += `\t${nodeId} `;
-		resultingString += `[${getLabel(currentNode!)} ${getShape(currentNode!)} `;
-		resultingString += `${getColor(currentNode!, state)} ${NodeStyle}];\n`;
+		resultingString += `[${getLabel(currentNode!)} ${getShape(currentNode!)} ${getTooltip(currentNode!)}`;
+		resultingString += `${getColor(currentNode!, state)}];\n`;
 
 		if ((<any>currentNode).children) {
 			for (const child of (<any>currentNode).children) {
