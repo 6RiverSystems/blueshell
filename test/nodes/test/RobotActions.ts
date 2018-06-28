@@ -28,6 +28,9 @@ class RobotState implements BlueshellState {
 }
 
 class Recharge extends Behavior.Action<RobotState, string> {
+	constructor() {
+		super('Recharge');
+	}
 	onEvent(state: RobotState, event: string): string {
 		let result = rc.SUCCESS;
 

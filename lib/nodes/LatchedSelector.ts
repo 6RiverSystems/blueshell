@@ -17,4 +17,8 @@ export class LatchedSelector<S extends BlueshellState, E> extends Selector<S, E>
 	constructor(name: string, children: Base<S, E>[]) {
 		super(name, children, true);
 	}
+
+	get symbol(): string {
+		return '⎅';
+	}
 }

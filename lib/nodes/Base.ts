@@ -180,4 +180,8 @@ export class Base<S extends BlueshellState, E> {
 	getLastResult(state: S) {
 		return this.getNodeStorage(state).lastResult;
 	}
+
+	get symbol(): string {
+		return '';
+	}
 }

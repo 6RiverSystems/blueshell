@@ -10,7 +10,7 @@ export {resultCodes} from './utils/resultCodes';
 
 import * as decorators from './nodes/decorators';
 
-import {toString, toConsole} from './utils/renderTree';
+import {toString, toConsole, toDotString, toDotConsole} from './utils/renderTree';
 
 export {Base as Action};
 export {Base as Condition};
@@ -18,6 +18,8 @@ export {Base as Condition};
 export {decorators};
 
 export const renderTree = {
-		toString,
-		toConsole,
+	toString,
+	toConsole,
+	toDotString,
+	toDotConsole,
 };

@@ -63,4 +63,8 @@ export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
 			return rc.FAILURE;
 		}
 	}
+
+	get symbol(): string {
+		return '?';
+	}
 }

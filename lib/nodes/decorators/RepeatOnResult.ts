@@ -17,4 +17,7 @@ export class RepeatOnResult<S extends BlueshellState, E> extends RepeatWhen<S, E
 			(state, event, res) => res === repeatRes);
 	}
 
+	get symbol(): string {
+		return '⊜↻';
+	}
 }
