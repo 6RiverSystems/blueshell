@@ -96,9 +96,9 @@ export function serializeDotTree<S extends BlueshellState, E>(root: Base<S, E>, 
 		resultingString += `${getColor(currentNode!, state)}];\n`;
 
 		if ((<any>currentNode).children) {
-			for (const child of (<any>currentNode).children) {
-				resultingString += `\t${nodeId} -> ${getNodeId(child)}\n`;
-			}
+			resultingString = (<any>currentNode).children.reduce(
+				(acc: string, child: Base<S, E>) => (`${acc}\t${nodeId}->${getNodeId(child)};\n`),
+				resultingString);
 			for (const child of [...(<any>currentNode).children].reverse()) {
 				nodesToVisit.push(child);
 			}
