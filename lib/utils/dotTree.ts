@@ -53,11 +53,11 @@ function getColor<S extends BlueshellState, E>(node: Base<S, E>, state?: S): str
 }
 
 function getNodeId<S extends BlueshellState, E>(node: Base<S, E>): string {
-	const cheat: any = node;
-	if (!cheat.magicTreeId) {
-		cheat.magicTreeId = `n${v4().replace(/\-/g, '')}`;
+	const anyfiedNode: any = node;
+	if (!anyfiedNode.__nodeId) {
+		anyfiedNode.__nodeId = `n${v4().replace(/\-/g, '')}`;
 	}
-	return cheat.magicTreeId;
+	return anyfiedNode.__nodeId;
 }
 
 function getLabel<S extends BlueshellState, E>(node: Base<S, E>): string {
