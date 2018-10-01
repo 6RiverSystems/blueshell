@@ -53,11 +53,11 @@ function getColor<S extends BlueshellState, E>(node: Base<S, E>, state?: S): str
 }
 
 function getNodeId<S extends BlueshellState, E>(node: Base<S, E>): string {
-	const anyfiedNode: any = node;
-	if (!anyfiedNode.__nodeId) {
-		anyfiedNode.__nodeId = `n${v4().replace(/\-/g, '')}`;
+	const nodeUnsafe: any = node;
+	if (!nodeUnsafe.__nodeId) {
+		nodeUnsafe.__nodeId = `n${v4().replace(/\-/g, '')}`;
 	}
-	return anyfiedNode.__nodeId;
+	return nodeUnsafe.__nodeId;
 }
 
 function getLabel<S extends BlueshellState, E>(node: Base<S, E>): string {
