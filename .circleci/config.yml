@@ -1,0 +1,74 @@
+version: 2
+jobs:
+  setup:
+    docker:
+      - image: circleci/node:8
+        environment:
+          NODE_ENV: test
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "package-lock.json"}}
+            - dependency-cache-
+      - run:
+          name: Install node dependencies
+          command: |
+            npm ci
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - .
+  publish:
+    docker:
+      - image: circleci/node:8
+        environment:
+          NODE_ENV: test
+    steps:
+      - attach_workspace:
+          at: ./
+      - run:
+          name: npm publish via script
+          command: |
+            ./scripts/release.sh
+  test:
+    docker:
+      - image: node:8.9.4
+        environment:
+          NODE_ENV: test
+          MOCHA_OPTS: --reporter mocha-junit-reporter --reporter-options mochaFile=$CIRCLE_TEST_REPORTS/mocha/junit.xml
+          CODECOV_TOKEN: 93320c3b-2cd0-48d7-9ff1-5b29632d377e
+    steps:
+      - attach_workspace:
+          at: ./
+      - run:
+          name: npm test
+          command: |
+            npm test
+      - run:
+          name: npm run coverage
+          command: |
+            npm run coverage
+      - store_artifacts:
+          path: coverage
+      - store_artifacts:
+          path: reports/junit/
+      - store_test_results:
+          path: reports/junit/
+
+workflows:
+  version: 2
+
+  test_and_publish:
+    jobs:
+      - setup
+      - test:
+          requires:
+            - setup
+      - publish:
+          requires:
+            - test
