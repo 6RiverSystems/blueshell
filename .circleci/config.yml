@@ -45,6 +45,11 @@ jobs:
       - attach_workspace:
           at: ./
       - run:
+          name: Get CI Scripts
+          command: |
+            git submodule update --init
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run:
           name: npm test
           command: |
             npm test
