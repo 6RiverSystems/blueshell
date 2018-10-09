@@ -32,6 +32,10 @@ jobs:
       - attach_workspace:
           at: ./
       - run:
+          name: Set NPM auth token
+          command: |
+             echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run:
           name: npm publish via script
           command: |
             ./scripts/release.sh
