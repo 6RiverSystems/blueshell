@@ -13,7 +13,7 @@ const CompositeShape = 'shape=diamond height=1';
 const DefaultShape = 'shape=box';
 
 const SuccessColor = 'fillcolor="#4daf4a"';
-const FailureColor = 'fillcolor=#984ea3';
+const FailureColor = 'fillcolor="#984ea3"';
 const RunningColor = 'fillcolor="#377eb8"';
 const ErrorColor = 'fillcolor="#e41a1c"';
 const DefaultColor = 'fillcolor="#e5e5e5"';
@@ -93,7 +93,7 @@ export function serializeDotTree<S extends BlueshellState, E>(root: Base<S, E>, 
 
 		resultingString += `\t${nodeId} `;
 		resultingString += `[${getLabel(currentNode!)} ${getShape(currentNode!)} ${getTooltip(currentNode!)}`;
-		resultingString += `${getColor(currentNode!, state)}];\n`;
+		resultingString += ` ${getColor(currentNode!, state)}];\n`;
 
 		if ((<any>currentNode).children) {
 			resultingString = (<any>currentNode).children.reduce(

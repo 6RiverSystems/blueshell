@@ -21,7 +21,7 @@
     "test": "NODE_ENV=test nyc mocha ${MOCHA_OPTS}",
     "test:no-cover": "NODE_ENV=test mocha",
     "test:debug": "npm run test:no-cover -- --debug-brk test",
-    "coverage": "NODE_ENV=test nyc report --reporter=text-lcov | coveralls",
+    "coverage": "NODE_ENV=test nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "prepublish": "npm-run-all clean compile",
     "commitmsg": "validate-commit-msg"
   },
@@ -53,6 +53,7 @@
     "@types/reflect-metadata": "^0.1.0",
     "@types/uuid": "^3.4.3",
     "chai": "^4.1.2",
+    "codecov": "^3.1.0",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.18.1",
     "eslint-config-6river": "^1.1.0",
