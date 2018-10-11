@@ -2,7 +2,7 @@
  * Created by josh on 3/23/16.
  */
 import {assert} from 'chai';
-
+import * as parse from 'dotparser';
 
 import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
@@ -79,19 +79,14 @@ describe('renderTree', function() {
 		it('should generate a dot string without state', function(done) {
 			const dotString = renderTree.toDotString(waitAi);
 
-/*			const expectedWords = [
-				'shutdownWithWaitAi',
-				'Recharge',
-				'WaitForCooldown',
-				'EmergencyShutdown',
-			];
-
-			assertWordsInString(dotString, expectedWords);*/
-			assert.notOk(dotString.includes('colorscheme=set14 fillcolor=3')); // SUCCESS
-			assert.notOk(dotString.includes('colorscheme=set14 fillcolor=4')); // FAILURE
-			assert.notOk(dotString.includes('colorscheme=set14 fillcolor=2')); // RUNNING
-			assert.notOk(dotString.includes('colorscheme=set14 fillcolor=1')); // ERROR
+			assert.notOk(dotString.includes('fillcolor="#4daf4a"')); // SUCCESS
+			assert.notOk(dotString.includes('fillcolor="#984ea3"')); // FAILURE
+			assert.notOk(dotString.includes('fillcolor="#377eb8"')); // RUNNING
+			assert.notOk(dotString.includes('fillcolor="#e41a1c"')); // ERROR
 			console.log(dotString);
+			assert.doesNotThrow(function() {
+				parse(dotString);
+			});
 			done();
 		});
 
@@ -109,20 +104,10 @@ describe('renderTree', function() {
 				const result = renderTree.toDotString(waitAi, state);
 
 				assert.ok(result);
-
-/*				const expectedWords = [
-					'shutdownWithWaitAi',
-					'colorscheme=set14 fillcolor=2', // RUNNING
-					'Recharge',
-					'colorscheme=set14 fillcolor=4', // FAILURE
-					'WaitForCooldown',
-					'colorscheme=set14 fillcolor=2', // RUNNING
-					'EmergencyShutdown',
-					'colorscheme=X11 fillcolor=gray90', // DEFAULT
-				];
-
-				assertWordsInString(result, expectedWords); */
 				console.log(result);
+				assert.doesNotThrow(function() {
+					parse(result);
+				});
 			});
 		});
 
@@ -130,6 +115,9 @@ describe('renderTree', function() {
 			const customLSelector = new CustomLatchedSelector();
 			const dotString = renderTree.toDotString(customLSelector);
 			console.log(dotString);
+			assert.doesNotThrow(function() {
+				parse(dotString);
+			});
 			done();
 		});
 	});
