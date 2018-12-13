@@ -1,6 +1,6 @@
 import {Composite} from './Composite';
 import {BlueshellState} from './BlueshellState';
-import {resultCodes as rc} from '../utils/resultCodes';
+import {resultCodes as rc, ResultCode} from '../utils/resultCodes';
 
 /**
  * Sends an event to each child until one of the returns `FAILURE`, or `RUNNING`, then returns that value.
@@ -16,7 +16,7 @@ export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param event The event to handle.
 	 * @param i The child index.
 	 */
-	handleChild(state: S, event: E, i: number): Promise<string> {
+	async handleChild(state: S, event: E, i: number): Promise<ResultCode> {
 
 		let storage = this.getNodeStorage(state);
 
@@ -27,20 +27,18 @@ export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 
 		let child = this.children[i];
 
-		return child.handleEvent(state, event)
-		.then(res => this._afterChild(res, state, event))
-		.then(({res, state: state_, event: event_}) => {
-			if (res === rc.SUCCESS) {
-				// Call the next child
-				return this.handleChild(state_, event_, ++i);
-			} else {
-				if (this.latched && res === rc.RUNNING) {
-					storage.running = i;
-				}
-
-				return res;
+		const res = await child.handleEvent(state, event);
+		const {res: res_, state: state_, event: event_} = await this._afterChild(res, state, event);
+		if (res_ === rc.SUCCESS) {
+			// Call the next child
+			return this.handleChild(state_, event_, ++i);
+		} else {
+			if (this.latched && res_ === rc.RUNNING) {
+				storage.running = i;
 			}
-		});
+
+			return res_;
+		}
 	}
 
 	/**
@@ -49,7 +47,7 @@ export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param state
 	 * @param event
 	 */
-	_afterChild(res: string, state: S, event: E) {
+	_afterChild(res: ResultCode, state: S, event: E) {
 		return {res, state, event};
 	}
 

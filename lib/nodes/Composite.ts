@@ -1,5 +1,6 @@
 import {Base} from './Base';
 import {BlueshellState} from './BlueshellState';
+import { ResultCode } from '../utils/resultCodes';
 
 /**
  * Base class for all Composite Nodes (nodes which have children).
@@ -48,7 +49,7 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 	 * @param state
 	 * @param event
 	 */
-	onEvent(state: S, event: E): string|Promise<string> {
+	onEvent(state: S, event: E): ResultCode|Promise<ResultCode> {
 		let storage = this.getNodeStorage(state);
 
 		let firstChild = 0;
@@ -71,7 +72,7 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 	 * @param event
 	 * @param i
 	 */
-	handleChild(state: S, event: E, i: number): Promise<string> {
+	handleChild(state: S, event: E, i: number): Promise<ResultCode> {
 		throw new Error('This is an abstract method - please override.');
 	}
 

@@ -2,7 +2,7 @@
  * Created by josh on 1/10/16.
  */
 import {BlueshellState} from './BlueshellState';
-import {resultCodes as rc} from '../utils/resultCodes';
+import {resultCodes as rc, ResultCode, resultCodes} from '../utils/resultCodes';
 
 /**
  * Base class of all Nodes.
@@ -29,28 +29,27 @@ export class Base<S extends BlueshellState, E> {
 	 * @param event The event to handle.
 	 * @protected
 	 */
-	handleEvent(state: S, event: E): Promise<string> {
-		return Promise.resolve(this._beforeEvent(state, event))
-		.then(() => this.precondition(state, event))
-		.then((passed) => {
+	async handleEvent(state: S, event: E): Promise<ResultCode> {
+		let result: ResultCode;
+		try {
+		await this._beforeEvent(state, event);
+		const passed = await this.precondition(state, event);
 			if (!passed) {
 				return rc.FAILURE;
 			}
 
-			return this.onEvent(state, event);
-		})
-		.catch(err => {
+			result = await this.onEvent(state, event);
+		
+	} catch (err) {
 			state.errorReason = err;
 
 			if (this.getDebug(state)) {
 				console.error('Error: ', err.stack); // eslint-disable-line no-console
 			}
 
-			return rc.ERROR;
-		})
-		.then(res => {
-			return this._afterEvent(res, state, event);
-		});
+			result = rc.ERROR;
+		}
+			return this._afterEvent(result, state, event);
 	}
 
 	/**
@@ -83,7 +82,7 @@ export class Base<S extends BlueshellState, E> {
 	 * @param state
 	 * @param event
 	 */
-	_afterEvent(res: string, state: S, event: E): string|Promise<string> {
+	_afterEvent(res: ResultCode, state: S, event: E): ResultCode|Promise<ResultCode> {
 		if (this.getDebug(state)) {
 			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console
 		}
@@ -111,7 +110,7 @@ export class Base<S extends BlueshellState, E> {
 	 * @param event
 	 * @return Result. Must be rc.SUCCESS, rc.FAILURE, or rc.RUNNING
 	 */
-	onEvent(state: S, event: E): string|Promise<string> {
+	onEvent(state: S, event: E): ResultCode|Promise<ResultCode> {
 		return Promise.resolve(rc.SUCCESS);
 	}
 

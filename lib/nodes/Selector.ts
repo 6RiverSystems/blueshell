@@ -1,7 +1,7 @@
 import {Composite} from './Composite';
 import {BlueshellState} from './BlueshellState';
 
-import {resultCodes as rc} from '../utils/resultCodes';
+import {resultCodes as rc, ResultCode} from '../utils/resultCodes';
 
 /**
  * Selector Node (a.k.a. Fallback)
@@ -18,7 +18,7 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param event The event to handle.
 	 * @param i The child index.
 	 */
-	handleChild(state: S, event: E, i: number): Promise<string> {
+	async handleChild(state: S, event: E, i: number): Promise<ResultCode> {
 
 		let storage = this.getNodeStorage(state);
 
@@ -29,20 +29,18 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 
 		let child = this.children[i];
 
-		return child.handleEvent(state, event)
-		.then((res) => this._afterChild(res, state, event))
-		.then(({res, state: state_, event: event_}) => {
-			if (res !== rc.FAILURE) {
+		const res = await child.handleEvent(state, event);
+		const {res: res_, state: state_, event: event_} = await this._afterChild(res, state, event);
+		if (res_ !== rc.FAILURE) {
 
-				if (this.latched && res === rc.RUNNING) {
-					storage.running = i;
-				}
-
-				return res;
-			} else {
-				return this.handleChild(state_, event_, ++i);
+			if (this.latched && res_ === rc.RUNNING) {
+				storage.running = i;
 			}
-		});
+
+			return res_;
+		} else {
+			return this.handleChild(state_, event_, ++i);
+		}
 	}
 
 	/**
@@ -51,7 +49,7 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param state
 	 * @param event
 	 */
-	_afterChild(res: string, state: S, event: E) {
+	_afterChild(res: ResultCode, state: S, event: E) {
 		return {res, state, event};
 	}
 

@@ -1,6 +1,6 @@
 import {BlueshellState} from '../BlueshellState';
 
-import {resultCodes as rc} from '../../utils/resultCodes';
+import {resultCodes as rc, ResultCode} from '../../utils/resultCodes';
 import {Decorator} from '../Decorator';
 
 /**
@@ -18,23 +18,17 @@ export class Not<S extends BlueshellState, E> extends Decorator<S, E> {
 	 * @param state The state when the event occured.
 	 * @param event The event to handle.
 	 */
-	onEvent(state: S, event: E): Promise<string> {
-		let p = this.child.handleEvent(state, event);
+	async onEvent(state: S, event: E): Promise<ResultCode> {
+		const res = await this.child.handleEvent(state, event);
 
-		return p.then((res: string) => {
-			switch (res) {
-			case rc.SUCCESS:
-				res = rc.FAILURE;
-				break;
-			case rc.FAILURE:
-				res = rc.SUCCESS;
-				break;
-			default:
-				// no-op
-			}
-
+		switch (res) {
+		case rc.SUCCESS:
+			return rc.FAILURE;
+		case rc.FAILURE:
+			return rc.SUCCESS;
+		default:
 			return res;
-		});
+		}
 	}
 
 	get symbol(): string {
