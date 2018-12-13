@@ -49,7 +49,7 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 	 * @param state
 	 * @param event
 	 */
-	onEvent(state: S, event: E): ResultCode|Promise<ResultCode> {
+	async onEvent(state: S, event: E): Promise<ResultCode> {
 		let storage = this.getNodeStorage(state);
 
 		let firstChild = 0;
@@ -63,7 +63,7 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 			storage.running = undefined;
 		}
 
-		return this.handleChild(state, event, firstChild);
+		return await this.handleChild(state, event, firstChild);
 	}
 
 	/**

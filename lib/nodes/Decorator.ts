@@ -28,8 +28,8 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param state
 	 * @param event
 	 */
-	onEvent(state: S, event: E): ResultCode|Promise<ResultCode> {
+	async onEvent(state: S, event: E): Promise<ResultCode> {
 		// Passthrough
-		return this.child.handleEvent(state, event);
+		return await this.child.handleEvent(state, event);
 	}
 }

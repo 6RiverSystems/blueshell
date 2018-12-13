@@ -82,7 +82,7 @@ export class Base<S extends BlueshellState, E> {
 	 * @param state
 	 * @param event
 	 */
-	_afterEvent(res: ResultCode, state: S, event: E): ResultCode|Promise<ResultCode> {
+	_afterEvent(res: ResultCode, state: S, event: E): ResultCode {
 		if (this.getDebug(state)) {
 			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console
 		}
@@ -110,8 +110,8 @@ export class Base<S extends BlueshellState, E> {
 	 * @param event
 	 * @return Result. Must be rc.SUCCESS, rc.FAILURE, or rc.RUNNING
 	 */
-	onEvent(state: S, event: E): ResultCode|Promise<ResultCode> {
-		return Promise.resolve(rc.SUCCESS);
+	async onEvent(state: S, event: E): Promise<ResultCode> {
+		return rc.SUCCESS;
 	}
 
 	set parent(path: string) {

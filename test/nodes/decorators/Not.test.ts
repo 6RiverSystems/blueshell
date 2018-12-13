@@ -12,8 +12,8 @@ const Action = Behavior.Action;
 const Not = Behavior.decorators.Not;
 
 class EchoAction extends Action<DroneState, string> {
-	onEvent(state: DroneState, event: string) {
-		return event;
+	async onEvent(state: DroneState, event: string) {
+		return event as any;
 	}
 }
 

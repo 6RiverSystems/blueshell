@@ -19,8 +19,8 @@ class TestAction extends Base<TestState, string> {
 		super(name);
 	}
 
-	precondition(): Promise<boolean> {
-		return Promise.resolve(this.preconditionStatus);
+	async precondition(): Promise<boolean> {
+		return this.preconditionStatus;
 	}
 }
 
@@ -94,8 +94,8 @@ describe('Base', function() {
 
 		it('should allow precondition to return a promise', function() {
 			class PromiseAction extends TestAction {
-				precondition() {
-					return Promise.resolve(true);
+				async precondition() {
+					return true;
 				}
 			};
 

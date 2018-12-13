@@ -22,7 +22,7 @@ export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 
 		// If we finished all processing without failure return success.
 		if (i >= this.children.length) {
-			return Promise.resolve(rc.SUCCESS);
+			return rc.SUCCESS;
 		}
 
 		let child = this.children[i];

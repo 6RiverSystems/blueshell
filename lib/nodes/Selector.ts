@@ -24,7 +24,7 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 
 		// If we finished all processing without success return failure.
 		if (i >= this.children.length) {
-			return Promise.resolve(rc.FAILURE);
+			return rc.FAILURE;
 		}
 
 		let child = this.children[i];
