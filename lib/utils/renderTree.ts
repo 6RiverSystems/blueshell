@@ -6,12 +6,16 @@ import {BlueshellState} from '../nodes/BlueshellState';
 import {serializeArchyTree} from './archyTree';
 import {serializeDotTree} from './dotTree';
 
-export function toString<S extends BlueshellState, E>(tree: Base<S, E>, state?: S): string {
-	return serializeArchyTree(tree, state);
+export function toString<S extends BlueshellState, E>(
+	tree: Base<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
+): string {
+	return serializeArchyTree(tree, state, contextDepth);
 }
 
-export function toConsole<S extends BlueshellState, E>(tree: Base<S, E>, state?: S) {
-	console.log(toString(tree, state)); // eslint-disable-line no-console
+export function toConsole<S extends BlueshellState, E>(
+	tree: Base<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
+) {
+	console.log(toString(tree, state, contextDepth)); // eslint-disable-line no-console
 }
 
 export function toDotString<S extends BlueshellState, E>(tree: Base<S, E>, state?: S) {

@@ -4,40 +4,66 @@ import {BlueshellState} from '../nodes/BlueshellState';
 import * as archy from 'archy';
 import {Data} from 'archy';
 
-function buildArchyTree<S extends BlueshellState, E>(node: Base<S, E>, state?: S): Data {
+function buildArchyTree<S extends BlueshellState, E>(
+	node: Base<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
+): Required<Data>|undefined {
+	let label = node.name;
 
-	let nodeLabel = node.name;
-
-	if (nodeLabel !== node.constructor.name) {
-		nodeLabel += ' (' + node.constructor.name + ')';
+	if (label !== node.constructor.name) {
+		label += ' (' + node.constructor.name + ')';
 	}
+
+	let onPath = false;
 
 	if (state) {
-		let eventCounter = node.getTreeEventCounter(state);
-		let lastEventSeen = node.getLastEventSeen(state);
-		let lastResult = node.getLastResult(state);
+		const eventCounter = node.getTreeEventCounter(state);
+		const lastEventSeen = node.getLastEventSeen(state);
+		const lastResult = node.getLastResult(state);
 
 		if (lastEventSeen === eventCounter && lastResult) {
-			nodeLabel += ' => ' + lastResult;
+			label += ' => ' + lastResult;
+			onPath = true;
 		}
-
 	}
 
-	const archyTree = {
-		label: nodeLabel,
-		nodes: new Array<Data | string>(),
-	};
+	if (!onPath) {
+		if (contextDepth < 0) {
+			return undefined;
+		}
+
+		if (contextDepth === 0) {
+			return {
+				label: '...',
+				nodes: [],
+			};
+		}
+	}
+
+	label += `(${contextDepth})`;
+
+	const nodes = [];
 
 	if ((<any>node).children) {
-		for (let child of (<any>node).children) {
-			archyTree.nodes.push(buildArchyTree(<Base<S,E>>child, state));
+		for (const child of (<any>node).children) {
+			const subTree = buildArchyTree(<Base<S, E>>child, state, contextDepth - (onPath ? 0 : 1));
+			if (subTree) {
+				nodes.push(subTree);
+			}
 		}
 	}
 
-	return archyTree;
+	return {
+		label,
+		nodes,
+	};
 }
 
-export function serializeArchyTree<S extends BlueshellState, E>(tree: Base<S, E>, state?: S): string {
-	const archyTree = buildArchyTree(tree, state);
-	return archy(archyTree);
+export function serializeArchyTree<S extends BlueshellState, E>(
+	tree: Base<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
+): string {
+	const archyTree = buildArchyTree(tree, state, contextDepth);
+	if ( archyTree ) {
+		return archy(archyTree);
+	}
+	return '';
 }

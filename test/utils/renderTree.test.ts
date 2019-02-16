@@ -6,11 +6,121 @@ import * as parse from 'dotparser';
 
 import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
-import {renderTree, LatchedSelector} from '../../lib';
+import {renderTree, LatchedSelector, LatchedSequence, Action} from '../../lib';
 import {RobotState, waitAi} from '../nodes/test/RobotActions';
+import {BlueshellState} from '../../lib/nodes/BlueshellState';
+
+class ConsumeOnce extends Action<any, any> {
+	async onEvent(state: any, event: any): Promise<string> {
+		const storage = this.getNodeStorage(state);
+
+		if (storage.ateOne) {
+			delete storage.ateOne;
+			return rc.SUCCESS;
+		} else {
+			storage.ateOne = true;
+			return rc.RUNNING;
+		}
+	}
+}
 
 describe('renderTree', function() {
 	context('archy tree', function() {
+		context('contextDepth', function() {
+			const testTree = new LatchedSequence(
+				'root',
+				[
+					new LatchedSequence(
+						'0',
+						[
+							new LatchedSequence(
+								'0.0',
+								[
+									new ConsumeOnce('0.0.0'),
+									new ConsumeOnce('0.0.1'),
+								]
+							),
+							new LatchedSequence(
+								'0.1',
+								[
+									new ConsumeOnce('0.1.0'),
+									new ConsumeOnce('0.1.1'),
+								]
+							),
+						]
+					),
+					new LatchedSequence(
+						'1',
+						[
+							new ConsumeOnce('1.0'),
+							new ConsumeOnce('1.1'),
+						]
+					),
+				]
+			);
+			let state: BlueshellState = {
+				errorReason: undefined,
+				__blueshell: {},
+			};
+			beforeEach(function() {
+				state = {
+					errorReason: undefined,
+					__blueshell: {},
+				};
+			});
+			function runContextDepthTest(
+				contextDepth: number,
+				expectedNodes: number,
+				expectedEllipses: number,
+				expectedArrows: number
+			) {
+				const render = renderTree!.toString(testTree, state, contextDepth);
+
+				const nodesShown = render.split('\n').length - 1;
+				const ellipsesShown = getCount(/\.\.\./g);
+				const arrowsShown = getCount(/=>/g);
+
+				assert.strictEqual(nodesShown, expectedNodes, 'nodes');
+				assert.strictEqual(ellipsesShown, expectedEllipses, 'ellipses');
+				assert.strictEqual(arrowsShown, expectedArrows, 'arrows');
+
+				function getCount(re: RegExp) {
+					const matches = render.match(re);
+					return matches && matches.length || 0;
+				}
+			}
+			context('before running', function() {
+				it('should show nothing with -1 context depth', function() {
+					runContextDepthTest(-1, 0, 0, 0);
+				});
+				it('should show root ellipsis with 0 context depth', function() {
+					runContextDepthTest(0, 1, 1, 0);
+				});
+				it('should show everything by default', function() {
+					runContextDepthTest(undefined, 11, 0, 0);
+				});
+			});
+			context('after one run', function() {
+				beforeEach(async function() {
+					await testTree.handleEvent(state, {});
+				});
+				it('should arrow the first path by default', function() {
+					runContextDepthTest(undefined, 11, 0, 4);
+				});
+				it('should show only the active path and ellipses 0 context depth', function() {
+					runContextDepthTest(0, 7, 3, 4);
+				});
+				it('should show only the active path at -1 context depth', function() {
+					runContextDepthTest(-1, 4, 0, 4);
+				});
+				it('should show only the active path, siblings, and ellipses', function() {
+					runContextDepthTest(1, 11, 4, 4);
+				});
+				it('should show everything at 2 context depth', function() {
+					runContextDepthTest(2, 11, 0, 4);
+				});
+			});
+		});
 		it('should not crash', function(done) {
 			renderTree!.toConsole(waitAi);
 			done();
