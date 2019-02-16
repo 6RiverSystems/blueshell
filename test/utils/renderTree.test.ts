@@ -90,30 +90,30 @@ describe('renderTree', function() {
 				}
 			}
 			context('before running', function() {
-				it('should show nothing with -1 context depth', function() {
+				it('should show everything at unspecified context depth', function() {
+					runContextDepthTest(undefined, 11, 0, 0);
+				});
+				it('should show nothing at -1 context depth', function() {
 					runContextDepthTest(-1, 0, 0, 0);
 				});
-				it('should show root ellipsis with 0 context depth', function() {
+				it('should show root ellipsis at 0 context depth', function() {
 					runContextDepthTest(0, 1, 1, 0);
-				});
-				it('should show everything by default', function() {
-					runContextDepthTest(undefined, 11, 0, 0);
 				});
 			});
 			context('after one run', function() {
 				beforeEach(async function() {
 					await testTree.handleEvent(state, {});
 				});
-				it('should arrow the first path by default', function() {
+				it('should arrow the first path at unspecified context depth', function() {
 					runContextDepthTest(undefined, 11, 0, 4);
-				});
-				it('should show only the active path and ellipses 0 context depth', function() {
-					runContextDepthTest(0, 7, 3, 4);
 				});
 				it('should show only the active path at -1 context depth', function() {
 					runContextDepthTest(-1, 4, 0, 4);
 				});
-				it('should show only the active path, siblings, and ellipses', function() {
+				it('should show only the active path and ellipses at 0 context depth', function() {
+					runContextDepthTest(0, 7, 3, 4);
+				});
+				it('should show only the active path, siblings, and ellipses at 1 context depth', function() {
 					runContextDepthTest(1, 11, 4, 4);
 				});
 				it('should show everything at 2 context depth', function() {
