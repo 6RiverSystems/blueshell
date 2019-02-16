@@ -39,8 +39,6 @@ function buildArchyTree<S extends BlueshellState, E>(
 		}
 	}
 
-	label += `(${contextDepth})`;
-
 	const nodes = [];
 
 	if ((<any>node).children) {
