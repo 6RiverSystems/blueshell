@@ -5,7 +5,7 @@ import * as archy from 'archy';
 import {Data} from 'archy';
 
 function buildArchyTree<S extends BlueshellState, E>(
-	node: Base<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
+	node: Base<S, E>, contextDepth: number, state?: S
 ): Required<Data>|undefined {
 	let label = node.name;
 
@@ -43,7 +43,8 @@ function buildArchyTree<S extends BlueshellState, E>(
 
 	if ((<any>node).children) {
 		for (const child of (<any>node).children) {
-			const subTree = buildArchyTree(<Base<S, E>>child, state, contextDepth - (onPath ? 0 : 1));
+			const childDepth = contextDepth - (onPath ? 0 : 1);
+			const subTree = buildArchyTree(<Base<S, E>>child, childDepth, state);
 			if (subTree) {
 				nodes.push(subTree);
 			}
@@ -59,8 +60,8 @@ function buildArchyTree<S extends BlueshellState, E>(
 export function serializeArchyTree<S extends BlueshellState, E>(
 	tree: Base<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
 ): string {
-	const archyTree = buildArchyTree(tree, state, contextDepth);
-	if ( archyTree ) {
+	const archyTree = buildArchyTree(tree, contextDepth, state);
+	if (archyTree) {
 		return archy(archyTree);
 	}
 	return '';
