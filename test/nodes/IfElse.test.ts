@@ -16,7 +16,7 @@ class TestState implements BlueshellState {
 
 describe('IfElse', function() {
 	const successAction = new (class extends Behavior.Action<TestState, string> {
-		onEvent(state: TestState, event: string) {
+		onEvent(state: TestState) {
 			state.success = true;
 
 			return rc.SUCCESS;
@@ -24,7 +24,7 @@ describe('IfElse', function() {
 	})();
 
 	const failureAction = new (class extends Behavior.Action<TestState, string> {
-		onEvent(state: TestState, event: string) {
+		onEvent(state: TestState) {
 			state.success = false;
 
 			return rc.FAILURE;
@@ -33,7 +33,7 @@ describe('IfElse', function() {
 
 	it('should return success when conditional is true with no alternative', function() {
 		const ifElse = new Behavior.IfElse('testIfElse',
-			(state, event) => true,
+			() => true,
 			successAction
 		);
 
@@ -47,7 +47,7 @@ describe('IfElse', function() {
 
 	it('should return success when conditional is true with an alternative', function() {
 		const ifElse = new Behavior.IfElse('testIfElse',
-			(state, event) => true,
+			() => true,
 			successAction,
 			failureAction
 		);
@@ -62,7 +62,7 @@ describe('IfElse', function() {
 
 	it('should return success when conditional is false', function() {
 		const ifElse = new Behavior.IfElse('testIfElse',
-			(state, event) => false,
+			() => false,
 			failureAction,
 			successAction
 		);
@@ -78,7 +78,7 @@ describe('IfElse', function() {
 
 	it('should return failure when conditional is false and there is no alternative', function() {
 		const ifElse = new Behavior.IfElse('testIfElse',
-			(state, event) => false,
+			() => false,
 			successAction
 		);
 

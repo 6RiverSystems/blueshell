@@ -1,22 +1,35 @@
 import {Base} from './Base';
 import {BlueshellState} from './BlueshellState';
 
-export class Composite<S extends BlueshellState, E> extends Base<S, E> {
-
+/**
+ * Base class for all Composite Nodes (nodes which have children).
+ * @author Joshua Chaitin-Pollak
+ */
+export abstract class Composite<S extends BlueshellState, E> extends Base<S, E> {
+	/**
+	 * @constructor
+	 * @param name
+	 * @param _children Children Nodes.
+	 * @param _latched
+	 */
 	constructor(name: string,
 	            private _children: Base<S, E>[],
 	            private _latched: boolean = false) {
 		super(name);
 
-		for (let child of this.children) {
+		for (const child of this.children) {
 			child.parent = this.name;
 		}
 	}
 
+	/**
+	 * Sets the parent of this Node, and all children Nodes.
+	 * @override
+	 */
 	set parent(parent: string) {
 		super.parent = parent;
 
-		for (let child of this.children) {
+		for (const child of this.children) {
 			child.parent = parent + '_' + this.name;
 		}
 	}
@@ -29,9 +42,14 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 		return this._latched;
 	}
 
+	/**
+	 * Invokes `handleChild` for each child.
+	 * @override
+	 * @param state
+	 * @param event
+	 */
 	onEvent(state: S, event: E): string {
-
-		let storage = this.getNodeStorage(state);
+		const storage = this.getNodeStorage(state);
 
 		let firstChild = 0;
 
@@ -47,14 +65,23 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 		return this.handleChild(state, event, firstChild);
 	}
 
-	handleChild(state: S, event: E, i: number): string {
-		throw new Error('This is an abstract method - please override.');
-	}
+	/**
+	 * @abstract
+	 * @param state
+	 * @param event
+	 * @param i
+	 */
+	abstract handleChild(state: S, event: E, i: number): string;
 
+	/**
+	 * Resets Node Storage for this node and all children.
+	 * @override
+	 * @param state
+	 */
 	resetNodeStorage(state: S) {
 		super.resetNodeStorage(state);
 
-		for (let child of this.children) {
+		for (const child of this.children) {
 			child.resetNodeStorage(state);
 		}
 	}

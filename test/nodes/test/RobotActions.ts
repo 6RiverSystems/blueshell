@@ -1,8 +1,6 @@
 /**
  * Created by josh on 1/18/16.
  */
-import {assert} from 'chai';
-
 import {resultCodes as rc} from '../../../lib/utils/resultCodes';
 
 import * as Behavior from '../../../lib';
@@ -28,6 +26,11 @@ class RobotState implements BlueshellState {
 }
 
 class Recharge extends Behavior.Action<RobotState, string> {
+	constructor() {
+		super('Recharge');
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: RobotState, event: string): string {
 		let result = rc.SUCCESS;
 
@@ -42,10 +45,9 @@ class Recharge extends Behavior.Action<RobotState, string> {
 		return result;
 	}
 }
-
 class WaitForCooldown extends Behavior.Action<RobotState, string> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: RobotState, event: string): string {
-
 		const storage = this.getNodeStorage(state);
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : 1;
@@ -66,6 +68,7 @@ class WaitForCooldown extends Behavior.Action<RobotState, string> {
 }
 
 class EmergencyShutdown extends Behavior.Action<RobotState, string> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: RobotState, event: string) {
 		state.commands.push('powerOff');
 

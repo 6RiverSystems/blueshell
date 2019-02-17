@@ -1,24 +1,30 @@
-/**
- * Created by josh on 1/10/16.
- */
 import {Composite} from './Composite';
 import {BlueshellState} from './BlueshellState';
 import {resultCodes as rc} from '../utils/resultCodes';
 
+/**
+ * Sends an event to each child until one of the returns `FAILURE`, or `RUNNING`, then returns that value.
+ * If all children return `SUCCESS`, return `SUCCESS`.
+ * 1/10/16
+ * @author Joshua Chaitin-Pollak
+ */
 export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
-
-	// Recursively executes children until one of them returns
-	// failure. If we call all the children successfully, return success.
+	/**
+	 * Recursively executes children until one of them returns
+	 * failure. If we call all the children successfully, return success.
+	 * @param state The state when the event occured.
+	 * @param event The event to handle.
+	 * @param i The child index.
+	 */
 	handleChild(state: S, event: E, i: number): string {
-
-		let storage = this.getNodeStorage(state);
+		const storage = this.getNodeStorage(state);
 
 		// If we finished all processing without failure return success.
 		if (i >= this.children.length) {
 			return rc.SUCCESS;
 		}
 
-		let child = this.children[i];
+		const child = this.children[i];
 
 		const res = child.handleEvent(state, event);
 		const {res: res_, state: state_, event: event_} =
@@ -36,7 +42,17 @@ export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 		}
 	}
 
+	/**
+	 * @ignore
+	 * @param res
+	 * @param state
+	 * @param event
+	 */
 	_afterChild(res: string, state: S, event: E) {
 		return {res, state, event};
+	}
+
+	get symbol(): string {
+		return '→';
 	}
 }

@@ -1,9 +1,10 @@
 /**
- * Created by jpollak on 5/30/16.
+ * 5/30/16
+ * @author Joshua Chaitin-Pollak
  */
 export const resultCodes = {
 	SUCCESS: 'SUCCESS',
 	FAILURE: 'FAILURE',
 	RUNNING: 'RUNNING',
-	ERROR: 'ERROR'
+	ERROR: 'ERROR',
 };

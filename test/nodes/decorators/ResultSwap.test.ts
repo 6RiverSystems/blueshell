@@ -6,8 +6,6 @@ import * as Behavior from '../../../lib';
 import {DroneState} from '../test/DroneActions';
 
 const Action = Behavior.Action;
-const RepeatOnResult = Behavior.decorators.RepeatOnResult;
-
 const ResultSwap = Behavior.decorators.ResultSwap;
 
 class SuccessAction extends Action<DroneState, string> {
@@ -15,6 +13,7 @@ class SuccessAction extends Action<DroneState, string> {
 		super('successAction');
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: DroneState, event: string): string {
 		return rc.SUCCESS;
 	}
@@ -25,6 +24,7 @@ class FailureAction extends Action<DroneState, string> {
 		super('failureAction');
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: DroneState, event: string): string {
 		return rc.FAILURE;
 	}
@@ -35,7 +35,7 @@ describe('ResultSwap', function() {
 		const successAction = new SuccessAction();
 		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, successAction);
 
-		const response = resultSwap.handleEvent(new DroneState(), '')
+		const response = resultSwap.handleEvent(new DroneState(), '');
 
 		assert.equal(response, rc.SUCCESS);
 	});

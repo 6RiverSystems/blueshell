@@ -40,7 +40,7 @@ describe('RepeatOnResult', function() {
 			// isolated per test
 			const state = new DroneState();
 
-			const res = test.action.handleEvent(state, test.event);
+			test.action.handleEvent(state, test.event);
 
 			makeVerify(test, state);
 		}

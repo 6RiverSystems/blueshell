@@ -9,6 +9,7 @@ import * as Behavior from '../../lib';
 import {DroneState} from './test/DroneActions';
 
 class ShootFlares extends Behavior.Action<DroneState, string> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: DroneState, event: string) {
 		let result = rc.FAILURE;
 
@@ -20,8 +21,8 @@ class ShootFlares extends Behavior.Action<DroneState, string> {
 		return result;
 	}
 }
-
-class EvasiveManeuver extends Behavior.Action<DroneState, string>  {
+class EvasiveManeuver extends Behavior.Action<DroneState, string> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: DroneState, event: string) {
 		state.commands.push('turnLeft');
 

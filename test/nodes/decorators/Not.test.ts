@@ -31,6 +31,7 @@ describe('Not', function() {
 			{action: unEcho, event: rc.RUNNING, result: rc.RUNNING},
 		];
 
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const makeVerify = function(test: any, state: DroneState) {
 			return function(res: string) {
 				assert.equal(res, test.result, `${test.action.name} -> ${test.result}`);
@@ -39,10 +40,9 @@ describe('Not', function() {
 
 		for (const test of tests) {
 			const state = new DroneState();
-			const p = test.action.handleEvent(state, test.event);
+			test.action.handleEvent(state, test.event);
 
 			makeVerify(test, state);
 		}
-
 	});
 });

@@ -10,6 +10,7 @@ import * as Behavior from '../../lib';
 import {RobotState} from './test/RobotActions';
 
 class StopMotors extends Behavior.Action<RobotState, string> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: RobotState, event: string) {
 		state.commands.push('motorsStopped');
 
@@ -18,6 +19,7 @@ class StopMotors extends Behavior.Action<RobotState, string> {
 }
 
 class StopLasers extends Behavior.Action<RobotState, string> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: RobotState, event: string) {
 		const storage = this.getNodeStorage(state);
 
@@ -38,6 +40,7 @@ class StopLasers extends Behavior.Action<RobotState, string> {
 }
 
 class Shutdown extends Behavior.Action<RobotState, string> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: RobotState, event: string) {
 		state.commands.push('powerOff');
 

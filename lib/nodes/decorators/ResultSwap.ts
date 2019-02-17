@@ -1,17 +1,24 @@
-/**
- * Created by josh on 1/21/16.
- */
 import {BlueshellState} from '../BlueshellState';
 import {Base} from '../Base';
 import {Decorator} from '../Decorator';
 
-// Swaps one result from the child for another
-// You can use this to mask FAILURE, etc
-//
-// For example, you can use this to have a Sequence continue operation
-// when a child returns FAILURE.
+/**
+ * Swaps one result from a child node for another.
+ * This can be used to mask `FAILURE`
+ *
+ * For example, you can use this to have a Sequene continue operation if a child returns `FAILURE`.
+ *
+ * 1/21/16
+ * @author Joshua Chaitin-Pollak
+ */
 export class ResultSwap<S extends BlueshellState, E> extends Decorator<S, E> {
-
+	/**
+	 * @constructor
+	 * @param _inResult The result to swap out (mask).
+	 * @param _outResult The result to return when the child returns `_inResult'.
+	 * @param child The child Node of the decorator.
+	 * @param desc Optional description of the Node.
+	 */
 	constructor(private _inResult: string,
 							private _outResult: string,
 							child: Base<S, E>,
@@ -19,6 +26,12 @@ export class ResultSwap<S extends BlueshellState, E> extends Decorator<S, E> {
 		super(desc, child);
 	}
 
+	/**
+	 * Performs the swap from the child Node.
+	 * @override
+	 * @param state
+	 * @param event
+	 */
 	onEvent(state: S, event: E) {
 		let res = this.child.handleEvent(state, event);
 
@@ -28,5 +41,9 @@ export class ResultSwap<S extends BlueshellState, E> extends Decorator<S, E> {
 		}
 
 		return res;
+	}
+
+	get symbol(): string {
+		return '↬';
 	}
 }
