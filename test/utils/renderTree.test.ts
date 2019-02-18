@@ -2,15 +2,125 @@
  * Created by josh on 3/23/16.
  */
 import {assert} from 'chai';
-
+import * as parse from 'dotparser';
 
 import {resultCodes as rc} from '../../lib/utils/resultCodes';
 
-import {renderTree, LatchedSelector} from '../../lib';
+import {renderTree, LatchedSelector, LatchedSequence, Action} from '../../lib';
 import {RobotState, waitAi} from '../nodes/test/RobotActions';
+import {BlueshellState} from '../../lib/nodes/BlueshellState';
+
+class ConsumeOnce extends Action<any, any> {
+	async onEvent(state: any, event: any): Promise<string> {
+		const storage = this.getNodeStorage(state);
+
+		if (storage.ateOne) {
+			delete storage.ateOne;
+			return rc.SUCCESS;
+		} else {
+			storage.ateOne = true;
+			return rc.RUNNING;
+		}
+	}
+}
 
 describe('renderTree', function() {
 	context('archy tree', function() {
+		context('contextDepth', function() {
+			const testTree = new LatchedSequence(
+				'root',
+				[
+					new LatchedSequence(
+						'0',
+						[
+							new LatchedSequence(
+								'0.0',
+								[
+									new ConsumeOnce('0.0.0'),
+									new ConsumeOnce('0.0.1'),
+								]
+							),
+							new LatchedSequence(
+								'0.1',
+								[
+									new ConsumeOnce('0.1.0'),
+									new ConsumeOnce('0.1.1'),
+								]
+							),
+						]
+					),
+					new LatchedSequence(
+						'1',
+						[
+							new ConsumeOnce('1.0'),
+							new ConsumeOnce('1.1'),
+						]
+					),
+				]
+			);
+			let state: BlueshellState = {
+				errorReason: undefined,
+				__blueshell: {},
+			};
+			beforeEach(function() {
+				state = {
+					errorReason: undefined,
+					__blueshell: {},
+				};
+			});
+			function runContextDepthTest(
+				contextDepth: number,
+				expectedNodes: number,
+				expectedEllipses: number,
+				expectedArrows: number
+			) {
+				const render = renderTree!.toString(testTree, state, contextDepth);
+
+				const nodesShown = render.split('\n').length - 1;
+				const ellipsesShown = getCount(/\.\.\./g);
+				const arrowsShown = getCount(/=>/g);
+
+				assert.strictEqual(nodesShown, expectedNodes, 'nodes');
+				assert.strictEqual(ellipsesShown, expectedEllipses, 'ellipses');
+				assert.strictEqual(arrowsShown, expectedArrows, 'arrows');
+
+				function getCount(re: RegExp) {
+					const matches = render.match(re);
+					return matches && matches.length || 0;
+				}
+			}
+			context('before running', function() {
+				it('should show everything at unspecified context depth', function() {
+					runContextDepthTest(undefined, 11, 0, 0);
+				});
+				it('should show nothing at -1 context depth', function() {
+					runContextDepthTest(-1, 0, 0, 0);
+				});
+				it('should show root ellipsis at 0 context depth', function() {
+					runContextDepthTest(0, 1, 1, 0);
+				});
+			});
+			context('after one run', function() {
+				beforeEach(async function() {
+					await testTree.handleEvent(state, {});
+				});
+				it('should arrow the first path at unspecified context depth', function() {
+					runContextDepthTest(undefined, 11, 0, 4);
+				});
+				it('should show only the active path at -1 context depth', function() {
+					runContextDepthTest(-1, 4, 0, 4);
+				});
+				it('should show only the active path and ellipses at 0 context depth', function() {
+					runContextDepthTest(0, 7, 3, 4);
+				});
+				it('should show only the active path, siblings, and ellipses at 1 context depth', function() {
+					runContextDepthTest(1, 11, 4, 4);
+				});
+				it('should show everything at 2 context depth', function() {
+					runContextDepthTest(2, 11, 0, 4);
+				});
+			});
+		});
 		it('should not crash', function(done) {
 			renderTree!.toConsole(waitAi);
 			done();
@@ -79,19 +189,14 @@ describe('renderTree', function() {
 		it('should generate a dot string without state', function(done) {
 			const dotString = renderTree.toDotString(waitAi);
 
-/*			const expectedWords = [
-				'shutdownWithWaitAi',
-				'Recharge',
-				'WaitForCooldown',
-				'EmergencyShutdown',
-			];
-
-			assertWordsInString(dotString, expectedWords);*/
-			assert.notOk(dotString.includes('colorscheme=set14 fillcolor=3')); // SUCCESS
-			assert.notOk(dotString.includes('colorscheme=set14 fillcolor=4')); // FAILURE
-			assert.notOk(dotString.includes('colorscheme=set14 fillcolor=2')); // RUNNING
-			assert.notOk(dotString.includes('colorscheme=set14 fillcolor=1')); // ERROR
+			assert.notOk(dotString.includes('fillcolor="#4daf4a"')); // SUCCESS
+			assert.notOk(dotString.includes('fillcolor="#984ea3"')); // FAILURE
+			assert.notOk(dotString.includes('fillcolor="#377eb8"')); // RUNNING
+			assert.notOk(dotString.includes('fillcolor="#e41a1c"')); // ERROR
 			console.log(dotString);
+			assert.doesNotThrow(function() {
+				parse(dotString);
+			});
 			done();
 		});
 
@@ -109,20 +214,10 @@ describe('renderTree', function() {
 				const result = renderTree.toDotString(waitAi, state);
 
 				assert.ok(result);
-
-/*				const expectedWords = [
-					'shutdownWithWaitAi',
-					'colorscheme=set14 fillcolor=2', // RUNNING
-					'Recharge',
-					'colorscheme=set14 fillcolor=4', // FAILURE
-					'WaitForCooldown',
-					'colorscheme=set14 fillcolor=2', // RUNNING
-					'EmergencyShutdown',
-					'colorscheme=X11 fillcolor=gray90', // DEFAULT
-				];
-
-				assertWordsInString(result, expectedWords); */
 				console.log(result);
+				assert.doesNotThrow(function() {
+					parse(result);
+				});
 			});
 		});
 
@@ -130,6 +225,9 @@ describe('renderTree', function() {
 			const customLSelector = new CustomLatchedSelector();
 			const dotString = renderTree.toDotString(customLSelector);
 			console.log(dotString);
+			assert.doesNotThrow(function() {
+				parse(dotString);
+			});
 			done();
 		});
 	});
