@@ -92,7 +92,7 @@ describe('renderTree', function() {
 			}
 			context('before running', function() {
 				it('should show everything at unspecified context depth', function() {
-					runContextDepthTest(11, 0, 0, undefined);
+					runContextDepthTest(11, 0, 0);
 				});
 				it('should show nothing at -1 context depth', function() {
 					runContextDepthTest(0, 0, 0, -1);
@@ -106,7 +106,7 @@ describe('renderTree', function() {
 					await testTree.handleEvent(state, {});
 				});
 				it('should arrow the first path at unspecified context depth', function() {
-					runContextDepthTest(11, 0, 4, undefined);
+					runContextDepthTest(11, 0, 4);
 				});
 				it('should show only the active path at -1 context depth', function() {
 					runContextDepthTest(4, 0, 4, -1);
