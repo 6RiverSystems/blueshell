@@ -10,7 +10,7 @@ import {
 	NodeAnalysis,
 	NodeVisitor,
 	StatelessAnalysis,
-} from './NodeAnalysis';
+} from './NodeVisitor';
 
 type ArchyResult = Required<archy.Data>|undefined;
 

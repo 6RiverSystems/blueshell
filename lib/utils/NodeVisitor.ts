@@ -7,6 +7,14 @@ function isComposite<S extends BlueshellState, E>(node: Base<S, E>): node is Com
 	return node instanceof Composite;
 }
 
+const ids: Map<Base<BlueshellState, unknown>, string> = new Map<Base<BlueshellState, unknown>, string>();
+function getNodeId(node: Base<BlueshellState, unknown>) {
+	if (!ids.has(node)) {
+		ids.set(node, `n${v4().replace(/\-/g, '')}`);
+	}
+	return ids.get(node)!;
+}
+
 export abstract class NodeVisitor<S extends BlueshellState, E, T = void> {
 	public visit(node: Base<S, E>): T {
 		return this.visitStateless(new StatelessAnalysis(node, this));
@@ -42,14 +50,6 @@ export abstract class NodeStateVisitor<S extends BlueshellState, E, T = void> {
 	protected abstract visitInContext(analysis: InContextAnalysis<S, E, T>): T;
 	protected abstract visitEdgeOfContext(analysis: NodeAnalysis<S, E>): T;
 	protected abstract visitOutOfContext(analysis: NodeAnalysis<S, E>): T;
-}
-
-const ids: Map<Base<BlueshellState, unknown>, string> = new Map<Base<BlueshellState, unknown>, string>();
-function getNodeId(node: Base<BlueshellState, unknown>) {
-	if (!ids.has(node)) {
-		ids.set(node, `n${v4().replace(/\-/g, '')}`);
-	}
-	return ids.get(node)!;
 }
 
 export class NodeAnalysis<S extends BlueshellState, E> {

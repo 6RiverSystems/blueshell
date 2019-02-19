@@ -27,7 +27,7 @@ import {
 	NodeAnalysis,
 	NodeVisitor,
 	StatelessAnalysis,
-} from './NodeAnalysis';
+} from './NodeVisitor';
 
 function getHeader() {
 	return [
