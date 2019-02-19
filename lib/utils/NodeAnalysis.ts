@@ -7,44 +7,45 @@ function isComposite<S extends BlueshellState, E>(node: Base<S, E>): node is Com
 	return node instanceof Composite;
 }
 
-// Node types:
-// onpath -- constructor takes lastResult; can visit children (uses factory + state + same context)
-// incontext -- can visit children (uses factory + state + reduced context)
-// eliding -- cannot visit children (edge of context)
-// missing -- cannot visit children (context escaped somehow)
-
-// visitor: visit method for each type of child
-
-// node factory -- raw node to one of four types
-
-export class ContextualNodeAnalysisFactory<S extends BlueshellState, E> {
-	public manufacture(node: Base<S, E>, state: S, contextDepth: number) {
+export abstract class NodeVisitor<S extends BlueshellState, E> {
+	public visit(node: Base<S, E>, state: S, contextDepth: number) {
 		const eventCounter = node.getTreeEventCounter(state);
 		const lastEventSeen = node.getLastEventSeen(state);
 		const lastResult = node.getLastResult(state);
 
 		if (lastEventSeen === eventCounter && lastResult) {
-			return new OnPathAnalysis(node, lastResult, state, contextDepth, this);
+			this.visitOnPath(new OnPathAnalysis(node, state, lastResult, contextDepth, this));
 		} else {
 			if (contextDepth < 0) {
-				return new MissingAnalysis(node, state, contextDepth, this);
+				this.visitOutOfContext(new NodeAnalysis(node, state));
 			}
 			if (contextDepth === 0) {
-				return new ElidingAnalysis(node, state, contextDepth, this);
+				if (isComposite(node) && node.children.length > 0) {
+					this.visitEdgeOfContext(new NodeAnalysis(node, state));
+				} else {
+					this.visitInContext(new InContextAnalysis(node, state, contextDepth, this));
+				}
 			}
-			return new InContextAnalysis(node, state, contextDepth - 1, this);
+			this.visitInContext(new InContextAnalysis(node, state, contextDepth - 1, this));
 		}
 	}
+
+	protected abstract visitOnPath(analysis: OnPathAnalysis<S, E>): void;
+	protected abstract visitInContext(analysis: InContextAnalysis<S, E>): void;
+	protected abstract visitEdgeOfContext(analysis: NodeAnalysis<S, E>): void;
+	protected abstract visitOutOfContext(analysis: NodeAnalysis<S, E>): void;
+}
+
+const ids: Map<Base<BlueshellState, unknown>, string> = new Map<Base<BlueshellState, unknown>, string>();
+function getNodeId(node: Base<BlueshellState, unknown>) {
+	if (!ids.has(node)) {
+		ids.set(node, `n${v4().replace(/\-/g, '')}`);
+	}
+	return ids.get(node);
 }
 
 export class NodeAnalysis<S extends BlueshellState, E> {
-	private static ids: Map<Base<BlueshellState, unknown>, string> = new Map<Base<BlueshellState, unknown>, string>();
-
-	constructor(protected readonly node: Base<S, E>) {}
-	public get children() {
-		return isComposite(this.node) ? this.node.children.map((c) => new NodeAnalysis(c)) : [];
-	}
-
+	constructor(protected readonly node: Base<S, E>, public readonly state: S) {}
 	public get name() {
 		return this.node.name;
 	}
@@ -53,25 +54,48 @@ export class NodeAnalysis<S extends BlueshellState, E> {
 		return this.node.constructor.name;
 	}
 
-	public getLastResult(state: S) {
-		const eventCounter = this.node.getTreeEventCounter(state);
-		const lastEventSeen = this.node.getLastEventSeen(state);
-		const lastResult = this.node.getLastResult(state);
-
-		if (lastEventSeen === eventCounter && lastResult) {
-			return lastResult;
-		}
-		return undefined;
-	}
-
 	public get id() {
-		if (!NodeAnalysis.ids.has(this.node)) {
-			NodeAnalysis.ids.set(this.node, `n${v4().replace(/\-/g, '')}`);
-		}
-		return NodeAnalysis.ids.get(this.node);
+		return getNodeId(this.node);
 	}
 
 	public get symbol() {
 		return this.node.symbol;
+	}
+}
+
+export class OnPathAnalysis<S extends BlueshellState, E> extends NodeAnalysis<S, E> {
+	constructor(
+		node: Base<S, E>,
+		state: S,
+		public readonly lastResult: string,
+		private readonly contextDepth: number,
+		private readonly visitor: NodeVisitor<S, E>
+	) {
+		super(node, state);
+	}
+	public visitChildren() {
+		if (isComposite(this.node)) {
+			for (const child of this.node.children) {
+				this.visitor.visit(child, this.state, this.contextDepth);
+			}
+		}
+	}
+}
+
+export class InContextAnalysis<S extends BlueshellState, E> extends NodeAnalysis<S, E> {
+	constructor(
+		node: Base<S, E>,
+		state: S,
+		private readonly contextDepth: number,
+		private readonly visitor: NodeVisitor<S, E>
+	) {
+		super(node, state);
+	}
+	public visitChildren() {
+		if (isComposite(this.node)) {
+			for (const child of this.node.children) {
+				this.visitor.visit(child, this.state, this.contextDepth);
+			}
+		}
 	}
 }
