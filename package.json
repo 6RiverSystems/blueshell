@@ -21,8 +21,7 @@
     "test:no-cover": "NODE_ENV=test mocha",
     "test:debug": "npm run test:no-cover -- --debug-brk test",
     "coverage": "NODE_ENV=test nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "prepublish": "npm-run-all clean compile",
-    "commitmsg": "validate-commit-msg"
+    "prepublish": "npm-run-all clean compile"
   },
   "repository": {
     "type": "git",
@@ -44,6 +43,8 @@
   },
   "homepage": "https://github.com/6RiverSystems/blueshell#readme",
   "devDependencies": {
+    "@6river/commitlint-config-6river": "^2.1.0",
+    "@commitlint/cli": "^7.5.2",
     "@types/archy": "0.0.31",
     "@types/chai": "^4.1.7",
     "@types/lodash": "^4.14.121",
@@ -55,7 +56,6 @@
     "@typescript-eslint/parser": "^1.3.0",
     "chai": "^4.2.0",
     "codecov": "^3.2.0",
-    "cz-conventional-changelog": "^2.1.0",
     "dotparser": "^0.4.0",
     "eslint": "^5.14.0",
     "eslint-config-6river": "^2.0.0",
@@ -96,8 +96,10 @@
       "helpMessage": "Follow <type>(<scope>): <subject> pattern, max 100 chars.",
       "autoFix": false
     },
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+    "husky": {
+      "hooks": {
+        "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 import {BlueshellState} from '../BlueshellState';
 
-import {resultCodes as rc} from '../../utils/resultCodes';
+import {resultCodes as rc, ResultCode} from '../../utils/resultCodes';
 import {Decorator} from '../Decorator';
 
 /**
@@ -17,7 +17,7 @@ export class Not<S extends BlueshellState, E> extends Decorator<S, E> {
 	 * @param state The state when the event occured.
 	 * @param event The event to handle.
 	 */
-	onEvent(state: S, event: E): string {
+	onEvent(state: S, event: E): ResultCode {
 		let res = this.child.handleEvent(state, event);
 
 		switch (res) {

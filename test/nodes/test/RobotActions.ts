@@ -1,7 +1,7 @@
 /**
  * Created by josh on 1/18/16.
  */
-import {resultCodes as rc} from '../../../lib/utils/resultCodes';
+import {resultCodes as rc, ResultCode} from '../../../lib/utils/resultCodes';
 
 import * as Behavior from '../../../lib';
 import {BlueshellState} from '../../../lib/nodes/BlueshellState';
@@ -31,7 +31,7 @@ class Recharge extends Behavior.Action<RobotState, string> {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	onEvent(state: RobotState, event: string): string {
+	onEvent(state: RobotState, event: string): ResultCode {
 		let result = rc.SUCCESS;
 
 		state.batteryLevel = state.batteryLevel !== undefined ? ++state.batteryLevel : 1;
@@ -47,7 +47,7 @@ class Recharge extends Behavior.Action<RobotState, string> {
 }
 class WaitForCooldown extends Behavior.Action<RobotState, string> {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	onEvent(state: RobotState, event: string): string {
+	onEvent(state: RobotState, event: string): ResultCode {
 		const storage = this.getNodeStorage(state);
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : 1;

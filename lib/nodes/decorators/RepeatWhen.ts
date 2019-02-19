@@ -1,6 +1,7 @@
 import {BlueshellState} from '../BlueshellState';
 import {Base} from '../Base';
 import {Decorator} from '../Decorator';
+import {ResultCode} from '../../utils/resultCodes';
 
 /**
  * Given a state, event, and result code (from a child Node), return a boolean.
@@ -30,7 +31,7 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 	 * @param state The state when the event occured.
 	 * @param event The event to handle.
 	 */
-	onEvent(state: S, event: E): string {
+	onEvent(state: S, event: E): ResultCode {
 		const res = this.child.handleEvent(state, event);
 
 		if (this.conditional(state, event, res)) {

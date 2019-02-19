@@ -2,7 +2,7 @@
  * Created by josh on 1/10/16.
  */
 import {BlueshellState} from './BlueshellState';
-import {resultCodes as rc} from '../utils/resultCodes';
+import {resultCodes as rc, ResultCode} from '../utils/resultCodes';
 
 /**
  * Base class of all Nodes.
@@ -29,7 +29,7 @@ export class Base<S extends BlueshellState, E> {
 	 * @param event The event to handle.
 	 * @protected
 	 */
-	handleEvent(state: S, event: E): string {
+	handleEvent(state: S, event: E): ResultCode {
 		this._beforeEvent(state, event);
 
 		const passed = this.precondition(state, event);
@@ -83,7 +83,7 @@ export class Base<S extends BlueshellState, E> {
 	 * @param state
 	 * @param event
 	 */
-	_afterEvent(res: string, state: S, event: E): string {
+	_afterEvent(res: ResultCode, state: S, event: E): ResultCode {
 		if (this.getDebug(state)) {
 			console.log(this.path, ' => ', event, ' => ', res); // eslint-disable-line no-console
 		}
@@ -113,7 +113,7 @@ export class Base<S extends BlueshellState, E> {
 	 * @return Result. Must be rc.SUCCESS, rc.FAILURE, or rc.RUNNING
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	onEvent(state: S, event: E): string {
+	onEvent(state: S, event: E): ResultCode {
 		return rc.SUCCESS;
 	}
 

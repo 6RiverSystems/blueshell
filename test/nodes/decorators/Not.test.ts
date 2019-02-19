@@ -3,7 +3,7 @@
  */
 import {assert} from 'chai';
 
-import {resultCodes as rc} from '../../../lib/utils/resultCodes';
+import {resultCodes as rc, ResultCode} from '../../../lib/utils/resultCodes';
 
 import * as Behavior from '../../../lib';
 import {DroneState} from '../test/DroneActions';
@@ -12,7 +12,7 @@ const Action = Behavior.Action;
 const Not = Behavior.decorators.Not;
 
 class EchoAction extends Action<DroneState, string> {
-	onEvent(state: DroneState, event: string) {
+	onEvent(state: DroneState, event: ResultCode) {
 		return event;
 	}
 }

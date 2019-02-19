@@ -1,5 +1,6 @@
 import {Base} from './Base';
 import {BlueshellState} from './BlueshellState';
+import {ResultCode} from '../utils/resultCodes';
 
 /**
  * Base class for all Composite Nodes (nodes which have children).
@@ -48,7 +49,7 @@ export abstract class Composite<S extends BlueshellState, E> extends Base<S, E> 
 	 * @param state
 	 * @param event
 	 */
-	onEvent(state: S, event: E): string {
+	onEvent(state: S, event: E): ResultCode {
 		const storage = this.getNodeStorage(state);
 
 		let firstChild = 0;
@@ -71,7 +72,7 @@ export abstract class Composite<S extends BlueshellState, E> extends Base<S, E> 
 	 * @param event
 	 * @param i
 	 */
-	abstract handleChild(state: S, event: E, i: number): string;
+	abstract handleChild(state: S, event: E, i: number): ResultCode;
 
 	/**
 	 * Resets Node Storage for this node and all children.
