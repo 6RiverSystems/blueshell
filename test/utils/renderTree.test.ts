@@ -80,9 +80,9 @@ describe('renderTree', function() {
 				const ellipsesShown = getCount(/\.\.\./g);
 				const arrowsShown = getCount(/=>/g);
 
-				assert.strictEqual(nodesShown, expectedNodes, 'nodes');
-				assert.strictEqual(ellipsesShown, expectedEllipses, 'ellipses');
-				assert.strictEqual(arrowsShown, expectedArrows, 'arrows');
+				assert.strictEqual(nodesShown, expectedNodes, 'nodes:\n' + render);
+				assert.strictEqual(ellipsesShown, expectedEllipses, 'ellipses:\n' + render);
+				assert.strictEqual(arrowsShown, expectedArrows, 'arrows:\n' + render);
 
 				function getCount(re: RegExp) {
 					const matches = render.match(re);
@@ -110,14 +110,12 @@ describe('renderTree', function() {
 				it('should show only the active path at -1 context depth', function() {
 					runContextDepthTest(-1, 4, 0, 4);
 				});
-				it('should show only the active path and ellipses at 0 context depth', function() {
-					runContextDepthTest(0, 7, 3, 4);
+				// eslint-disable-next-line max-len
+				it('should show only the active path, terminal context-boundaries, and ellipses at 0 context depth', function() {
+					runContextDepthTest(0, 7, 2, 4);
 				});
-				it('should show only the active path, siblings, and ellipses at 1 context depth', function() {
-					runContextDepthTest(1, 11, 4, 4);
-				});
-				it('should show everything at 2 context depth', function() {
-					runContextDepthTest(2, 11, 0, 4);
+				it('should show everything at 1 context depth', function() {
+					runContextDepthTest(1, 11, 0, 4);
 				});
 			});
 		});
