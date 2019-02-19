@@ -80,7 +80,7 @@ export function serializeArchyTree<S extends BlueshellState, E>(
 	tree: Base<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
 ): string {
 	const archyTree = buildArchyTree(tree, contextDepth, state);
-	if ( archyTree ) {
+	if (archyTree) {
 		return archy(archyTree);
 	}
 	return '';
