@@ -16,7 +16,7 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param child
 	 */
 	constructor(name: string, child: Base<S, E>) {
-		super(name, [child]);
+		super(name, [child], false);
 	}
 
 	get child() {
