@@ -9,6 +9,7 @@ import * as Behavior from '../../lib';
 import {DroneState} from './test/DroneActions';
 
 class ShootFlares extends Behavior.Action<DroneState, string> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: DroneState, event: string) {
 		let result = rc.FAILURE;
 
@@ -20,8 +21,8 @@ class ShootFlares extends Behavior.Action<DroneState, string> {
 		return result;
 	}
 }
-
-class EvasiveManeuver extends Behavior.Action<DroneState, string>  {
+class EvasiveManeuver extends Behavior.Action<DroneState, string> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: DroneState, event: string) {
 		state.commands.push('turnLeft');
 
@@ -41,13 +42,11 @@ describe('Sequence', function() {
 		const jetState = new DroneState();
 		jetState.flares = 2;
 
-		const p = droneAi.handleEvent(jetState, 'underAttack');
+		const res = droneAi.handleEvent(jetState, 'underAttack');
 
-		return p.then((res) => {
-			assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
-			assert.equal(jetState.flares, 1, 'Used Flares');
-			assert.equal(jetState.commands[0], 'turnLeft', 'Turning Left');
-		});
+		assert.equal(res, rc.SUCCESS, 'Behavior Tree success');
+		assert.equal(jetState.flares, 1, 'Used Flares');
+		assert.equal(jetState.commands[0], 'turnLeft', 'Turning Left');
 	});
 
 	it('should return failure', function() {
@@ -55,12 +54,10 @@ describe('Sequence', function() {
 		const emptyDrone = new DroneState();
 		emptyDrone.flares = 0;
 
-		const p = droneAi.handleEvent(emptyDrone, 'underAttack');
+		const res = droneAi.handleEvent(emptyDrone, 'underAttack');
 
-		return p.then((res) => {
-			assert.equal(res, rc.FAILURE, 'Behavior Tree failure');
-			assert.equal(emptyDrone.flares, 0, 'Used Flares');
-			assert.equal(emptyDrone.commands.length, 0, 'No Commands');
-		});
+		assert.equal(res, rc.FAILURE, 'Behavior Tree failure');
+		assert.equal(emptyDrone.flares, 0, 'Used Flares');
+		assert.equal(emptyDrone.commands.length, 0, 'No Commands');
 	});
 });

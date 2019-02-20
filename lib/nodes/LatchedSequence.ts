@@ -10,7 +10,6 @@ import {BlueshellState} from './BlueshellState';
  * @author Joshua Chaitin-Pollak
  */
 export class LatchedSequence<S extends BlueshellState, E> extends Sequence<S, E> {
-
 	constructor(name: string, children: Base<S, E>[]) {
 		super(name, children, true);
 	}

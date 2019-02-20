@@ -1,7 +1,7 @@
 import {Composite} from './Composite';
 import {BlueshellState} from './BlueshellState';
 
-import {resultCodes as rc} from '../utils/resultCodes';
+import {resultCodes as rc, ResultCode} from '../utils/resultCodes';
 
 /**
  * Selector Node (a.k.a. Fallback)
@@ -18,31 +18,30 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param event The event to handle.
 	 * @param i The child index.
 	 */
-	handleChild(state: S, event: E, i: number): Promise<string> {
-
-		let storage = this.getNodeStorage(state);
+	handleChild(state: S, event: E, i: number): ResultCode {
+		const storage = this.getNodeStorage(state);
 
 		// If we finished all processing without success return failure.
 		if (i >= this.children.length) {
-			return Promise.resolve(rc.FAILURE);
+			return rc.FAILURE;
 		}
 
-		let child = this.children[i];
+		const child = this.children[i];
 
-		return child.handleEvent(state, event)
-		.then((res) => this._afterChild(res, state, event))
-		.then(({res, state: state_, event: event_}) => {
-			if (res !== rc.FAILURE) {
+		const res = child.handleEvent(state, event);
 
-				if (this.latched && res === rc.RUNNING) {
-					storage.running = i;
-				}
+		const {res: res_, state: state_, event: event_} =
+			this._afterChild(res, state, event);
 
-				return res;
-			} else {
-				return this.handleChild(state_, event_, ++i);
+		if (res_ !== rc.FAILURE) {
+			if (this.latched && res_ === rc.RUNNING) {
+				storage.running = i;
 			}
-		});
+
+			return res_;
+		} else {
+			return this.handleChild(state_, event_, ++i);
+		}
 	}
 
 	/**
@@ -51,7 +50,7 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param state
 	 * @param event
 	 */
-	_afterChild(res: string, state: S, event: E) {
+	_afterChild(res: ResultCode, state: S, event: E) {
 		return {res, state, event};
 	}
 

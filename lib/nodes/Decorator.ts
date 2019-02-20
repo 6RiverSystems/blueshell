@@ -1,6 +1,7 @@
 import {BlueshellState} from './BlueshellState';
 import {Base} from './Base';
 import {Composite} from './Composite';
+import {ResultCode} from '../utils/resultCodes';
 
 /**
  * Base Class for all Decorator Nodes. Can only have one child.
@@ -15,7 +16,7 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param child
 	 */
 	constructor(name: string, child: Base<S, E>) {
-		super(name, [child]);
+		super(name, [child], false);
 	}
 
 	get child() {
@@ -27,7 +28,7 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param state
 	 * @param event
 	 */
-	onEvent(state: S, event: E): string|Promise<string> {
+	handleChild(state: S, event: E): ResultCode {
 		// Passthrough
 		return this.child.handleEvent(state, event);
 	}

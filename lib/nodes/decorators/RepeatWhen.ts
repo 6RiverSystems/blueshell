@@ -1,6 +1,7 @@
 import {BlueshellState} from '../BlueshellState';
 import {Base} from '../Base';
 import {Decorator} from '../Decorator';
+import {ResultCode} from '../../utils/resultCodes';
 
 /**
  * Given a state, event, and result code (from a child Node), return a boolean.
@@ -17,7 +18,6 @@ export interface Conditional<S, E> {
  * @author Joshua Chaitin-Pollak
  */
 export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
-
 	constructor(desc: string,
 	            child: Base<S, E>,
 	            private conditional: Conditional<S, E>) {
@@ -31,16 +31,14 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 	 * @param state The state when the event occured.
 	 * @param event The event to handle.
 	 */
-	onEvent(state: S, event: E): Promise<string> {
-		let p = this.child.handleEvent(state, event);
+	onEvent(state: S, event: E): ResultCode {
+		const res = this.child.handleEvent(state, event);
 
-		return p.then(res => {
-			if (this.conditional(state, event, res)) {
-				return this.handleEvent(state, event);
-			} else {
-				return res;
-			}
-		});
+		if (this.conditional(state, event, res)) {
+			return this.handleEvent(state, event);
+		} else {
+			return res;
+		}
 	}
 
 	get symbol(): string {

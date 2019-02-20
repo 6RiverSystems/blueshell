@@ -19,8 +19,8 @@ class TestAction extends Base<TestState, string> {
 		super(name);
 	}
 
-	precondition(): Promise<boolean> {
-		return Promise.resolve(this.preconditionStatus);
+	precondition(): boolean {
+		return this.preconditionStatus;
 	}
 }
 
@@ -71,12 +71,10 @@ describe('Base', function() {
 		it('handles events', function() {
 			const action = new TestAction();
 
-			const p = action.handleEvent(new TestState(), 'testEvent');
+			const res = action.handleEvent(new TestState(), 'testEvent');
 
-			return p.then((res) => {
-				console.log('TestAction completed', res);
-				assert.equal(res, rc.SUCCESS);
-			});
+			console.log('TestAction completed', res);
+			assert.equal(res, rc.SUCCESS);
 		});
 	});
 
@@ -84,29 +82,10 @@ describe('Base', function() {
 		it('should return FAILURE if the precondition fails', function() {
 			const action = new TestAction('will fail', false);
 
-			const p = action.handleEvent(new TestState(), 'testEvent');
+			const res = action.handleEvent(new TestState(), 'testEvent');
 
-			return p.then((res) => {
-				console.log('TestAction completed', res);
-				assert.equal(res, rc.FAILURE);
-			});
-		});
-
-		it('should allow precondition to return a promise', function() {
-			class PromiseAction extends TestAction {
-				precondition() {
-					return Promise.resolve(true);
-				}
-			};
-
-			const action = new PromiseAction();
-
-			const p = action.handleEvent(new TestState(), 'testEvent');
-
-			return p.then((res) => {
-				console.log('TestAction completed', res);
-				assert.equal(res, rc.SUCCESS);
-			});
+			console.log('TestAction completed', res);
+			assert.equal(res, rc.FAILURE);
 		});
 	});
 
@@ -115,12 +94,11 @@ describe('Base', function() {
 			const root = new Base('root');
 			const state = new TestState();
 
-			return root.handleEvent(state, {})
-			.then(() => root.handleEvent(state, {}))
-			.then(() => {
-				assert.equal(root.getTreeEventCounter(state), 2);
-				assert.equal(root.getLastEventSeen(state), 2);
-			});
+			root.handleEvent(state, {});
+			root.handleEvent(state, {});
+
+			assert.equal(root.getTreeEventCounter(state), 2);
+			assert.equal(root.getLastEventSeen(state), 2);
 		});
 
 		it('Child Node Counter', function() {
@@ -131,14 +109,13 @@ describe('Base', function() {
 
 			// Since it has a parent, it should increment
 			// the local node but not the eventCounter
-			return root.handleEvent(state, {})
-			.then(() => root.handleEvent(state, {}))
-			.then(() => {
-				assert.equal(root.getTreeEventCounter(state), 2);
-				assert.equal(root.getLastEventSeen(state), 2);
-				assert.equal(child.getTreeEventCounter(state), 2);
-				assert.equal(child.getLastEventSeen(state), 2, 'last event seen should be updated');
-			});
+			root.handleEvent(state, {});
+			root.handleEvent(state, {});
+
+			assert.equal(root.getTreeEventCounter(state), 2);
+			assert.equal(root.getLastEventSeen(state), 2);
+			assert.equal(child.getTreeEventCounter(state), 2);
+			assert.equal(child.getLastEventSeen(state), 2, 'last event seen should be updated');
 		});
 	});
 });

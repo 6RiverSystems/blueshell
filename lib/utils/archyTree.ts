@@ -7,7 +7,6 @@ import {
 	NodeStateVisitor,
 	OnPathAnalysis,
 	InContextAnalysis,
-	NodeAnalysis,
 	NodeVisitor,
 	StatelessAnalysis,
 } from './NodeVisitor';
@@ -20,7 +19,7 @@ export class ArchyStatelessVisitor<S extends BlueshellState, E> extends NodeVisi
 			`${analysis.name} (${analysis.nodeType})` :
 			analysis.name;
 		const nodes: Required<archy.Data>[] = [];
-		for ( const node of analysis.visitChildren() ) {
+		for (const node of analysis.visitChildren()) {
 			if (node !== undefined) {
 				nodes.push(node);
 			}
@@ -35,7 +34,7 @@ export class ArchyVisitor<S extends BlueshellState, E> extends NodeStateVisitor<
 			`${analysis.name} (${analysis.nodeType}) => ${analysis.lastResult}` :
 			`${analysis.name} => ${analysis.lastResult}`;
 		const nodes: Required<archy.Data>[] = [];
-		for ( const node of analysis.visitChildren() ) {
+		for (const node of analysis.visitChildren()) {
 			if (node !== undefined) {
 				nodes.push(node);
 			}
@@ -47,19 +46,19 @@ export class ArchyVisitor<S extends BlueshellState, E> extends NodeStateVisitor<
 			`${analysis.name} (${analysis.nodeType})` :
 			analysis.name;
 		const nodes: Required<archy.Data>[] = [];
-		for ( const node of analysis.visitChildren() ) {
+		for (const node of analysis.visitChildren()) {
 			if (node !== undefined) {
 				nodes.push(node);
 			}
 		}
 		return {label, nodes};
 	}
-	protected visitEdgeOfContext(analysis: NodeAnalysis<S, E>): Required<archy.Data> | undefined {
+	protected visitEdgeOfContext(): Required<archy.Data> | undefined {
 		const label = '...';
 		const nodes: Required<archy.Data>[] = [];
 		return {label, nodes};
 	}
-	protected visitOutOfContext(analysis: NodeAnalysis<S, E>): Required<archy.Data> | undefined {
+	protected visitOutOfContext(): Required<archy.Data> | undefined {
 		return undefined;
 	}
 }

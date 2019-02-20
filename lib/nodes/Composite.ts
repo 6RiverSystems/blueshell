@@ -1,11 +1,12 @@
 import {Base} from './Base';
 import {BlueshellState} from './BlueshellState';
+import {ResultCode} from '../utils/resultCodes';
 
 /**
  * Base class for all Composite Nodes (nodes which have children).
  * @author Joshua Chaitin-Pollak
  */
-export class Composite<S extends BlueshellState, E> extends Base<S, E> {
+export abstract class Composite<S extends BlueshellState, E> extends Base<S, E> {
 	/**
 	 * @constructor
 	 * @param name
@@ -17,7 +18,7 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 	            private _latched: boolean = false) {
 		super(name);
 
-		for (let child of this.children) {
+		for (const child of this.children) {
 			child.parent = this.name;
 		}
 	}
@@ -29,7 +30,7 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 	set parent(parent: string) {
 		super.parent = parent;
 
-		for (let child of this.children) {
+		for (const child of this.children) {
 			child.parent = parent + '_' + this.name;
 		}
 	}
@@ -48,8 +49,8 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 	 * @param state
 	 * @param event
 	 */
-	onEvent(state: S, event: E): string|Promise<string> {
-		let storage = this.getNodeStorage(state);
+	onEvent(state: S, event: E): ResultCode {
+		const storage = this.getNodeStorage(state);
 
 		let firstChild = 0;
 
@@ -71,9 +72,7 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 	 * @param event
 	 * @param i
 	 */
-	handleChild(state: S, event: E, i: number): Promise<string> {
-		throw new Error('This is an abstract method - please override.');
-	}
+	abstract handleChild(state: S, event: E, i: number): ResultCode;
 
 	/**
 	 * Resets Node Storage for this node and all children.
@@ -83,7 +82,7 @@ export class Composite<S extends BlueshellState, E> extends Base<S, E> {
 	resetNodeStorage(state: S) {
 		super.resetNodeStorage(state);
 
-		for (let child of this.children) {
+		for (const child of this.children) {
 			child.resetNodeStorage(state);
 		}
 	}

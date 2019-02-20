@@ -3,7 +3,7 @@
  */
 import {assert} from 'chai';
 
-import {resultCodes as rc} from '../../../lib/utils/resultCodes';
+import {resultCodes as rc, ResultCode} from '../../../lib/utils/resultCodes';
 
 import * as Behavior from '../../../lib';
 import {DroneState} from '../test/DroneActions';
@@ -12,7 +12,7 @@ const Action = Behavior.Action;
 const Not = Behavior.decorators.Not;
 
 class EchoAction extends Action<DroneState, string> {
-	onEvent(state: DroneState, event: string) {
+	onEvent(state: DroneState, event: ResultCode) {
 		return event;
 	}
 }
@@ -31,21 +31,18 @@ describe('Not', function() {
 			{action: unEcho, event: rc.RUNNING, result: rc.RUNNING},
 		];
 
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const makeVerify = function(test: any, state: DroneState) {
 			return function(res: string) {
 				assert.equal(res, test.result, `${test.action.name} -> ${test.result}`);
 			};
 		};
 
-		const ps = [];
-
 		for (const test of tests) {
 			const state = new DroneState();
-			const p = test.action.handleEvent(state, test.event);
+			test.action.handleEvent(state, test.event);
 
-			ps.push(p.then(makeVerify(test, state)));
+			makeVerify(test, state);
 		}
-
-		return Promise.all(ps);
 	});
 });

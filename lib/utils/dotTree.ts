@@ -4,8 +4,6 @@ import {resultCodes as rc} from './resultCodes';
 import {Decorator} from '../nodes/Decorator';
 import {Composite} from '../nodes/Composite';
 
-import {v4} from 'uuid';
-
 const DefaultStyle = 'style="filled,bold"';
 
 const DecoratorShape = 'shape=ellipse';
@@ -60,7 +58,7 @@ export class DotStatelessVisitor<S extends BlueshellState, E> extends NodeVisito
 			`[${getLabel(analysis)} ${getShape(analysis)} ${getTooltip(analysis)}];`
 		);
 
-		for ( const childId of analysis.visitChildren() ) {
+		for (const childId of analysis.visitChildren()) {
 			this._lines.push(`\t${nodeId}->${childId};`);
 		}
 
@@ -86,7 +84,7 @@ export class DotStateVisitor<S extends BlueshellState, E> extends NodeStateVisit
 			` ${getColor(analysis)}];`
 		);
 
-		for ( const childId of analysis.visitChildren() ) {
+		for (const childId of analysis.visitChildren()) {
 			this._lines.push(`\t${nodeId}->${childId};`);
 		}
 
@@ -100,7 +98,7 @@ export class DotStateVisitor<S extends BlueshellState, E> extends NodeStateVisit
 			`[${getLabel(analysis)} ${getShape(analysis)} ${getTooltip(analysis)}]`
 		);
 
-		for ( const childId of analysis.visitChildren() ) {
+		for (const childId of analysis.visitChildren()) {
 			this._lines.push(`\t${nodeId}->${childId};`);
 		}
 

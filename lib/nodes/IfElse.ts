@@ -23,7 +23,6 @@ export interface Conditional<S, E> {
  * @author Joshua Chaitin-Pollak
  */
 export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
-
 	constructor(name: string,
 	            private conditional: Conditional<S, E>,
 	            private consequent: any,
@@ -35,7 +34,7 @@ export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
 	 * Returns the children of this node, i.e. the `consequent` and the optional `alternative`.
 	 */
 	get children() {
-		let children = [this.consequent];
+		const children = [this.consequent];
 
 		if (this.alternative) {
 			children.push(this.alternative);
@@ -54,7 +53,6 @@ export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
 	 * @param i The child index.
 	 */
 	onEvent(state: S, event: E) {
-
 		if (this.conditional(state, event)) {
 			return this.consequent.handleEvent(state, event);
 		} else if (this.alternative) {
