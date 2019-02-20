@@ -2,7 +2,7 @@
  * Created by josh on 1/10/16.
  */
 import {BlueshellState} from './BlueshellState';
-import {resultCodes as rc} from '../utils/resultCodes';
+import {resultCodes as rc, ResultCode} from '../utils/resultCodes';
 
 /**
  * Base class of all Nodes.
@@ -29,17 +29,19 @@ export class Base<S extends BlueshellState, E> {
 	 * @param event The event to handle.
 	 * @protected
 	 */
-	handleEvent(state: S, event: E): Promise<string> {
-		return Promise.resolve(this._beforeEvent(state, event))
-		.then(() => this.precondition(state, event))
-		.then((passed) => {
-			if (!passed) {
-				return rc.FAILURE;
-			}
+	handleEvent(state: S, event: E): ResultCode {
+		this._beforeEvent(state, event);
 
-			return this.onEvent(state, event);
-		})
-		.catch(err => {
+		const passed = this.precondition(state, event);
+		if (!passed) {
+			return rc.FAILURE;
+		}
+
+		try {
+			const result = this.onEvent(state, event);
+
+			return this._afterEvent(result, state, event);
+		} catch (err) {
 			state.errorReason = err;
 
 			if (this.getDebug(state)) {
@@ -47,10 +49,7 @@ export class Base<S extends BlueshellState, E> {
 			}
 
 			return rc.ERROR;
-		})
-		.then(res => {
-			return this._afterEvent(res, state, event);
-		});
+		}
 	}
 
 	/**
@@ -59,9 +58,10 @@ export class Base<S extends BlueshellState, E> {
 	 * @param state
 	 * @param event
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	_beforeEvent(state: S, event: E) {
-		let pStorage = this._privateStorage(state);
-		let nodeStorage = this.getNodeStorage(state);
+		const pStorage = this._privateStorage(state);
+		const nodeStorage = this.getNodeStorage(state);
 
 		// If this is the root node, increment the event counter
 		if (!this._parent) {
@@ -69,7 +69,7 @@ export class Base<S extends BlueshellState, E> {
 		}
 
 		// Record the last event we've seen
-		//console.log('%s: incrementing event counter %s, %s',
+		// console.log('%s: incrementing event counter %s, %s',
 		//	this.path, nodeStorage.lastEventSeen,  pStorage.eventCounter);
 		nodeStorage.lastEventSeen = pStorage.eventCounter;
 
@@ -83,12 +83,12 @@ export class Base<S extends BlueshellState, E> {
 	 * @param state
 	 * @param event
 	 */
-	_afterEvent(res: string, state: S, event: E): string|Promise<string> {
+	_afterEvent(res: ResultCode, state: S, event: E): ResultCode {
 		if (this.getDebug(state)) {
-			console.log(this.path, ' => ', event, ' => ', res);  // eslint-disable-line no-console
+			console.log(this.path, ' => ', event, ' => ', res); // eslint-disable-line no-console
 		}
 
-		let storage = this.getNodeStorage(state);
+		const storage = this.getNodeStorage(state);
 
 		// Cache our results for the next iteration
 		storage.lastResult = res;
@@ -101,7 +101,8 @@ export class Base<S extends BlueshellState, E> {
 	 * @param state
 	 * @param event
 	 */
-	precondition(state: S, event: E): boolean|Promise<boolean> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	precondition(state: S, event: E): boolean {
 		return true;
 	}
 
@@ -111,8 +112,9 @@ export class Base<S extends BlueshellState, E> {
 	 * @param event
 	 * @return Result. Must be rc.SUCCESS, rc.FAILURE, or rc.RUNNING
 	 */
-	onEvent(state: S, event: E): string|Promise<string> {
-		return Promise.resolve(rc.SUCCESS);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	onEvent(state: S, event: E): ResultCode {
+		return rc.SUCCESS;
 	}
 
 	set parent(path: string) {
@@ -128,8 +130,8 @@ export class Base<S extends BlueshellState, E> {
 	 * @param state
 	 */
 	public getNodeStorage(state: S) {
-		let path = this.path;
-		let blueshell = this._privateStorage(state);
+		const path = this.path;
+		const blueshell = this._privateStorage(state);
 
 		blueshell[path] = blueshell[path] || {};
 		return blueshell[path];
@@ -140,8 +142,8 @@ export class Base<S extends BlueshellState, E> {
 	 * @param state
 	 */
 	resetNodeStorage(state: S) {
-		let path = this.path;
-		let blueshell = this._privateStorage(state);
+		const path = this.path;
+		const blueshell = this._privateStorage(state);
 
 		blueshell[path] = {};
 		return blueshell[path];

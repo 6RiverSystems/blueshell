@@ -2,16 +2,17 @@
  * Created by josh on 3/23/16.
  */
 import {assert} from 'chai';
-import * as parse from 'dotparser';
 
-import {resultCodes as rc} from '../../lib/utils/resultCodes';
+const parse = require('dotparser');
+
+import {resultCodes as rc, ResultCode} from '../../lib/utils/resultCodes';
 
 import {renderTree, LatchedSelector, LatchedSequence, Action} from '../../lib';
 import {RobotState, waitAi} from '../nodes/test/RobotActions';
 import {BlueshellState} from '../../lib/nodes/BlueshellState';
 
 class ConsumeOnce extends Action<any, any> {
-	async onEvent(state: any, event: any): Promise<string> {
+	onEvent(state: any): ResultCode {
 		const storage = this.getNodeStorage(state);
 
 		if (storage.ateOne) {
@@ -69,10 +70,10 @@ describe('renderTree', function() {
 				};
 			});
 			function runContextDepthTest(
-				contextDepth: number,
 				expectedNodes: number,
 				expectedEllipses: number,
-				expectedArrows: number
+				expectedArrows: number,
+				contextDepth?: number
 			) {
 				const render = renderTree!.toString(testTree, state, contextDepth);
 
@@ -91,13 +92,13 @@ describe('renderTree', function() {
 			}
 			context('before running', function() {
 				it('should show everything at unspecified context depth', function() {
-					runContextDepthTest(undefined, 11, 0, 0);
+					runContextDepthTest(11, 0, 0);
 				});
 				it('should show nothing at -1 context depth', function() {
-					runContextDepthTest(-1, 0, 0, 0);
+					runContextDepthTest(0, 0, 0, -1);
 				});
 				it('should show root ellipsis at 0 context depth', function() {
-					runContextDepthTest(0, 1, 1, 0);
+					runContextDepthTest(1, 1, 0, 0);
 				});
 			});
 			context('after one run', function() {
@@ -105,19 +106,19 @@ describe('renderTree', function() {
 					await testTree.handleEvent(state, {});
 				});
 				it('should arrow the first path at unspecified context depth', function() {
-					runContextDepthTest(undefined, 11, 0, 4);
+					runContextDepthTest(11, 0, 4);
 				});
 				it('should show only the active path at -1 context depth', function() {
-					runContextDepthTest(-1, 4, 0, 4);
+					runContextDepthTest(4, 0, 4, -1);
 				});
 				it('should show only the active path and ellipses at 0 context depth', function() {
-					runContextDepthTest(0, 7, 3, 4);
+					runContextDepthTest(7, 3, 4, 0);
 				});
 				it('should show only the active path, siblings, and ellipses at 1 context depth', function() {
-					runContextDepthTest(1, 11, 4, 4);
+					runContextDepthTest(11, 4, 4, 1);
 				});
 				it('should show everything at 2 context depth', function() {
-					runContextDepthTest(2, 11, 0, 4);
+					runContextDepthTest(11, 0, 4, 2);
 				});
 			});
 		});
@@ -155,29 +156,25 @@ describe('renderTree', function() {
 
 			state.overheated = true;
 
-			return waitAi.handleEvent(state, event)
-			.catch((err) => {
-				console.error(err.stack);
-			})
-			.then(() => {
-				const a = renderTree.toString(waitAi, state);
+			waitAi.handleEvent(state, event);
 
-				assert.ok(a);
-				assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
+			const a = renderTree.toString(waitAi, state);
 
-				const expectedWords = [
-					'(LatchedSelector)',
-					rc.RUNNING,
-					'Recharge',
-					rc.FAILURE,
-					'WaitForCooldown',
-					rc.RUNNING,
-					'EmergencyShutdown',
-				];
+			assert.ok(a);
+			assert.equal(a.indexOf('shutdownWithWaitAi'), 0);
 
-				assertWordsInString(a, expectedWords);
-				console.log(a);
-			});
+			const expectedWords = [
+				'(LatchedSelector)',
+				rc.RUNNING,
+				'Recharge',
+				rc.FAILURE,
+				'WaitForCooldown',
+				rc.RUNNING,
+				'EmergencyShutdown',
+			];
+
+			assertWordsInString(a, expectedWords);
+			console.log(a);
 		});
 	});
 
@@ -206,18 +203,14 @@ describe('renderTree', function() {
 
 			state.overheated = true;
 
-			return waitAi.handleEvent(state, event)
-			.catch((err) => {
-				console.error(err.stack);
-			})
-			.then(() => {
-				const result = renderTree.toDotString(waitAi, state);
+			waitAi.handleEvent(state, event);
 
-				assert.ok(result);
-				console.log(result);
-				assert.doesNotThrow(function() {
-					parse(result);
-				});
+			const result = renderTree.toDotString(waitAi, state);
+
+			assert.ok(result);
+			console.log(result);
+			assert.doesNotThrow(function() {
+				parse(result);
 			});
 		});
 

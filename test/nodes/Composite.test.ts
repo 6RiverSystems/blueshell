@@ -15,29 +15,24 @@ describe('Composite', function() {
 
 			state.overheated = true;
 
-			return waitAi.handleEvent(state, event)
-			.catch((err: Error) => {
-				console.error(err.stack);
-				throw err;
-			})
-			.then((res: string) => {
-				// assert state of child
-				assert.equal(res, rc.RUNNING);
-				assert.equal(state.batteryLevel, 1);
-				assert.equal(state.cooldownLevel, 1);
+			const res = waitAi.handleEvent(state, event);
 
-				// reset state
-				waitAi.resetNodeStorage(state);
-			})
-			.then(() => waitAi.handleEvent(state, event))
-			.then((res: string) => {
-				// assert state of child again
-				assert.equal(res, rc.RUNNING);
-				assert.equal(state.batteryLevel, 2);
+			// assert state of child
+			assert.equal(res, rc.RUNNING);
+			assert.equal(state.batteryLevel, 1);
+			assert.equal(state.cooldownLevel, 1);
 
-				// Normally would be 0
-				assert.equal(state.cooldownLevel, 1);
-			});
+			// reset state
+			waitAi.resetNodeStorage(state);
+
+			const res2 = waitAi.handleEvent(state, event);
+
+			// assert state of child again
+			assert.equal(res2, rc.RUNNING);
+			assert.equal(state.batteryLevel, 2);
+
+			// Normally would be 0
+			assert.equal(state.cooldownLevel, 1);
 		});
 	});
 });

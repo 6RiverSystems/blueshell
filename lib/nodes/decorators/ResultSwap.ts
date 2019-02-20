@@ -1,6 +1,7 @@
 import {BlueshellState} from '../BlueshellState';
 import {Base} from '../Base';
 import {Decorator} from '../Decorator';
+import {ResultCode} from '../../utils/resultCodes';
 
 /**
  * Swaps one result from a child node for another.
@@ -12,7 +13,6 @@ import {Decorator} from '../Decorator';
  * @author Joshua Chaitin-Pollak
  */
 export class ResultSwap<S extends BlueshellState, E> extends Decorator<S, E> {
-
 	/**
 	 * @constructor
 	 * @param _inResult The result to swap out (mask).
@@ -20,8 +20,8 @@ export class ResultSwap<S extends BlueshellState, E> extends Decorator<S, E> {
 	 * @param child The child Node of the decorator.
 	 * @param desc Optional description of the Node.
 	 */
-	constructor(private _inResult: string,
-							private _outResult: string,
+	constructor(private _inResult: ResultCode,
+							private _outResult: ResultCode,
 							child: Base<S, E>,
 							desc = `ResultSwap_${_inResult}-${_outResult}-${child.name}`) {
 		super(desc, child);
@@ -34,15 +34,14 @@ export class ResultSwap<S extends BlueshellState, E> extends Decorator<S, E> {
 	 * @param event
 	 */
 	onEvent(state: S, event: E) {
-		let p = this.child.handleEvent(state, event);
+		let res = this.child.handleEvent(state, event);
 
-		return p.then(res => {
-			if (res === this._inResult) {
-				res = this._outResult;
-			}
 
-			return res;
-		});
+		if (res === this._inResult) {
+			res = this._outResult;
+		}
+
+		return res;
 	}
 
 	get symbol(): string {

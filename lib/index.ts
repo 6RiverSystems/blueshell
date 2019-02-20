@@ -6,7 +6,7 @@ export {Selector} from './nodes/Selector';
 export {LatchedSelector} from './nodes/LatchedSelector';
 export {LatchedSequence} from './nodes/LatchedSequence';
 export {IfElse} from './nodes/IfElse';
-export {resultCodes} from './utils/resultCodes';
+export {resultCodes, ResultCode} from './utils/resultCodes';
 
 import * as decorators from './nodes/decorators';
 

@@ -11,7 +11,6 @@ import {RepeatWhen} from './RepeatWhen';
  * @author Joshua Chaitin-Pollak
  */
 export class RepeatOnResult<S extends BlueshellState, E> extends RepeatWhen<S, E> {
-
 	constructor(repeatRes: string, child: Base<S, E>) {
 		super('ResultEquals-' + repeatRes, child,
 			(state, event, res) => res === repeatRes);

@@ -1,4 +1,4 @@
-Blueshell is a Promise-based Behavior Tree implementation using modern ES6 syntax.
+Blueshell is a Behavior Tree implementation using modern ES6 syntax.
 
 [![Circle CI](https://circleci.com/gh/6RiverSystems/blueshell/tree/master.svg?style=svg)](https://circleci.com/gh/6RiverSystems/blueshell/tree/master)
 

@@ -1,13 +1,11 @@
 import {assert} from 'chai';
 
-import {resultCodes as rc} from '../../../lib/utils/resultCodes';
+import {resultCodes as rc, ResultCode} from '../../../lib/utils/resultCodes';
 
 import * as Behavior from '../../../lib';
 import {DroneState} from '../test/DroneActions';
 
 const Action = Behavior.Action;
-const RepeatOnResult = Behavior.decorators.RepeatOnResult;
-
 const ResultSwap = Behavior.decorators.ResultSwap;
 
 class SuccessAction extends Action<DroneState, string> {
@@ -15,7 +13,8 @@ class SuccessAction extends Action<DroneState, string> {
 		super('successAction');
 	}
 
-	onEvent(state: DroneState, event: string): string {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	onEvent(state: DroneState, event: string): ResultCode {
 		return rc.SUCCESS;
 	}
 }
@@ -25,7 +24,8 @@ class FailureAction extends Action<DroneState, string> {
 		super('failureAction');
 	}
 
-	onEvent(state: DroneState, event: string): string {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	onEvent(state: DroneState, event: string): ResultCode {
 		return rc.FAILURE;
 	}
 }
@@ -35,22 +35,18 @@ describe('ResultSwap', function() {
 		const successAction = new SuccessAction();
 		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, successAction);
 
-		return resultSwap
-		.handleEvent(new DroneState(), '')
-		.then((response) => {
-			assert.equal(response, rc.SUCCESS);
-		});
+		const response = resultSwap.handleEvent(new DroneState(), '');
+
+		assert.equal(response, rc.SUCCESS);
 	});
 
 	it('failure in action should return success', function() {
 		const failureAction = new FailureAction();
 		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction);
 
-		return resultSwap
-		.handleEvent(new DroneState(), '')
-		.then((response) => {
-			assert.equal(response, rc.SUCCESS);
-		});
+		const response = resultSwap.handleEvent(new DroneState(), '');
+
+		assert.equal(response, rc.SUCCESS);
 	});
 
 	it('should use default name', function() {
