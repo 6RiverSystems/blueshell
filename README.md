@@ -1,4 +1,6 @@
-Blueshell is a Behavior Tree implementation using modern ES6 syntax. It is synchronous for performance - asynchronous operations can be handled by returning async operations to your framework for evaluation, these can then generate new events to drive the behavior tree.
+Blueshell is a Behavior Tree implementation written in Typescript. 
+
+It is synchronous for performance - asynchronous operations can be handled by returning async operations to your framework for evaluation, these can then generate new events to drive the behavior tree.
 
 [![Circle CI](https://circleci.com/gh/6RiverSystems/blueshell/tree/master.svg?style=svg)](https://circleci.com/gh/6RiverSystems/blueshell/tree/master)
 
