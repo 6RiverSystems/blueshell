@@ -147,7 +147,6 @@ function getColor(analysis: OnPathAnalysis<BlueshellState, unknown, any>) {
 	case rc.FAILURE:
 		return FailureColor;
 	}
-	return '';
 }
 
 function getLabel(analysis: NodeAnalysis<BlueshellState, unknown>): string {

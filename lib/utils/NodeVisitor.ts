@@ -2,6 +2,7 @@ import {BlueshellState} from '../nodes/BlueshellState';
 import {Base} from '../nodes/Base';
 import {Composite} from '..';
 import {v4} from 'uuid';
+import {ResultCode} from './resultCodes';
 
 function isComposite<S extends BlueshellState, E>(node: Base<S, E>): node is Composite<S, E> {
 	return node instanceof Composite;
@@ -101,7 +102,7 @@ export class OnPathAnalysis<S extends BlueshellState, E, T = void> extends State
 	constructor(
 		node: Base<S, E>,
 		state: S,
-		public readonly lastResult: string,
+		public readonly lastResult: ResultCode,
 		private readonly contextDepth: number,
 		private readonly visitor: NodeStateVisitor<S, E, T>
 	) {
