@@ -4,7 +4,7 @@ import {resultCodes as rc} from '../utils/resultCodes';
 
 export class Success<S extends BlueshellState, E> extends Base<S, E> {
 	constructor(
-		name = `Success`
+		name = 'Success'
 	) {
 		super(name);
 	}
