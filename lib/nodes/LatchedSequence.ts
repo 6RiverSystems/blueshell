@@ -15,6 +15,6 @@ export class LatchedSequence<S extends BlueshellState, E> extends Sequence<S, E>
 	}
 
 	get symbol(): string {
-		return `⍈`;
+		return '⍈';
 	}
 }
