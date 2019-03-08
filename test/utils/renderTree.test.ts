@@ -25,40 +25,44 @@ class ConsumeOnce extends Action<any, any> {
 	}
 }
 
+const testTree = new LatchedSequence(
+	'root',
+	[
+		new LatchedSequence(
+			'0',
+			[
+				new LatchedSequence(
+					'0.0',
+					[
+						new ConsumeOnce('0.0.0'),
+						new ConsumeOnce('0.0.1'),
+					]
+				),
+				new LatchedSequence(
+					'0.1',
+					[
+						new ConsumeOnce('0.1.0'),
+						new ConsumeOnce('0.1.1'),
+					]
+				),
+			]
+		),
+		new LatchedSequence(
+			'1',
+			[
+				new ConsumeOnce('1.0'),
+				new ConsumeOnce('1.1'),
+			]
+		),
+	]
+);
+
 describe('renderTree', function() {
+	context('d3 tree', function() {
+		assert.isOk(renderTree!.toD3String(testTree));
+	});
 	context('archy tree', function() {
 		context('contextDepth', function() {
-			const testTree = new LatchedSequence(
-				'root',
-				[
-					new LatchedSequence(
-						'0',
-						[
-							new LatchedSequence(
-								'0.0',
-								[
-									new ConsumeOnce('0.0.0'),
-									new ConsumeOnce('0.0.1'),
-								]
-							),
-							new LatchedSequence(
-								'0.1',
-								[
-									new ConsumeOnce('0.1.0'),
-									new ConsumeOnce('0.1.1'),
-								]
-							),
-						]
-					),
-					new LatchedSequence(
-						'1',
-						[
-							new ConsumeOnce('1.0'),
-							new ConsumeOnce('1.1'),
-						]
-					),
-				]
-			);
 			let state: BlueshellState = {
 				errorReason: undefined,
 				__blueshell: {},
