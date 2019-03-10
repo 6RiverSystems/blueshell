@@ -59,8 +59,19 @@ const testTree = new LatchedSequence(
 
 describe('renderTree', function() {
 	context('d3 tree', function() {
+		function assertParse(s: string) {
+			try {
+				JSON.parse(s);
+			} catch (err) {
+				// eslint-disable-next-line no-console
+				console.log('failed to parse:');
+				// eslint-disable-next-line no-console
+				console.log(s);
+				throw err;
+			}
+		}
 		it('should be ok with non-tree', function() {
-			assert.isDefined(renderTree!.toD3String(undefined as any));
+			assertParse(renderTree!.toD3String(undefined as any));
 		});
 		context('before running', function() {
 			it('works', function() {
@@ -68,7 +79,7 @@ describe('renderTree', function() {
 					errorReason: undefined,
 					__blueshell: {},
 				};
-				assert.isOk(renderTree!.toD3String(testTree, state));
+				assertParse(renderTree!.toD3String(testTree, state));
 			});
 		});
 		context('after one run', function() {
@@ -80,15 +91,15 @@ describe('renderTree', function() {
 				await testTree.handleEvent(state, {});
 			});
 			it('works', function() {
-				assert.isOk(renderTree!.toD3String(testTree, state));
+				assertParse(renderTree!.toD3String(testTree, state));
 			});
 			it('works at 0 context depth', function() {
-				assert.isOk(renderTree!.toD3String(testTree, state, 0));
+				assertParse(renderTree!.toD3String(testTree, state, 0));
 			});
 		});
 		context('without state', function() {
 			it('works', function() {
-				assert.isOk(renderTree!.toD3String(testTree));
+				assertParse(renderTree!.toD3String(testTree));
 			});
 		});
 	});
