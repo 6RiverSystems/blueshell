@@ -5,6 +5,7 @@ import {Base} from '../nodes/Base';
 import {BlueshellState} from '../nodes/BlueshellState';
 import {serializeArchyTree} from './archyTree';
 import {serializeDotTree} from './dotTree';
+import {serializeD3Tree} from './d3Hierarchy';
 
 export function toString<S extends BlueshellState, E>(
 	tree: Base<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
@@ -18,10 +19,34 @@ export function toConsole<S extends BlueshellState, E>(
 	console.log(toString(tree, state, contextDepth)); // eslint-disable-line no-console
 }
 
-export function toDotString<S extends BlueshellState, E>(tree: Base<S, E>, state?: S) {
-	return serializeDotTree(tree, state);
+export function toDotString<S extends BlueshellState, E>(
+	tree: Base<S, E>,
+	state?: S,
+	contextDepth = Number.MAX_SAFE_INTEGER
+) {
+	return serializeDotTree(tree, state, contextDepth);
 }
 
-export function toDotConsole<S extends BlueshellState, E>(tree: Base<S, E>, state?: S) {
-	console.log(toDotString(tree, state)); // eslint-disable-line no-console
+export function toDotConsole<S extends BlueshellState, E>(
+	tree: Base<S, E>,
+	state?: S,
+	contextDepth = Number.MAX_SAFE_INTEGER
+) {
+	console.log(toDotString(tree, state, contextDepth)); // eslint-disable-line no-console
+}
+
+export function toD3String<S extends BlueshellState, E>(
+	tree: Base<S, E>,
+	state?: S,
+	contextDepth = Number.MAX_SAFE_INTEGER
+) {
+	return serializeD3Tree(tree, state, contextDepth);
+}
+
+export function toD3Console<S extends BlueshellState, E>(
+	tree: Base<S, E>,
+	state?: S,
+	contextDepth = Number.MAX_SAFE_INTEGER
+) {
+	console.log(toD3String(tree, state, contextDepth)); // eslint-disable-line no-console
 }

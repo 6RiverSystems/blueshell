@@ -11,14 +11,12 @@ import {DroneState} from './test/DroneActions';
 class ShootFlares extends Behavior.Action<DroneState, string> {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: DroneState, event: string) {
-		let result = rc.FAILURE;
-
 		if (state.flares > 0) {
 			state.flares--;
-			result = rc.SUCCESS;
+			return rc.SUCCESS;
 		}
 
-		return result;
+		return rc.FAILURE;
 	}
 }
 class EvasiveManeuver extends Behavior.Action<DroneState, string> {
