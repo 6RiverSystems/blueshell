@@ -59,7 +59,38 @@ const testTree = new LatchedSequence(
 
 describe('renderTree', function() {
 	context('d3 tree', function() {
-		assert.isOk(renderTree!.toD3String(testTree));
+		it('should be ok with non-tree', function() {
+			assert.isDefined(renderTree!.toD3String(undefined as any));
+		});
+		context('before running', function() {
+			it('works', function() {
+				const state: BlueshellState = {
+					errorReason: undefined,
+					__blueshell: {},
+				};
+				assert.isOk(renderTree!.toD3String(testTree, state));
+			});
+		});
+		context('after one run', function() {
+			const state: BlueshellState = {
+				errorReason: undefined,
+				__blueshell: {},
+			};
+			beforeEach(async function() {
+				await testTree.handleEvent(state, {});
+			});
+			it('works', function() {
+				assert.isOk(renderTree!.toD3String(testTree, state));
+			});
+			it('works at 0 context depth', function() {
+				assert.isOk(renderTree!.toD3String(testTree, state, 0));
+			});
+		});
+		context('without state', function() {
+			it('works', function() {
+				assert.isOk(renderTree!.toD3String(testTree));
+			});
+		});
 	});
 	context('archy tree', function() {
 		context('contextDepth', function() {
@@ -181,10 +212,32 @@ describe('renderTree', function() {
 	});
 
 	context('dot notation tree', function() {
+		function assertParse(s: string) {
+			try {
+				parse(s);
+			} catch (err) {
+				// eslint-disable-next-line no-console
+				console.log('failed to parse:');
+				// eslint-disable-next-line no-console
+				console.log(s);
+				throw err;
+			}
+		}
 		it('should not crash', function(done) {
 			renderTree!.toDotConsole(waitAi);
 			done();
 		});
+
+		it('should generate a digraph at context depth 0 after a run', async function() {
+			const state: BlueshellState = {
+				errorReason: undefined,
+				__blueshell: {},
+			};
+			await testTree.handleEvent(state, {});
+			const render = renderTree!.toDotString(testTree, state, 0);
+			assertParse(render);
+		});
+
 		it('should generate a dot string without state', function(done) {
 			const dotString = renderTree.toDotString(waitAi);
 
@@ -192,10 +245,7 @@ describe('renderTree', function() {
 			assert.notOk(dotString.includes('fillcolor="#984ea3"')); // FAILURE
 			assert.notOk(dotString.includes('fillcolor="#377eb8"')); // RUNNING
 			assert.notOk(dotString.includes('fillcolor="#e41a1c"')); // ERROR
-			console.log(dotString);
-			assert.doesNotThrow(function() {
-				parse(dotString);
-			});
+			assertParse(dotString);
 			done();
 		});
 
@@ -210,19 +260,13 @@ describe('renderTree', function() {
 			const result = renderTree.toDotString(waitAi, state);
 
 			assert.ok(result);
-			console.log(result);
-			assert.doesNotThrow(function() {
-				parse(result);
-			});
+			assertParse(result);
 		});
 
 		it('should generate a digraph with custom node', function(done) {
 			const customLSelector = new CustomLatchedSelector();
 			const dotString = renderTree.toDotString(customLSelector);
-			console.log(dotString);
-			assert.doesNotThrow(function() {
-				parse(dotString);
-			});
+			assertParse(dotString);
 			done();
 		});
 	});
