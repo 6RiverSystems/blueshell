@@ -228,6 +228,29 @@ describe('renderTree', function() {
 			done();
 		});
 
+		it('should generate a digraph at context depth 1 after a run', async function() {
+			const state: BlueshellState = {
+				errorReason: undefined,
+				__blueshell: {},
+			};
+			await testTree.handleEvent(state, {});
+			const render = renderTree!.toDotString(testTree, state, 1);
+			assertParse(render);
+		});
+
+		it('should generate a digraph at context depth -1', async function() {
+			const state: BlueshellState = {
+				errorReason: undefined,
+				__blueshell: {},
+			};
+			const render = renderTree!.toDotString(testTree, state, -1);
+			assertParse(render);
+		});
+
+		it('should generate a digraph with no tree', function() {
+			assertParse(renderTree!.toDotString(undefined as any));
+		});
+
 		it('should generate a digraph at context depth 0 after a run', async function() {
 			const state: BlueshellState = {
 				errorReason: undefined,

@@ -165,7 +165,7 @@ export function serializeDotTree<S extends BlueshellState, E>(
 	root: Base<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
 ) {
 	if (!root) {
-		return '';
+		return getHeader().concat(getFooter()).join('\n');
 	}
 
 	if (state) {
