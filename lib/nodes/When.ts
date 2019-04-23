@@ -30,7 +30,7 @@ export class When<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param event The event to handle.
 	 * @param i The child index, which is always 0
 	 */
-	handleChild(state: S, event: E, i: number) {
+	handleChild(state: S, event: E) {
 		if (this.conditional(state, event)) {
 			return this.consequent.handleEvent(state, event);
 		} else {
