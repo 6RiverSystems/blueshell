@@ -1,6 +1,3 @@
-/**
- * Created by josh on 1/10/16.
- */
 import {assert} from 'chai';
 
 import {resultCodes as rc} from '../../lib/utils/resultCodes';
