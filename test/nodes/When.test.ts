@@ -105,7 +105,9 @@ describe('When', function() {
 		]);
 		const When = new Behavior.When('testWhen',
 			(state: TestState, event: string) => event !== 'ignore',
-			child
+			child,
+			rc.SUCCESS,
+			true,
 		);
 
 		const state = new TestState();
