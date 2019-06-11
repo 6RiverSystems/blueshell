@@ -5,14 +5,19 @@
   "main": "dist/index",
   "typings": "dist/index",
   "scripts": {
-    "prepare": "tsc --pretty",
+    "clean": "npm-run-all clean:js",
+    "clean:js": "shx rm -rf dist",
+    "compile": "npm-run-all compile:js",
+    "compile:js": "tsc --pretty",
+    "compile:watch": "tsc --pretty --watch",
     "pretest": "npm-run-all pretest:eslint",
     "pretest:eslint": "shx echo eslint .",
-    "clean": "shx rm -rf dist",
-    "build": "tsc --pretty",
-    "test": "NODE_ENV=test nyc mocha",
+    "test": "NODE_ENV=test nyc mocha ${MOCHA_OPTS}",
+    "test:no-cover": "NODE_ENV=test mocha",
+    "test:debug": "npm run test:no-cover -- --debug-brk test",
     "coverage": "NODE_ENV=test nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "preversion": "npm test"
+    "lCov": "NODE_ENV=test nyc report --reporter=lcov",
+    "prepublish": "npm-run-all clean compile"
   },
   "repository": {
     "type": "git",
