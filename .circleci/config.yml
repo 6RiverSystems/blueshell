@@ -68,10 +68,14 @@ workflows:
 
   test_and_publish:
     jobs:
-      - setup
+      - setup:
+          context: 6rs-circle
       - test:
+          context: 6rs-circle
           requires:
             - setup
       - publish:
+          context: 6rs-circle
           requires:
             - test
+            
