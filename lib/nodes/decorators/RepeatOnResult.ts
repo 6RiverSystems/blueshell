@@ -10,4 +10,7 @@ export class RepeatOnResult<State> extends RepeatWhen<State> {
 		super('ResultEquals-' + repeatRes, child, (res: ResultCodes) => res === repeatRes);
 	}
 
+	get symbol(): string {
+		return '⊜↻';
+	}
 }

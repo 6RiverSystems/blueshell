@@ -8,4 +8,8 @@ export class LatchedSelector<State> extends Selector<State> {
 	constructor(name: string, children: Array<Base<State>>) {
 		super(name, children, true);
 	}
+
+	get symbol(): string {
+		return '⎅';
+	}
 }

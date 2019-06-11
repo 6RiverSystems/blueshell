@@ -37,4 +37,8 @@ export class Selector<State> extends Composite<State> {
 	private afterChild(res: ResultCodes, state: State) {
 		return [res, state];
 	}
+
+	get symbol(): string {
+		return '∣';
+	}
 }

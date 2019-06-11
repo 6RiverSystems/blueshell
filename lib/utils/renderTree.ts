@@ -8,6 +8,7 @@ import * as archy from 'archy';
 import {Base} from '../nodes/Base';
 import {ResultCodes} from './ResultCodes';
 import {Composite} from '../nodes/composites/Composite';
+import {serializeDotTree} from './dotTree';
 
 class ArchyTree {
 	label: string;
@@ -52,4 +53,8 @@ export function renderTree(tree: Base<any>, state?: any) {
 
 export function toConsole(tree: Base<any>, state?: any) {
 	console.log(renderTree(tree, state)); // eslint-disable-line no-console
+}
+
+export function toDotString(tree: Base<any>, state?: any) {
+	return serializeDotTree(tree, state);
 }
