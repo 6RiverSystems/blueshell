@@ -69,13 +69,12 @@ workflows:
   test_and_publish:
     jobs:
       - setup:
-          context: 6rs-circle
+          context: 6rs-public-npm
       - test:
-          context: 6rs-circle
+          context: 6rs-public-npm
           requires:
             - setup
       - publish:
-          context: 6rs-circle
+          context: 6rs-public-npm
           requires:
             - test
-            
