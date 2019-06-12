@@ -96,12 +96,12 @@ describe('Base', function() {
 			.then(() => root.run(state))
 			.then(() => {
 				assert.equal(root.getTreeEventCounter(state), 2);
+				assert.equal(root.getLastEventSeen(state), 2);
 			});
 
 		});
 
 		it('Child Node Counter', function() {
-
 			let child = new Base('child');
 			let root = new Decorator('root', child);
 
@@ -113,7 +113,9 @@ describe('Base', function() {
 			.then(() => root.run(state))
 			.then(() => {
 				assert.equal(root.getTreeEventCounter(state), 2);
+				assert.equal(root.getLastEventSeen(state), 2);
 				assert.equal(child.getTreeEventCounter(state), 2);
+				assert.equal(child.getLastEventSeen(state), 2, 'last event seen should be updated');
 			});
 
 		});

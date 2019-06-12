@@ -14,7 +14,7 @@
     "pretest:eslint": "shx echo eslint .",
     "test": "NODE_ENV=test nyc mocha ${MOCHA_OPTS}",
     "test:no-cover": "NODE_ENV=test mocha",
-    "test:debug": "npm run test:no-cover -- --debug-brk test",
+    "test:debug": "npm run test:no-cover -- --inspect-brk test",
     "coverage": "NODE_ENV=test nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "lCov": "NODE_ENV=test nyc report --reporter=lcov",
     "prepublish": "npm-run-all clean compile"
@@ -44,6 +44,7 @@
     "codecov": "^3.2.0",
     "coveralls": "3.0.0",
     "cz-conventional-changelog": "^2.0.0",
+    "dotparser": "0.4.0",
     "eslint": "3.19.0",
     "eslint-config-defaults": "~9.0.0",
     "husky": "^0.13.4",

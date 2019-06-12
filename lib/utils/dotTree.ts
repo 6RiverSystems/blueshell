@@ -20,6 +20,17 @@ const DefaultColor = 'fillcolor="#e5e5e5"';
 
 const DefaultEdgeColor ='color="#000000"';
 
+function getHeader() {
+	return `digraph G {
+		node [${DefaultShape} ${DefaultColor} ${DefaultStyle}]
+		edge [${DefaultEdgeColor}]
+	`;
+}
+
+function getFooter() {
+	return '}';
+}
+
 function getShape<S>(node: Base<S>): string {
 	if (node instanceof Decorator) {
 		return DecoratorShape;
@@ -80,16 +91,14 @@ function getTooltip<S>(node: Base<S>): string {
 }
 
 export function serializeDotTree<S>(root: Base<S>, state?: S): any {
-	if (!root) {
-		return '';
-	}
-
 	const nodesToVisit: Base<S>[] = [];
 
-	let resultingString = `digraph G {
-	node [${DefaultShape} ${DefaultColor} ${DefaultStyle}]
-	edge [${DefaultEdgeColor}]
-`;
+	let resultingString = getHeader();
+	let footer = getFooter();
+
+	if (!root) {
+		return resultingString + footer;
+	}
 
 	nodesToVisit.push(root);
 
@@ -117,7 +126,7 @@ export function serializeDotTree<S>(root: Base<S>, state?: S): any {
 		}
 	}
 
-	resultingString += '}';
+	resultingString += footer;
 
 	return resultingString;
 }
