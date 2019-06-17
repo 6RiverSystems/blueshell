@@ -1,5 +1,4 @@
 import {Base} from '../nodes/Base';
-// import {BlueshellState} from '../nodes/BlueshellState';
 import {ResultCodes as rc} from './ResultCodes';
 import {Decorator} from '../nodes/decorators/Decorator';
 import {Composite} from '../nodes/composites/Composite';
@@ -72,7 +71,7 @@ function getNodeId<S>(node: Base<S>): string {
 			nodeUnsafe.__nodeId = `n`+id;
 		}
 		catch(err) {
-			debugger;
+			console.error("Unable to get node id: ", err);
 		}
 	}
 	return nodeUnsafe.__nodeId;
