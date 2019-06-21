@@ -46,7 +46,7 @@ function getColor<S>(node: Base<S>, state?: S): string {
 		const lastEventSeen = node!.getLastEventSeen(state);
 		const lastResult = node!.getLastResult(state);
 
-		if (lastEventSeen === eventCounter && lastResult) {
+		if (lastEventSeen === eventCounter) {
 			switch (lastResult) {
 			case rc.ERROR:
 				return ErrorColor;
