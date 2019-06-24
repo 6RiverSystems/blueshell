@@ -15,14 +15,16 @@ export class Base<State> {
 
 	run(state: State): Promise<ResultCodes> {
 		return Promise.resolve(this._beforeRun(state))
-		.then(() => this.precondition(state))
-			.then((passed) => {
-				if (!passed) {
-					return ResultCodes.FAILURE;
-				}
+		.then(() => {
+			return this.precondition(state);
+		})
+		.then((passed) => {
+			if (!passed) {
+				return ResultCodes.FAILURE;
+			}
 
-				return this.onRun(state);
-			})
+			return this.onRun(state);
+		})
 		.catch(err => {
 			(<any>state).errorReason = err;
 
@@ -41,11 +43,18 @@ export class Base<State> {
 	private _beforeRun(state: State) {
 
 		let pStorage = this._privateStorage(state);
+		const nodeStorage = this.getNodeStorage(state);
 
 		// If this is the root node, increment the event counter
 		if (!this._parent) {
 			pStorage.runCounter = ++pStorage.runCounter || 1;
 		}
+
+		
+		// Record the last event we've seen
+		// console.log('%s: incrementing event counter %s, %s',
+		//	this.path, nodeStorage.lastEventSeen,  pStorage.runCounter);
+		nodeStorage.lastEventSeen = pStorage.runCounter;
 
 		return {};
 	}
@@ -126,11 +135,23 @@ export class Base<State> {
 		return this._privateStorage(state).debug;
 	}
 
+	/**
+	 * Getter for the previous event seen.
+	 * @param state
+	 */
+	getLastEventSeen(state: State) {
+		return this.getNodeStorage(state).lastEventSeen;
+	}
+
 	getTreeEventCounter(state: State) {
 		return this._privateStorage(state).runCounter;
 	}
 
 	getLastResult(state: State) {
 		return this.getNodeStorage(state).lastResult;
+	}
+
+	get symbol(): string {
+		return '';
 	}
 }

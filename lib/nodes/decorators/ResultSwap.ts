@@ -32,4 +32,8 @@ export class ResultSwap<State> extends Decorator<State> {
 			return res;
 		});
 	}
+
+	get symbol(): string {
+		return '↬';
+	}
 }

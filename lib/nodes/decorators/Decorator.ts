@@ -16,7 +16,7 @@ export class Decorator<State> extends Composite<State> {
 
 	onRun(state: State): Promise<ResultCodes> {
 		// Passthrough
-		return this.child.onRun(state);
+		return this.child.run(state);
 	}
 
 }

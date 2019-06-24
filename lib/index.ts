@@ -22,4 +22,4 @@ export {
 	ResultSwap
 } from './nodes/decorators';
 
-export {ResultCodes, renderTree, toConsole, EnumEx} from './utils';
+export {ResultCodes, renderTree, toConsole, toDotString, EnumEx} from './utils';

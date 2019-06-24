@@ -9,4 +9,7 @@ export class LatchedSequence<State> extends Sequence<State> {
 		super(name, children, true);
 	}
 
+	get symbol(): string {
+		return '⍈';
+	}
 }

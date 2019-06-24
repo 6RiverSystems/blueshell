@@ -23,4 +23,8 @@ export class Not<State> extends Decorator<State> {
 			return res;
 		});
 	}
+
+	get symbol(): string {
+		return '∼';
+	}
 }

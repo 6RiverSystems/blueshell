@@ -3,6 +3,6 @@
  */
 'use strict';
 
-export {renderTree, toConsole} from'./renderTree';
+export {renderTree, toConsole, toDotString} from'./renderTree';
 export {ResultCodes} from './ResultCodes';
 export {EnumEx} from './EnumEx';

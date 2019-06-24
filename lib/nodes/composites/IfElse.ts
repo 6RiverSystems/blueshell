@@ -51,4 +51,7 @@ export class IfElse<State> extends Base<State> {
 		}
 	}
 
+	get symbol(): string {
+		return '?';
+	}
 }
