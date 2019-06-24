@@ -15,14 +15,16 @@ export class Base<State> {
 
 	run(state: State): Promise<ResultCodes> {
 		return Promise.resolve(this._beforeRun(state))
-		.then(() => this.precondition(state))
-			.then((passed) => {
-				if (!passed) {
-					return ResultCodes.FAILURE;
-				}
+		.then(() => {
+			return this.precondition(state);
+		})
+		.then((passed) => {
+			if (!passed) {
+				return ResultCodes.FAILURE;
+			}
 
-				return this.onRun(state);
-			})
+			return this.onRun(state);
+		})
 		.catch(err => {
 			(<any>state).errorReason = err;
 

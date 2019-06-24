@@ -73,7 +73,7 @@ describe('RenderTree', () => {
 		done();
 	});
 
-	it('should generate a tree of nodes without a state', (done) => {
+	it('should generate a tree of nodes without a state', () => {
 		let a = renderTree(waitAi);
 
 		assert.ok(a);
@@ -100,8 +100,6 @@ describe('RenderTree', () => {
 			assert.notOk(a.includes(namesAndValues.name));
 			assert.notOk(namesAndValues.value === null);
 		});
-
-		done();
 	});
 
 	it('should generate a tree of nodes with state', () => {
@@ -172,7 +170,7 @@ describe('RenderTree', () => {
 			assertParse(render);
 		});
 
-		it('should generate a dot string without state', function(done) {
+		it('should generate a dot string without state', function() {
 			const dotString = toDotString(waitAi);
 
 			assert.notOk(dotString.includes('fillcolor="#4daf4a"')); // SUCCESS
@@ -180,7 +178,6 @@ describe('RenderTree', () => {
 			assert.notOk(dotString.includes('fillcolor="#377eb8"')); // RUNNING
 			assert.notOk(dotString.includes('fillcolor="#e41a1c"')); // ERROR
 			assertParse(dotString);
-			done();
 		});
 
 		it('should generate a digraph string with state', function() {
@@ -196,11 +193,10 @@ describe('RenderTree', () => {
 			assertParse(result);
 		});
 
-		it('should generate a digraph with custom node', function(done) {
+		it('should generate a digraph with custom node', function() {
 			const customLSelector = new CustomLatchedSelector();
 			const dotString = toDotString(customLSelector);
 			assertParse(dotString);
-			done();
 		});
 	});
 });

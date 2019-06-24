@@ -11,11 +11,11 @@ const DecoratorShape = 'shape=ellipse';
 const CompositeShape = 'shape=diamond height=1';
 const DefaultShape = 'shape=box';
 
-const SuccessColor = 'fillcolor="#4daf4a"';
-const FailureColor = 'fillcolor="#984ea3"';
-const RunningColor = 'fillcolor="#377eb8"';
-const ErrorColor = 'fillcolor="#e41a1c"';
-const DefaultColor = 'fillcolor="#e5e5e5"';
+export const SuccessColor = 'fillcolor="#4daf4a"';
+export const FailureColor = 'fillcolor="#984ea3"';
+export const RunningColor = 'fillcolor="#377eb8"';
+export const ErrorColor = 'fillcolor="#e41a1c"';
+export const DefaultColor = 'fillcolor="#e5e5e5"';
 
 const DefaultEdgeColor ='color="#000000"';
 
@@ -40,7 +40,7 @@ function getShape<S>(node: Base<S>): string {
 	}
 }
 
-function getColor<S>(node: Base<S>, state?: S): string {
+export function getColor<S>(node: Base<S>, state?: S): string {
 	if (state) {
 		const eventCounter = node!.getTreeEventCounter(state);
 		const lastEventSeen = node!.getLastEventSeen(state);
