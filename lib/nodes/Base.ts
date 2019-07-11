@@ -14,6 +14,7 @@ export class Base<State> {
 	}
 
 	run(state: State): Promise<ResultCodes> {
+		console.log("MBDEBUG: running node", this.name);
 		return Promise.resolve(this._beforeRun(state))
 		.then(() => {
 			return this.precondition(state);
@@ -35,6 +36,7 @@ export class Base<State> {
 			return ResultCodes.ERROR;
 		})
 		.then(res => {
+			console.log("MBDEBUG: node", this.name, " result: ", res);
 			return this._afterRun(res, state);
 		});
 	}
