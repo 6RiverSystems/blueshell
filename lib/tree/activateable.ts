@@ -2,7 +2,6 @@ import {BlueshellState} from '../nodes/BlueshellState';
 import {Base as Action} from '../nodes/Base';
 import {ResultCode, resultCodes} from '../utils/resultCodes';
 
-
 function activationCheck<E>(storage: any) {
 	return storage.lastResult !== resultCodes.RUNNING;
 }
@@ -14,8 +13,8 @@ function reactivationCheck<E>(storage: any, e: E) {
 class Activatable<S extends BlueshellState, E> extends Action<S, E> {
 	constructor(
 		name: string,
-		private readonly onActivateFn: RunningFn,
-		private readonly onRunningFn: RunningFn,
+		private readonly onActivateFn: RunningFn<S, E>,
+		private readonly onRunningFn: RunningFn<S, E>,
 		private readonly activationCheck: (storage: any, e: E) => boolean,
 	) {
 		super(name);
@@ -36,20 +35,15 @@ class Activatable<S extends BlueshellState, E> extends Action<S, E> {
 	}
 }
 
-export interface ActivateFn {
-	<S, E>(state: S, event: E): ResultCode;
-}
-
-export interface RunningFn {
-	<S, E>(state: S, event: E): ResultCode;
-}
+export type ActivateFn<S extends BlueshellState, E> = (state: S, event: E) => ResultCode
+export type RunningFn<S extends BlueshellState, E> = (state: S, event: E) => ResultCode
 
 export function activatable<S extends BlueshellState, E>(
 	name: string,
-	onActivateFn: ActivateFn,
-	onRunningFn: RunningFn,
+	onActivateFn: ActivateFn<S, E>,
+	onRunningFn: RunningFn<S, E>,
 ): Action<S, E> {
-	return new Activatable(
+	return new Activatable<S, E>(
 		name,
 		onActivateFn,
 		onRunningFn,
@@ -58,8 +52,8 @@ export function activatable<S extends BlueshellState, E>(
 
 export function reactivatable<S extends BlueshellState, E>(
 	name: string,
-	onActivateFn: ActivateFn,
-	onRunningFn: RunningFn,
+	onActivateFn: ActivateFn<S, E>,
+	onRunningFn: RunningFn<S, E>,
 ): Action<S, E> {
 	return new Activatable(
 		name,
