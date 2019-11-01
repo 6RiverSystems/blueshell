@@ -25,17 +25,15 @@ class StopLasers extends Behavior.Action<RobotState, string> {
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : state.laserCooldownTime;
 
-		let result = rc.SUCCESS;
-
 		console.log('Storage cooldown is ', storage.cooldown);
 
 		if (storage.cooldown > 0) {
-			result = rc.RUNNING;
+			return rc.RUNNING;
 		} else {
 			state.commands.push('lasersCooled');
 		}
 
-		return result;
+		return rc.SUCCESS;
 	}
 }
 

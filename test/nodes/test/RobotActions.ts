@@ -32,17 +32,15 @@ class Recharge extends Behavior.Action<RobotState, string> {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onEvent(state: RobotState, event: string): ResultCode {
-		let result = rc.SUCCESS;
-
 		state.batteryLevel = state.batteryLevel !== undefined ? ++state.batteryLevel : 1;
 
 		if (state.overheated) {
-			result = rc.FAILURE;
+			return rc.FAILURE;
 		} else {
 			state.commands.push('findDock');
 		}
 
-		return result;
+		return rc.SUCCESS;
 	}
 }
 class WaitForCooldown extends Behavior.Action<RobotState, string> {
@@ -52,18 +50,16 @@ class WaitForCooldown extends Behavior.Action<RobotState, string> {
 
 		storage.cooldown = storage.cooldown ? --storage.cooldown : 1;
 
-		let result = rc.SUCCESS;
-
 		console.log('Storage cooldown is ', storage.cooldown);
 
 		if (storage.cooldown) {
 			state.cooldownLevel = storage.cooldown;
-			result = rc.RUNNING;
+			return rc.RUNNING;
 		} else {
 			state.overheated = false;
 		}
 
-		return result;
+		return rc.SUCCESS;
 	}
 }
 
