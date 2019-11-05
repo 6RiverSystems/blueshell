@@ -39,7 +39,7 @@ export class Base<S extends BlueshellState, E> {
 		}
 
 		try {
-			publishTree();
+			publishTree(state, event);
 
 			const result = this.onEvent(state, event);
 			return this._afterEvent(result, state, event);
