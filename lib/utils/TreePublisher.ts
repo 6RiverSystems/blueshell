@@ -1,10 +1,10 @@
-import {BlueshellState} from "../nodes/BlueshellState";
+import {BlueshellState} from '../nodes/BlueshellState';
 
 // @@@ probably a better way to do this than a global
 let treePublisher: TreePublisher<BlueshellState, any>;
 
 export interface TreePublisher<S extends BlueshellState, E> {
-	publishTree(state: S, event: E): void;
+	maybePublishTree(state: S, event: E, topLevel: boolean): void;
 	configure(options: object): void;
 }
 
@@ -12,8 +12,9 @@ export function registerTreePublisher<S extends BlueshellState, E>(publisher: Tr
 	treePublisher = publisher;
 }
 
-export function publishTree<S extends BlueshellState, E>(state: S, event: E) {
+// toplevel is handleEvent cadence of publishing
+export function maybePublishTree<S extends BlueshellState, E>(state: S, event: E, topLevel: boolean) {
 	if (!!treePublisher) {
-		treePublisher.publishTree(state, event);
+		treePublisher.maybePublishTree(state, event, topLevel);
 	}
 }
