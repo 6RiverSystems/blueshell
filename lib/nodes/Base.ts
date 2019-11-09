@@ -3,7 +3,8 @@
  */
 import {BlueshellState} from './BlueshellState';
 import {resultCodes as rc, ResultCode} from '../utils/resultCodes';
-import {publishTree} from '../utils/TreePublisher';
+import {maybePublishTree} from '../utils/TreePublisher';
+
 
 /**
  * Base class of all Nodes.
@@ -39,8 +40,7 @@ export class Base<S extends BlueshellState, E> {
 		}
 
 		try {
-			publishTree(state, event);
-
+			maybePublishTree(state, event, false);
 			const result = this.onEvent(state, event);
 			return this._afterEvent(result, state, event);
 		} catch (err) {
