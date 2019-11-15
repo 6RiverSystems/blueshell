@@ -5,6 +5,7 @@ import {assert} from 'chai';
 import * as Behavior from '../../lib';
 import {BlueshellState} from '../../lib/nodes/BlueshellState';
 import {resultCodes as rc} from '../../lib/utils/resultCodes';
+import {TreeNonPublisher} from '../../lib/utils/TreePublisher';
 
 const Base = Behavior.Action;
 const Decorator = Behavior.Decorator;
@@ -116,6 +117,31 @@ describe('Base', function() {
 			assert.equal(root.getLastEventSeen(state), 2);
 			assert.equal(child.getTreeEventCounter(state), 2);
 			assert.equal(child.getLastEventSeen(state), 2, 'last event seen should be updated');
+		});
+	});
+
+	describe('publisher', function() {
+		it('Has a non publisher by default', function() {
+			assert.isTrue(Base.treePublisher instanceof TreeNonPublisher);
+		});
+
+		it('We can make a publisher', function() {
+			const action = new TestAction();
+			let published = false;
+			const publisher = {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				maybePublishTree(_state: any, _event: any, _topLevel: boolean) {
+					published = true;
+				},
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				configure(_options: object) {},
+			} as Behavior.TreePublisher<any, any>;
+
+			Base.registerTreePublisher(publisher);
+			const res = action.handleEvent(new TestState(), 'testEvent');
+
+			assert.equal(res, rc.SUCCESS);
+			assert.isTrue(published);
 		});
 	});
 });
