@@ -3,7 +3,7 @@
  */
 import {BlueshellState} from './BlueshellState';
 import {resultCodes as rc, ResultCode} from '../utils/resultCodes';
-import {maybePublishTree} from '../utils/TreePublisher';
+import {TreePublisher, TreeNonPublisher} from '../utils/TreePublisher';
 
 
 /**
@@ -12,6 +12,17 @@ import {maybePublishTree} from '../utils/TreePublisher';
  */
 export class Base<S extends BlueshellState, E> {
 	private _parent: string;
+
+	// Hard to properly type this since the static can't
+	// inherit the types from this generic class.  This static is
+	// here because it's difficult to inject this functionality
+	// into blueshell in the current form, but this is maybe
+	// marginally better than a global
+	static treePublisher: TreeNonPublisher | TreePublisher<any, any> = new TreeNonPublisher();
+
+	static registerTreePublisher<S extends BlueshellState, E>(publisher: TreePublisher<S, E>): void {
+		Base.treePublisher = publisher;
+	}
 
 	/**
 	 * @constructor
@@ -40,7 +51,7 @@ export class Base<S extends BlueshellState, E> {
 		}
 
 		try {
-			maybePublishTree(state, event, false);
+			Base.treePublisher.maybePublishTree(state, event, false);
 			const result = this.onEvent(state, event);
 			return this._afterEvent(result, state, event);
 		} catch (err) {

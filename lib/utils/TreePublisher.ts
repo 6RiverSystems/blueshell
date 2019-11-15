@@ -1,20 +1,13 @@
 import {BlueshellState} from '../nodes/BlueshellState';
 
-// @@@ probably a better way to do this than a global
-let treePublisher: TreePublisher<BlueshellState, any>;
-
-export interface TreePublisher<S extends BlueshellState, E> {
-	maybePublishTree(state: S, event: E, topLevel: boolean): void;
+export interface TreePublisher<B extends BlueshellState, V> {
+	maybePublishTree(state: B, event: V, topLevel: boolean): void;
 	configure(options: object): void;
 }
 
-export function registerTreePublisher<S extends BlueshellState, E>(publisher: TreePublisher<S, E>): void {
-	treePublisher = publisher;
-}
-
-// toplevel is handleEvent cadence of publishing
-export function maybePublishTree<S extends BlueshellState, E>(state: S, event: E, topLevel: boolean) {
-	if (!!treePublisher) {
-		treePublisher.maybePublishTree(state, event, topLevel);
-	}
+export class TreeNonPublisher implements TreePublisher<any, any> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	maybePublishTree(_state: BlueshellState, _event: any, _topLevel: boolean) {}
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	configure(_options: object) {}
 }
