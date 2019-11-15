@@ -20,7 +20,7 @@ export class Base<S extends BlueshellState, E> {
 	// marginally better than a global
 	static treePublisher: TreeNonPublisher | TreePublisher<any, any> = new TreeNonPublisher();
 
-	static registerTreePublisher<S extends BlueshellState, E>(publisher: TreePublisher<S, E>): void {
+	public static registerTreePublisher<S extends BlueshellState, E>(publisher: TreePublisher<S, E>): void {
 		Base.treePublisher = publisher;
 	}
 
