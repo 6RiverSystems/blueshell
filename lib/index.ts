@@ -10,6 +10,7 @@ export {LatchedSelector} from './nodes/LatchedSelector';
 export {LatchedSequence} from './nodes/LatchedSequence';
 export {IfElse} from './nodes/IfElse';
 export {resultCodes, ResultCode} from './utils/resultCodes';
+export {TreePublisher} from './utils/TreePublisher';
 
 import * as decorators from './nodes/decorators';
 
