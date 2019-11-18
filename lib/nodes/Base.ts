@@ -18,7 +18,7 @@ export class Base<S extends BlueshellState, E> {
 	// here because it's difficult to inject this functionality
 	// into blueshell in the current form, but this is maybe
 	// marginally better than a global
-	static treePublisher: TreeNonPublisher | TreePublisher<any, any> = new TreeNonPublisher();
+	static treePublisher: TreePublisher<any, any> = new TreeNonPublisher();
 
 	public static registerTreePublisher<S extends BlueshellState, E>(publisher: TreePublisher<S, E>): void {
 		Base.treePublisher = publisher;
@@ -51,7 +51,7 @@ export class Base<S extends BlueshellState, E> {
 		}
 
 		try {
-			Base.treePublisher.maybePublishTree(state, event, false);
+			Base.treePublisher.publishTree(state, event, false);
 			const result = this.onEvent(state, event);
 			return this._afterEvent(result, state, event);
 		} catch (err) {

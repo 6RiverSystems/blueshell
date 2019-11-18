@@ -130,7 +130,7 @@ describe('Base', function() {
 			let published = false;
 			const publisher = {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				maybePublishTree(_state: any, _event: any, _topLevel: boolean) {
+				publishTree(_state: any, _event: any, _topLevel: boolean) {
 					published = true;
 				},
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
