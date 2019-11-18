@@ -51,7 +51,7 @@ export class Base<S extends BlueshellState, E> {
 		}
 
 		try {
-			Base.treePublisher.publishTree(state, event, false);
+			Base.treePublisher.publishResult(state, event, false);
 			const result = this.onEvent(state, event);
 			return this._afterEvent(result, state, event);
 		} catch (err) {
