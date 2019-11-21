@@ -3,9 +3,10 @@ import {Base} from '../nodes/Base';
 import {Composite} from '..';
 import {v4} from 'uuid';
 import {ResultCode} from './resultCodes';
+import {IfElse} from '../nodes/IfElse';
 
-function isComposite<S extends BlueshellState, E>(node: Base<S, E>): node is Composite<S, E> {
-	return node instanceof Composite;
+function hasChildren<S extends BlueshellState, E>(node: Base<S, E>): node is Composite<S, E> {
+	return node instanceof Composite || node instanceof IfElse;
 }
 
 const ids: Map<Base<BlueshellState, unknown>, string> = new Map<Base<BlueshellState, unknown>, string>();
@@ -37,7 +38,7 @@ export abstract class NodeStateVisitor<S extends BlueshellState, E, T = void> {
 				return this.visitOutOfContext(new NodeAnalysis(node));
 			}
 			if (contextDepth === 0) {
-				if (isComposite(node) && node.children.length > 0) {
+				if (hasChildren(node) && node.children.length > 0) {
 					return this.visitEdgeOfContext(new NodeAnalysis(node));
 				} else {
 					return this.visitInContext(new InContextAnalysis(node, state, contextDepth, this));
@@ -90,7 +91,7 @@ export class StatelessAnalysis<S extends BlueshellState, E, T = void> extends No
 		super(node);
 	}
 	public* visitChildren() {
-		if (isComposite(this.node)) {
+		if (hasChildren(this.node)) {
 			for (const child of this.node.children) {
 				yield this.visitor.visit(child);
 			}
@@ -109,7 +110,7 @@ export class OnPathAnalysis<S extends BlueshellState, E, T = void> extends State
 		super(node, state);
 	}
 	public* visitChildren() {
-		if (isComposite(this.node)) {
+		if (hasChildren(this.node)) {
 			for (const child of this.node.children) {
 				yield this.visitor.visit(child, this.state, this.contextDepth);
 			}
@@ -127,7 +128,7 @@ export class InContextAnalysis<S extends BlueshellState, E, T = void> extends St
 		super(node, state);
 	}
 	public* visitChildren() {
-		if (isComposite(this.node)) {
+		if (hasChildren(this.node)) {
 			for (const child of this.node.children) {
 				yield this.visitor.visit(child, this.state, this.contextDepth);
 			}
