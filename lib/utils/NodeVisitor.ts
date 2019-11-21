@@ -3,9 +3,10 @@ import {Base} from '../nodes/Base';
 import {Composite} from '..';
 import {v4} from 'uuid';
 import {ResultCode} from './resultCodes';
+import {IfElse} from '../nodes/IfElse';
 
 function isComposite<S extends BlueshellState, E>(node: Base<S, E>): node is Composite<S, E> {
-	return node instanceof Composite;
+	return node instanceof Composite || node instanceof IfElse;
 }
 
 const ids: Map<Base<BlueshellState, unknown>, string> = new Map<Base<BlueshellState, unknown>, string>();
