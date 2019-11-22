@@ -14,7 +14,7 @@ export {TreePublisher} from './utils/TreePublisher';
 
 import * as decorators from './nodes/decorators';
 
-import {toString, toConsole, toDotString, toDotConsole, toD3Console, toD3String} from './utils/renderTree';
+import {toString, toConsole, toDotString, toDotConsole} from './utils/renderTree';
 
 export {Base as Action};
 export {Base as Condition};
@@ -26,6 +26,4 @@ export const renderTree = {
 	toConsole,
 	toDotString,
 	toDotConsole,
-	toD3Console,
-	toD3String,
 };
