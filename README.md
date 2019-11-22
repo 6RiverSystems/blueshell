@@ -95,6 +95,10 @@ Decorators intercept and can modify the event sent to or the result from the chi
 * The base class for decorators.
 * Can only have one child.
 
+## Publishing
+
+* The publisher can be registered with the tree which will log each transition.
+
 ## Inspiration and Further Reading
 
 The following are sources used when designing this library
