@@ -25,86 +25,40 @@ class ConsumeOnce extends Action<any, any> {
 	}
 }
 
-const testTree = new LatchedSequence(
-	'root',
-	[
-		new LatchedSequence(
-			'0',
-			[
-				new LatchedSequence(
-					'0.0',
-					[
-						new ConsumeOnce('0.0.0'),
-						new ConsumeOnce('0.0.1'),
-					]
-				),
-				new LatchedSequence(
-					'0.1',
-					[
-						new ConsumeOnce('0.1.0'),
-						new ConsumeOnce('0.1.1'),
-					]
-				),
-			]
-		),
-		new LatchedSequence(
-			'1',
-			[
-				new ConsumeOnce('1.0'),
-				new ConsumeOnce('1.1'),
-			]
-		),
-	]
-);
-
 describe('renderTree', function() {
-	context('d3 tree', function() {
-		function assertParse(s: string) {
-			try {
-				JSON.parse(s);
-			} catch (err) {
-				// eslint-disable-next-line no-console
-				console.log('failed to parse:');
-				// eslint-disable-next-line no-console
-				console.log(s);
-				throw err;
-			}
-		}
-		it('should be ok with non-tree', function() {
-			assertParse(renderTree!.toD3String(undefined as any));
-		});
-		context('before running', function() {
-			it('works', function() {
-				const state: BlueshellState = {
-					errorReason: undefined,
-					__blueshell: {},
-				};
-				assertParse(renderTree!.toD3String(testTree, state));
-			});
-		});
-		context('after one run', function() {
-			const state: BlueshellState = {
-				errorReason: undefined,
-				__blueshell: {},
-			};
-			beforeEach(async function() {
-				await testTree.handleEvent(state, {});
-			});
-			it('works', function() {
-				assertParse(renderTree!.toD3String(testTree, state));
-			});
-			it('works at 0 context depth', function() {
-				assertParse(renderTree!.toD3String(testTree, state, 0));
-			});
-		});
-		context('without state', function() {
-			it('works', function() {
-				assertParse(renderTree!.toD3String(testTree));
-			});
-		});
-	});
 	context('archy tree', function() {
 		context('contextDepth', function() {
+			const testTree = new LatchedSequence(
+				'root',
+				[
+					new LatchedSequence(
+						'0',
+						[
+							new LatchedSequence(
+								'0.0',
+								[
+									new ConsumeOnce('0.0.0'),
+									new ConsumeOnce('0.0.1'),
+								]
+							),
+							new LatchedSequence(
+								'0.1',
+								[
+									new ConsumeOnce('0.1.0'),
+									new ConsumeOnce('0.1.1'),
+								]
+							),
+						]
+					),
+					new LatchedSequence(
+						'1',
+						[
+							new ConsumeOnce('1.0'),
+							new ConsumeOnce('1.1'),
+						]
+					),
+				]
+			);
 			let state: BlueshellState = {
 				errorReason: undefined,
 				__blueshell: {},
@@ -127,9 +81,9 @@ describe('renderTree', function() {
 				const ellipsesShown = getCount(/\.\.\./g);
 				const arrowsShown = getCount(/=>/g);
 
-				assert.strictEqual(nodesShown, expectedNodes, 'nodes:\n' + render);
-				assert.strictEqual(ellipsesShown, expectedEllipses, 'ellipses:\n' + render);
-				assert.strictEqual(arrowsShown, expectedArrows, 'arrows:\n' + render);
+				assert.strictEqual(nodesShown, expectedNodes, 'nodes');
+				assert.strictEqual(ellipsesShown, expectedEllipses, 'ellipses');
+				assert.strictEqual(arrowsShown, expectedArrows, 'arrows');
 
 				function getCount(re: RegExp) {
 					const matches = render.match(re);
@@ -157,12 +111,14 @@ describe('renderTree', function() {
 				it('should show only the active path at -1 context depth', function() {
 					runContextDepthTest(4, 0, 4, -1);
 				});
-				// eslint-disable-next-line max-len
-				it('should show only the active path, terminal context-boundaries, and ellipses at 0 context depth', function() {
-					runContextDepthTest(7, 2, 4, 0);
+				it('should show only the active path and ellipses at 0 context depth', function() {
+					runContextDepthTest(7, 3, 4, 0);
 				});
-				it('should show everything at 1 context depth', function() {
-					runContextDepthTest(11, 0, 4, 1);
+				it('should show only the active path, siblings, and ellipses at 1 context depth', function() {
+					runContextDepthTest(11, 4, 4, 1);
+				});
+				it('should show everything at 2 context depth', function() {
+					runContextDepthTest(11, 0, 4, 2);
 				});
 			});
 		});
@@ -223,55 +179,10 @@ describe('renderTree', function() {
 	});
 
 	context('dot notation tree', function() {
-		function assertParse(s: string) {
-			try {
-				parse(s);
-			} catch (err) {
-				// eslint-disable-next-line no-console
-				console.log('failed to parse:');
-				// eslint-disable-next-line no-console
-				console.log(s);
-				throw err;
-			}
-		}
 		it('should not crash', function(done) {
 			renderTree!.toDotConsole(waitAi);
 			done();
 		});
-
-		it('should generate a digraph at context depth 1 after a run', async function() {
-			const state: BlueshellState = {
-				errorReason: undefined,
-				__blueshell: {},
-			};
-			await testTree.handleEvent(state, {});
-			const render = renderTree!.toDotString(testTree, state, 1);
-			assertParse(render);
-		});
-
-		it('should generate a digraph at context depth -1', async function() {
-			const state: BlueshellState = {
-				errorReason: undefined,
-				__blueshell: {},
-			};
-			const render = renderTree!.toDotString(testTree, state, -1);
-			assertParse(render);
-		});
-
-		it('should generate a digraph with no tree', function() {
-			assertParse(renderTree!.toDotString(undefined as any));
-		});
-
-		it('should generate a digraph at context depth 0 after a run', async function() {
-			const state: BlueshellState = {
-				errorReason: undefined,
-				__blueshell: {},
-			};
-			await testTree.handleEvent(state, {});
-			const render = renderTree!.toDotString(testTree, state, 0);
-			assertParse(render);
-		});
-
 		it('should generate a dot string without state', function(done) {
 			const dotString = renderTree.toDotString(waitAi);
 
@@ -279,7 +190,10 @@ describe('renderTree', function() {
 			assert.notOk(dotString.includes('fillcolor="#984ea3"')); // FAILURE
 			assert.notOk(dotString.includes('fillcolor="#377eb8"')); // RUNNING
 			assert.notOk(dotString.includes('fillcolor="#e41a1c"')); // ERROR
-			assertParse(dotString);
+			console.log(dotString);
+			assert.doesNotThrow(function() {
+				parse(dotString);
+			});
 			done();
 		});
 
@@ -294,13 +208,19 @@ describe('renderTree', function() {
 			const result = renderTree.toDotString(waitAi, state);
 
 			assert.ok(result);
-			assertParse(result);
+			console.log(result);
+			assert.doesNotThrow(function() {
+				parse(result);
+			});
 		});
 
 		it('should generate a digraph with custom node', function(done) {
 			const customLSelector = new CustomLatchedSelector();
 			const dotString = renderTree.toDotString(customLSelector);
-			assertParse(dotString);
+			console.log(dotString);
+			assert.doesNotThrow(function() {
+				parse(dotString);
+			});
 			done();
 		});
 	});
