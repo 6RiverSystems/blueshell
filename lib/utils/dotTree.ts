@@ -16,6 +16,7 @@ const SuccessColor = 'fillcolor="#4daf4a"';
 const FailureColor = 'fillcolor="#984ea3"';
 const RunningColor = 'fillcolor="#377eb8"';
 const ErrorColor = 'fillcolor="#e41a1c"';
+const EnteredColor = 'fillcolor="#afaf4a"';
 const DefaultColor = 'fillcolor="#e5e5e5"';
 
 const DefaultEdgeColor ='color="#000000"';
@@ -36,16 +37,20 @@ function getColor<S extends BlueshellState, E>(node: Base<S, E>, state?: S): str
 		const lastEventSeen = node!.getLastEventSeen(state);
 		const lastResult = node!.getLastResult(state);
 
-		if (lastEventSeen === eventCounter && lastResult) {
-			switch (lastResult) {
-			case rc.ERROR:
-				return ErrorColor;
-			case rc.SUCCESS:
-				return SuccessColor;
-			case rc.RUNNING:
-				return RunningColor;
-			case rc.FAILURE:
-				return FailureColor;
+		if (lastEventSeen === eventCounter) {
+			if (lastResult) {
+				switch (lastResult) {
+				case rc.ERROR:
+					return ErrorColor;
+				case rc.SUCCESS:
+					return SuccessColor;
+				case rc.RUNNING:
+					return RunningColor;
+				case rc.FAILURE:
+					return FailureColor;
+				}
+			} else {
+				return EnteredColor;
 			}
 		}
 	}
@@ -80,6 +85,7 @@ export function serializeDotTree<S extends BlueshellState, E>(root: Base<S, E>, 
 	const nodesToVisit: Base<S, E>[] = [];
 
 	let resultingString = `digraph G {
+	graph [ordering=out]
 	node [${DefaultShape} ${DefaultColor} ${DefaultStyle}]
 	edge [${DefaultEdgeColor}]
 `;
