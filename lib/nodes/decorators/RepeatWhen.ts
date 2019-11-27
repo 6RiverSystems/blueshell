@@ -24,6 +24,17 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 		super('RepeatWhen-' + desc, child);
 	}
 
+	// @@@ HACK - any types
+	clearChildEventSeen(node: any, state: S) {
+		if (node.children) {
+			node.children.forEach((child: any) => {
+				this.clearChildEventSeen(child, state);
+			});
+		}
+		const childStorage = node.getNodeStorage(state);
+		childStorage.lastEventSeen = undefined;
+	}
+
 	/**
 	 * Executes the conditional with the given state, event, and child result.
 	 * Child is repeated depending on result of conditional.
@@ -35,6 +46,7 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 		const res = this.child.handleEvent(state, event);
 
 		if (this.conditional(state, event, res)) {
+			this.clearChildEventSeen(this, state);
 			return this.handleEvent(state, event);
 		} else {
 			return res;

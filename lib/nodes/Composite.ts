@@ -1,6 +1,6 @@
 import {Base} from './Base';
 import {BlueshellState} from './BlueshellState';
-import {ResultCode} from '../utils/resultCodes';
+import {ResultCode, resultCodes} from '../utils/resultCodes';
 
 /**
  * Base class for all Composite Nodes (nodes which have children).
@@ -41,6 +41,76 @@ export abstract class Composite<S extends BlueshellState, E> extends Base<S, E> 
 
 	get latched() {
 		return this._latched;
+	}
+
+	setChildEventCounter(pStorage: any, state: S, child: Base<S, E>) {
+		// @@@ HACK: repeat of part of Base._beforeEvent
+		const childNodeStorage = child.getNodeStorage(state);
+		if (childNodeStorage.lastEventSeen !== undefined) {
+			childNodeStorage.lastEventSeen = pStorage.eventCounter;
+			if ((<any>(child)).children) {
+				(<any>(child)).children.forEach((child: any) => {
+					if (child.setChildEventCounter) {
+						child.setChildEventCounter(pStorage, state, child);
+					} else {
+						const childChildNodeStorage = child.getNodeStorage(state);
+						if (childChildNodeStorage.lastEventSeen !== undefined) {
+							childChildNodeStorage.lastEventSeen = pStorage.eventCounter;
+						}
+					}
+				});
+			}
+		}
+	}
+
+	/**
+	 * Return an empty object
+	 * @ignore
+	 * @param state
+	 * @param event
+	 */
+	_beforeEvent(state: S, event: E) {
+		const res = super._beforeEvent(state, event);
+		const nodeStorage = this.getNodeStorage(state);
+		const pStorage = this._privateStorage(state);
+		const running = nodeStorage.running || 0;
+		this.children.forEach((child, i) => {
+			if (i < running) {
+				// set event counter for each child before our latch point so they are registered
+				// as participating in this event (using the previous results)
+				this.setChildEventCounter(pStorage, state, child);
+			} else if (i > running) {
+				// clear the result from our children since this a new execution of this Composite
+				// and this child is not latched
+				const childStorage = child.getNodeStorage(state);
+				childStorage.lastResult = '';
+				childStorage.lastEventSeen = undefined;
+			}	// else do nothing with the running node (@@@ will show as blue in btv instead of yellow)
+		});
+		// clear our last result since we're processing a new event
+		nodeStorage.lastResult = '';
+		return res;
+	}
+
+	/**
+	 * Logging
+	 * @ignore
+	 * @param res
+	 * @param state
+	 * @param event
+	 */
+	_afterEvent(res: ResultCode, state: S, event: E): ResultCode {
+		res = super._afterEvent(res, state, event);
+
+		if (this.latched) {
+			const storage = this.getNodeStorage(state);
+			// clear latched status if the node is no longer running after processing the event
+			if (storage.running !== undefined && res !== resultCodes.RUNNING) {
+				storage.running = undefined;
+			}
+		}
+
+		return res;
 	}
 
 	/**

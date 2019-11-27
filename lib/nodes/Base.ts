@@ -66,7 +66,7 @@ export class Base<S extends BlueshellState, E> {
 	}
 
 	/**
-	 * Return nothing
+	 * Return an empty object
 	 * @ignore
 	 * @param state
 	 * @param event
