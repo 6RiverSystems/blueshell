@@ -73,7 +73,7 @@ export abstract class Composite<S extends BlueshellState, E> extends Base<S, E> 
 		const res = super._beforeEvent(state, event);
 		const nodeStorage = this.getNodeStorage(state);
 		const pStorage = this._privateStorage(state);
-		const running = nodeStorage.running || 0;
+		const running = (nodeStorage.running !== undefined) ? nodeStorage.running : -1;
 		this.children.forEach((child, i) => {
 			if (i < running) {
 				// set event counter for each child before our latch point so they are registered

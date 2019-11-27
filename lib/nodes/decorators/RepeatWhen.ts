@@ -46,6 +46,7 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 		const res = this.child.handleEvent(state, event);
 
 		if (this.conditional(state, event, res)) {
+			Base.treePublisher.publishResult(state, event, false);
 			this.clearChildEventSeen(this, state);
 			return this.handleEvent(state, event);
 		} else {
