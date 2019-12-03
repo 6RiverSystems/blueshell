@@ -54,7 +54,7 @@ class WaitForCooldown extends Behavior.Action<RobotState, string> {
 
 		let result = rc.SUCCESS;
 
-		console.log('Storage cooldown is ', storage.cooldown);
+		// console.log('Storage cooldown is ', storage.cooldown);
 
 		if (storage.cooldown) {
 			state.cooldownLevel = storage.cooldown;

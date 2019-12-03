@@ -55,6 +55,7 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 		return handleEvent(state, event);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	decorateResult(res: ResultCode, state: S, event: E): ResultCode {
 		return res;
 	}

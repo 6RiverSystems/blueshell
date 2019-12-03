@@ -145,7 +145,7 @@ describe('renderTree', function() {
 			assert.notOk(a.includes(rc.FAILURE));
 			assert.notOk(a.includes(rc.RUNNING));
 			assert.notOk(a.includes(rc.ERROR));
-			console.log(a);
+			// console.log(a);
 
 			done();
 		});
@@ -174,7 +174,7 @@ describe('renderTree', function() {
 			];
 
 			assertWordsInString(a, expectedWords);
-			console.log(a);
+			// console.log(a);
 		});
 	});
 
@@ -190,7 +190,7 @@ describe('renderTree', function() {
 			assert.notOk(dotString.includes('fillcolor="#984ea3"')); // FAILURE
 			assert.notOk(dotString.includes('fillcolor="#377eb8"')); // RUNNING
 			assert.notOk(dotString.includes('fillcolor="#e41a1c"')); // ERROR
-			console.log(dotString);
+			// console.log(dotString);
 			assert.doesNotThrow(function() {
 				parse(dotString);
 			});
@@ -208,7 +208,7 @@ describe('renderTree', function() {
 			const result = renderTree.toDotString(waitAi, state);
 
 			assert.ok(result);
-			console.log(result);
+			// console.log(result);
 			assert.doesNotThrow(function() {
 				parse(result);
 			});
@@ -217,7 +217,7 @@ describe('renderTree', function() {
 		it('should generate a digraph with custom node', function(done) {
 			const customLSelector = new CustomLatchedSelector();
 			const dotString = renderTree.toDotString(customLSelector);
-			console.log(dotString);
+			// console.log(dotString);
 			assert.doesNotThrow(function() {
 				parse(dotString);
 			});
