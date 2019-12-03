@@ -2,6 +2,7 @@ import {BlueshellState} from '../BlueshellState';
 
 import {resultCodes as rc, ResultCode} from '../../utils/resultCodes';
 import {Decorator} from '../Decorator';
+import {Base} from '../Base';
 
 /**
  * !Node
@@ -13,13 +14,21 @@ import {Decorator} from '../Decorator';
  */
 export class Not<S extends BlueshellState, E> extends Decorator<S, E> {
 	/**
+	 * Can only pass in one child.
+	 * @constructor
+	 * @param name
+	 * @param child
+	 */
+	constructor(name: string, child: Base<S, E>, latched = true) {
+		super(name, child, latched);
+	}
+
+	/**
 	 * @override
 	 * @param state The state when the event occured.
 	 * @param event The event to handle.
 	 */
-	onEvent(state: S, event: E): ResultCode {
-		let res = this.child.handleEvent(state, event);
-
+	decorateResult(res: ResultCode): ResultCode {
 		switch (res) {
 		case rc.SUCCESS:
 			res = rc.FAILURE;

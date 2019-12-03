@@ -42,10 +42,9 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 	 * @param state The state when the event occured.
 	 * @param event The event to handle.
 	 */
-	onEvent(state: S, event: E): ResultCode {
-		const res = this.child.handleEvent(state, event);
-
+	decorateResult(res: ResultCode, state: S, event: E): ResultCode {
 		if (this.conditional(state, event, res)) {
+			// publish the tree before we reset so we can see the result
 			Base.treePublisher.publishResult(state, event, false);
 			this.clearChildEventSeen(this, state);
 			return this.handleEvent(state, event);
