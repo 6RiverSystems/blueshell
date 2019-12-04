@@ -5,7 +5,7 @@ import {BlueshellState} from './BlueshellState';
  * Interface for a node that exposes a list of children.
  * Note: because you can't have an abstract getter/property, getChildren is just a normal method.
  */
-export interface HasChildrenNode<S extends BlueshellState, E> extends BaseNode<S, E> {
+export interface ParentNode<S extends BlueshellState, E> extends BaseNode<S, E> {
 	getChildren(): Base<S, E>[];
 }
 
@@ -13,9 +13,9 @@ export interface HasChildrenNode<S extends BlueshellState, E> extends BaseNode<S
  * Checks if the passed in Node exposes a list of children.
  * @param node Node to check
  */
-export function isHasChildrenNode<S extends BlueshellState, E>(
+export function isParentNode<S extends BlueshellState, E>(
 	node: BaseNode<S, E>
-): node is HasChildrenNode<S, E> {
+): node is ParentNode<S, E> {
 	return !!(<any>node).getChildren;
 }
 
@@ -26,7 +26,7 @@ export function isHasChildrenNode<S extends BlueshellState, E>(
  *
  * @author Mark Asdoorian
  */
-export abstract class HasChildren<S extends BlueshellState, E> extends Base<S, E> implements HasChildrenNode<S, E> {
+export abstract class Parent<S extends BlueshellState, E> extends Base<S, E> implements ParentNode<S, E> {
 	/**
 	 * @constructor
 	 * @param name

@@ -1,13 +1,13 @@
 import {Base, PrivateNodeStorage} from './Base';
 import {BlueshellState} from './BlueshellState';
 import {ResultCode, resultCodes} from '../utils/resultCodes';
-import {isHasChildrenNode, HasChildren} from './HasChildren';
+import {isParentNode, Parent} from './Parent';
 
 function setEventCounter<S extends BlueshellState, E>(pStorage: PrivateNodeStorage, state: S, node: Base<S, E>) {
 	const nodeStorage = node.getNodeStorage(state);
 	if (nodeStorage.lastEventSeen !== undefined) {
 		nodeStorage.lastEventSeen = pStorage.eventCounter;
-		if (isHasChildrenNode(node)) {
+		if (isParentNode(node)) {
 			node.getChildren().forEach((child) => {
 				setEventCounter(pStorage, state, child);
 			});
@@ -20,7 +20,7 @@ function setEventCounter<S extends BlueshellState, E>(pStorage: PrivateNodeStora
  * Includes support for latching and keeping track of running status.
  * @author Joshua Chaitin-Pollak
  */
-export abstract class Composite<S extends BlueshellState, E> extends HasChildren<S, E> {
+export abstract class Composite<S extends BlueshellState, E> extends Parent<S, E> {
 	/**
 	 * @constructor
 	 * @param name

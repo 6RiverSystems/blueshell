@@ -3,7 +3,7 @@
  */
 import {BlueshellState} from './BlueshellState';
 import {resultCodes as rc} from '../utils/resultCodes';
-import {HasChildren} from './HasChildren';
+import {Parent} from './Parent';
 
 export interface Conditional<S, E> {
 	(state: S, event: E): boolean;
@@ -22,7 +22,7 @@ export interface Conditional<S, E> {
  * 5/29/16
  * @author Joshua Chaitin-Pollak
  */
-export class IfElse<S extends BlueshellState, E> extends HasChildren<S, E> {
+export class IfElse<S extends BlueshellState, E> extends Parent<S, E> {
 	constructor(name: string,
 	            private conditional: Conditional<S, E>,
 	            private consequent: any,

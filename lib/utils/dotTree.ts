@@ -3,7 +3,7 @@ import {BlueshellState} from '../nodes/BlueshellState';
 import {resultCodes as rc} from './resultCodes';
 import {Decorator} from '../nodes/Decorator';
 import {Composite} from '../nodes/Composite';
-import {isHasChildrenNode} from '../nodes/HasChildren';
+import {isParentNode} from '../nodes/Parent';
 
 import {v4} from 'uuid';
 
@@ -102,7 +102,7 @@ export function serializeDotTree<S extends BlueshellState, E>(root: Base<S, E>, 
 		resultingString += `[${getLabel(currentNode!)} ${getShape(currentNode!)} ${getTooltip(currentNode!)}`;
 		resultingString += ` ${getColor(currentNode!, state)}];\n`;
 
-		if (!!currentNode && isHasChildrenNode(currentNode)) {
+		if (!!currentNode && isParentNode(currentNode)) {
 			resultingString = currentNode.getChildren().reduce(
 				(acc: string, child: Base<S, E>) => (`${acc}\t${nodeId}->${getNodeId(child)};\n`),
 				resultingString);

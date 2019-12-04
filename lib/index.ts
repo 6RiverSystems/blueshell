@@ -1,5 +1,5 @@
 import {Base} from './nodes/Base';
-export {HasChildrenNode, isHasChildrenNode} from './nodes/HasChildren';
+export {ParentNode, isParentNode} from './nodes/Parent';
 export {Composite} from './nodes/Composite';
 export {Decorator} from './nodes/Decorator';
 export {Sequence} from './nodes/Sequence';
