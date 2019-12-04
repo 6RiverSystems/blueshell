@@ -22,11 +22,11 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 		const storage = this.getNodeStorage(state);
 
 		// If we finished all processing without success return failure.
-		if (i >= this.children.length) {
+		if (i >= this.getChildren().length) {
 			return rc.FAILURE;
 		}
 
-		const child = this.children[i];
+		const child = this.getChildren()[i];
 
 		const res = child.handleEvent(state, event);
 

@@ -3,6 +3,7 @@ import {BlueshellState} from '../nodes/BlueshellState';
 
 import * as archy from 'archy';
 import {Data} from 'archy';
+import {isHasChildrenNode} from '../nodes/HasChildren';
 
 function buildArchyTree<S extends BlueshellState, E>(
 	node: Base<S, E>, contextDepth: number, state?: S
@@ -41,8 +42,8 @@ function buildArchyTree<S extends BlueshellState, E>(
 
 	const nodes = [];
 
-	if ((<any>node).children) {
-		for (const child of (<any>node).children) {
+	if (isHasChildrenNode(node)) {
+		for (const child of node.getChildren()) {
 			const childDepth = contextDepth - (onPath ? 0 : 1);
 			const subTree = buildArchyTree(<Base<S, E>>child, childDepth, state);
 			if (subTree) {

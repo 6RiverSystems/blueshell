@@ -20,7 +20,7 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 	}
 
 	get child() {
-		return this.children[0];
+		return this.getChildren()[0];
 	}
 
 	/**

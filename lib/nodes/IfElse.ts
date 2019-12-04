@@ -1,9 +1,9 @@
 /**
  * Created by jpollak on 5/29/16.
  */
-import {Base} from './Base';
 import {BlueshellState} from './BlueshellState';
 import {resultCodes as rc} from '../utils/resultCodes';
+import {HasChildren} from './HasChildren';
 
 export interface Conditional<S, E> {
 	(state: S, event: E): boolean;
@@ -22,30 +22,13 @@ export interface Conditional<S, E> {
  * 5/29/16
  * @author Joshua Chaitin-Pollak
  */
-export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
+export class IfElse<S extends BlueshellState, E> extends HasChildren<S, E> {
 	constructor(name: string,
 	            private conditional: Conditional<S, E>,
 	            private consequent: any,
 	            private alternative?: any) {
 		super(name);
-		if (!!consequent) {
-			consequent.parent = this.name;
-		}
-		if (!!alternative) {
-			alternative.parent = this.name;
-		}
-	}
-
-	/**
-	 * Sets the parent of this Node, and all children Nodes.
-	 * @override
-	 */
-	set parent(parent: string) {
-		super.parent = parent;
-
-		for (const child of this.children) {
-			child.parent = parent + '_' + this.name;
-		}
+		this.initChildren(!!alternative ? [consequent, alternative] : [consequent]);
 	}
 
 	/**
@@ -53,7 +36,7 @@ export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
 	 * this is to support the DOT & Archy visualizers
 	 * see Composite<S,E>.addEventCounterToChildren
 	 */
-	get children() {
+	getChildren() {
 		const children = [this.consequent];
 
 		if (this.alternative) {
@@ -64,32 +47,11 @@ export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
 	}
 
 	// this is to support the DOT & Archy visualizers
-	// see Composite<S,E>.addEventCounterToChildren
-	setChildEventCounter(pStorage: any, state: S, child: Base<S, E>) {
-		// @@@ HACK: repeat of part of Base._beforeEvent
-		const childNodeStorage = child.getNodeStorage(state);
-		if (childNodeStorage.lastEventSeen !== undefined) {
-			childNodeStorage.lastEventSeen = pStorage.eventCounter;
-			if ((<any>(child)).children) {
-				(<any>(child)).children.forEach((child: any) => {
-					if (child.setChildEventCounter) {
-						child.setChildEventCounter(pStorage, state, child);
-					} else {
-						const childChildNodeStorage = child.getNodeStorage(state);
-						if (childChildNodeStorage.lastEventSeen !== undefined) {
-							childChildNodeStorage.lastEventSeen = pStorage.eventCounter;
-						}
-					}
-				});
-			}
-		}
-	}
-
 	// this is to support the DOT & Archy visualizers
 	// see Composite<S,E>._beforeEvent
 	_beforeEvent(state: S, event: E) {
 		const res = super._beforeEvent(state, event);
-		this.children.forEach((child) => {
+		this.getChildren().forEach((child) => {
 			const childStorage = child.getNodeStorage(state);
 			childStorage.lastResult = '';
 			childStorage.lastEventSeen = undefined;

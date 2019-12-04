@@ -2,6 +2,7 @@ import {BlueshellState} from '../BlueshellState';
 import {Base} from '../Base';
 import {Decorator} from '../Decorator';
 import {ResultCode} from '../../utils/resultCodes';
+import {isHasChildrenNode} from '../HasChildren';
 
 /**
  * Given a state, event, and result code (from a child Node), return a boolean.
@@ -24,15 +25,14 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 		super('RepeatWhen-' + desc, child);
 	}
 
-	// @@@ HACK - any types
-	clearChildEventSeen(node: any, state: S) {
-		if (node.children) {
-			node.children.forEach((child: any) => {
+	clearChildEventSeen(node: Base<S, E>, state: S) {
+		if (isHasChildrenNode(node)) {
+			node.getChildren().forEach((child: any) => {
 				this.clearChildEventSeen(child, state);
 			});
 		}
-		const childStorage = node.getNodeStorage(state);
-		childStorage.lastEventSeen = undefined;
+		const nodeStorage = node.getNodeStorage(state);
+		nodeStorage.lastEventSeen = undefined;
 	}
 
 	/**
