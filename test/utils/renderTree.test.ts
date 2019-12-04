@@ -13,7 +13,7 @@ import {BlueshellState} from '../../lib/nodes/BlueshellState';
 
 class ConsumeOnce extends Action<any, any> {
 	onEvent(state: any): ResultCode {
-		const storage = this.getNodeStorage(state);
+		const storage: any = this.getNodeStorage(state);
 
 		if (storage.ateOne) {
 			delete storage.ateOne;
