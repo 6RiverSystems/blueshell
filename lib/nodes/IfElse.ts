@@ -51,11 +51,15 @@ export class IfElse<S extends BlueshellState, E> extends HasChildren<S, E> {
 	// see Composite<S,E>._beforeEvent
 	_beforeEvent(state: S, event: E) {
 		const res = super._beforeEvent(state, event);
-		this.getChildren().forEach((child) => {
-			const childStorage = child.getNodeStorage(state);
-			childStorage.lastResult = '';
-			childStorage.lastEventSeen = undefined;
-		});
+		const nodeStorage = this.getNodeStorage(state);
+		if (nodeStorage.lastResult !== rc.RUNNING) {
+			// if not previously running, then clear child results
+			this.getChildren().forEach((child) => {
+				const childStorage = child.getNodeStorage(state);
+				childStorage.lastResult = '';
+				childStorage.lastEventSeen = undefined;
+			});
+		}
 		return res;
 	}
 
