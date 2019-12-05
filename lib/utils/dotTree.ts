@@ -17,7 +17,7 @@ const SuccessColor = 'fillcolor="#4daf4a"';
 const FailureColor = 'fillcolor="#984ea3"';
 const RunningColor = 'fillcolor="#377eb8"';
 const ErrorColor = 'fillcolor="#e41a1c"';
-const EnteredColor = 'fillcolor="#afaf4a"';
+const EnteredColor = 'fillcolor="#ff7f00"';
 const DefaultColor = 'fillcolor="#e5e5e5"';
 
 const DefaultEdgeColor ='color="#000000"';
