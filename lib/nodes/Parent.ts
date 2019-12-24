@@ -1,5 +1,6 @@
-import {Base, BaseNode} from './Base';
 import {BlueshellState} from './BlueshellState';
+import {BaseNode} from './BaseNode';
+import {Base} from './Base';
 
 /**
  * Interface for a node that exposes a list of children.

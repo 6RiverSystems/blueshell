@@ -1,20 +1,8 @@
-import {Base, PrivateNodeStorage} from './Base';
+import {Base} from './Base';
 import {BlueshellState} from './BlueshellState';
 import {ResultCode, resultCodes} from '../utils/resultCodes';
 import {Parent} from './Parent';
-import {isParentNode} from './ParentNode';
-
-function setEventCounter<S extends BlueshellState, E>(pStorage: PrivateNodeStorage, state: S, node: Base<S, E>) {
-	const nodeStorage = node.getNodeStorage(state);
-	if (nodeStorage.lastEventSeen !== undefined) {
-		nodeStorage.lastEventSeen = pStorage.eventCounter;
-		if (isParentNode(node)) {
-			node.getChildren().forEach((child) => {
-				setEventCounter(pStorage, state, child);
-			});
-		}
-	}
-}
+import {setEventCounter} from './ParentNode';
 
 /**
  * Base class for all Composite Nodes (nodes which have an array of children).
