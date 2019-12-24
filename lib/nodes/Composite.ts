@@ -1,7 +1,8 @@
 import {Base, PrivateNodeStorage} from './Base';
 import {BlueshellState} from './BlueshellState';
 import {ResultCode, resultCodes} from '../utils/resultCodes';
-import {isParentNode, Parent} from './Parent';
+import {Parent} from './Parent';
+import {isParentNode} from './ParentNode';
 
 function setEventCounter<S extends BlueshellState, E>(pStorage: PrivateNodeStorage, state: S, node: Base<S, E>) {
 	const nodeStorage = node.getNodeStorage(state);
@@ -58,16 +59,8 @@ export abstract class Composite<S extends BlueshellState, E> extends Parent<S, E
 				// set event counter for each child before our latch point so they are registered
 				// as participating in this event (using the previous results)
 				setEventCounter(pStorage, state, child);
-			} else if (i > running) {
-				// clear the result from our children since this a new execution of this Composite
-				// and this child is not latched
-				const childStorage = child.getNodeStorage(state);
-				childStorage.lastResult = '';
-				childStorage.lastEventSeen = undefined;
-			}	// else do nothing with the running node (@@@ will show as blue in btv instead of yellow)
+			}	// else do nothing with the running node or nodes after latch point
 		});
-		// clear our last result since we're processing a new event
-		nodeStorage.lastResult = '';
 		return res;
 	}
 

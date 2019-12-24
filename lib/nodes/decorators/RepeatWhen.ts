@@ -2,7 +2,7 @@ import {BlueshellState} from '../BlueshellState';
 import {Base} from '../Base';
 import {Decorator} from '../Decorator';
 import {ResultCode} from '../../utils/resultCodes';
-import {isParentNode} from '../Parent';
+import {isParentNode} from '../ParentNode';
 
 /**
  * Given a state, event, and result code (from a child Node), return a boolean.
@@ -25,6 +25,11 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 		super('RepeatWhen-' + desc, child);
 	}
 
+	/**
+	 * Clears the last event seen property of node and all of node's children
+	 * @param node The node to clear
+	 * @param state The state holding the node storage
+	 */
 	clearChildEventSeen(node: Base<S, E>, state: S) {
 		if (isParentNode(node)) {
 			node.getChildren().forEach((child: any) => {

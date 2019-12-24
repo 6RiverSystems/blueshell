@@ -46,23 +46,6 @@ export class IfElse<S extends BlueshellState, E> extends Parent<S, E> {
 		return children;
 	}
 
-	// this is to support the DOT & Archy visualizers
-	// this is to support the DOT & Archy visualizers
-	// see Composite<S,E>._beforeEvent
-	_beforeEvent(state: S, event: E) {
-		const res = super._beforeEvent(state, event);
-		const nodeStorage = this.getNodeStorage(state);
-		if (nodeStorage.lastResult !== rc.RUNNING) {
-			// if not previously running, then clear child results
-			this.getChildren().forEach((child) => {
-				const childStorage = child.getNodeStorage(state);
-				childStorage.lastResult = '';
-				childStorage.lastEventSeen = undefined;
-			});
-		}
-		return res;
-	}
-
 	/**
 	 * If `conditional` resolves to `true`, then the `consequent` node handles the event.
 	 * Otherwise, the `alternative` node handles the event.

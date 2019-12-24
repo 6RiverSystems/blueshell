@@ -4,6 +4,7 @@
 import {BlueshellState} from './BlueshellState';
 import {resultCodes as rc, ResultCode} from '../utils/resultCodes';
 import {TreePublisher, TreeNonPublisher} from '../utils/TreePublisher';
+import {isParentNode} from './ParentNode';
 
 /**
  * Interface that defines what is stored in private node storage at the root
@@ -114,6 +115,11 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 			pStorage.eventCounter = ++pStorage.eventCounter || 1;
 		}
 
+		// Reset the lastResult unless it was previously RUNNING and we're not a parent
+		if (nodeStorage.lastResult !== rc.RUNNING || isParentNode(this)) {
+			nodeStorage.lastResult = '';
+		}
+
 		// Record the last event we've seen
 		// console.log('%s: incrementing event counter %s, %s',
 		//	this.path, nodeStorage.lastEventSeen,  pStorage.eventCounter);
@@ -168,7 +174,7 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 	}
 
 	get path() {
-		return (this._parent ? this._parent + '_' : '') + this.name;
+		return (!!this._parent ? `${this._parent}_` : '') + this.name;
 	}
 
 	/**
@@ -185,9 +191,15 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 
 	/**
 	 * Resets the storage unique to this Node, via the Node's path.
+	 * If this node is a parent, then also reset all children.
 	 * @param state
 	 */
 	resetNodeStorage(state: S) {
+		if (isParentNode(this)) {
+			for (const child of this.getChildren()) {
+				child.resetNodeStorage(state);
+			}
+		}
 		const path = this.path;
 		const blueshell = this._privateStorage(state);
 

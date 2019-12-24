@@ -6,6 +6,7 @@ import {resultCodes as rc, ResultCode} from '../utils/resultCodes';
 /**
  * Base Class for all Decorator Nodes. Can only have one child.
  * Decorators intercept and can modify the event sent to or the result from the child.
+ * They should do this by overriding one or more of the methods decorateEvent, decorateCall, or decorateResult.
  * @author Joshua Chaitin-Pollak
  */
 export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {

@@ -3,7 +3,7 @@ import {BlueshellState} from '../nodes/BlueshellState';
 import {resultCodes as rc} from './resultCodes';
 import {Decorator} from '../nodes/Decorator';
 import {Composite} from '../nodes/Composite';
-import {isParentNode} from '../nodes/Parent';
+import {isParentNode} from '../nodes/ParentNode';
 
 import {v4} from 'uuid';
 

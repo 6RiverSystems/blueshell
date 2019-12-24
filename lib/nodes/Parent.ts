@@ -10,16 +10,6 @@ export interface ParentNode<S extends BlueshellState, E> extends BaseNode<S, E> 
 }
 
 /**
- * Checks if the passed in Node exposes a list of children.
- * @param node Node to check
- */
-export function isParentNode<S extends BlueshellState, E>(
-	node: BaseNode<S, E>
-): node is ParentNode<S, E> {
-	return !!(<any>node).getChildren;
-}
-
-/**
  * Base class for all nodes that expose a list of children.
  * Primarily used to support the visualization of the behavior tree
  * using dotTree or archyTree
@@ -39,6 +29,8 @@ export abstract class Parent<S extends BlueshellState, E> extends Base<S, E> imp
 	 * Initializes the parent of our list of children.  Only required to be called if you know your children
 	 * at construction time.  If your children are dynamic, then you are responsible for setting their parent
 	 * properly when they are created.
+	 * Note: this repeats code from set parent() because at construction time, this.children will not return
+	 * anything (this isn't this yet), which is why we have to pass children in as a parameter
 	 * @param children list of children to init (can't call getChildren() yet because this is called from the constructor)
 	 */
 	initChildren(children: Base<S, E>[]) {
@@ -57,20 +49,7 @@ export abstract class Parent<S extends BlueshellState, E> extends Base<S, E> imp
 		super.parent = parent;
 
 		for (const child of this.getChildren()) {
-			child.parent = `${parent}_${this.name}`;
-		}
-	}
-
-	/**
-	 * Resets Node Storage for this node and all children.
-	 * @override
-	 * @param state
-	 */
-	resetNodeStorage(state: S) {
-		super.resetNodeStorage(state);
-
-		for (const child of this.getChildren()) {
-			child.resetNodeStorage(state);
+			child.parent = this.path;
 		}
 	}
 }

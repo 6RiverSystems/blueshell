@@ -3,7 +3,7 @@ import {BlueshellState} from '../nodes/BlueshellState';
 
 import * as archy from 'archy';
 import {Data} from 'archy';
-import {isParentNode} from '../nodes/Parent';
+import {isParentNode} from '../nodes/ParentNode';
 
 function buildArchyTree<S extends BlueshellState, E>(
 	node: Base<S, E>, contextDepth: number, state?: S
