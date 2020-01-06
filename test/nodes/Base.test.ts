@@ -74,7 +74,7 @@ describe('Base', function() {
 
 			const res = action.handleEvent(new TestState(), 'testEvent');
 
-			console.log('TestAction completed', res);
+			// console.log('TestAction completed', res);
 			assert.equal(res, rc.SUCCESS);
 		});
 	});
@@ -85,7 +85,7 @@ describe('Base', function() {
 
 			const res = action.handleEvent(new TestState(), 'testEvent');
 
-			console.log('TestAction completed', res);
+			// console.log('TestAction completed', res);
 			assert.equal(res, rc.FAILURE);
 		});
 	});
