@@ -3,6 +3,13 @@ import {ParentNode} from './Parent';
 import {PrivateNodeStorage, BaseNode} from './BaseNode';
 
 /**
+ * NOTE: this file is separate from Parent.ts so that Base can reference items from here
+ * and not import Parent.  Since Parent must import Base, Base cannot import Parent as that would
+ * setup a circular import, which isn't allowed.  See
+ * https://stackoverflow.com/questions/43176006/typeerror-class-extends-value-undefined-is-not-a-function-or-null
+ */
+
+/**
  * Checks if the passed in object exposes a list of children.
  * @param node Node to check
  */
