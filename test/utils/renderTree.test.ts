@@ -190,7 +190,8 @@ describe('renderTree', function() {
 			assert.notOk(dotString.includes('fillcolor="#984ea3"')); // FAILURE
 			assert.notOk(dotString.includes('fillcolor="#377eb8"')); // RUNNING
 			assert.notOk(dotString.includes('fillcolor="#e41a1c"')); // ERROR
-			// console.log(dotString);
+			// eslint-disable-next-line no-console
+			console.log(dotString);
 			assert.doesNotThrow(function() {
 				parse(dotString);
 			});
@@ -208,7 +209,8 @@ describe('renderTree', function() {
 			const result = renderTree.toDotString(waitAi, state);
 
 			assert.ok(result);
-			// console.log(result);
+			// eslint-disable-next-line no-console
+			console.log(result);
 			assert.doesNotThrow(function() {
 				parse(result);
 			});
@@ -217,7 +219,8 @@ describe('renderTree', function() {
 		it('should generate a digraph with custom node', function(done) {
 			const customLSelector = new CustomLatchedSelector();
 			const dotString = renderTree.toDotString(customLSelector);
-			// console.log(dotString);
+			// eslint-disable-next-line no-console
+			console.log(dotString);
 			assert.doesNotThrow(function() {
 				parse(dotString);
 			});
