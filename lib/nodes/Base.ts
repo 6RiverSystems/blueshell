@@ -4,13 +4,14 @@
 import {BlueshellState} from './BlueshellState';
 import {resultCodes as rc, ResultCode} from '../utils/resultCodes';
 import {TreePublisher, TreeNonPublisher} from '../utils/TreePublisher';
-
+import {isParentNode} from './ParentNode';
+import {BaseNode, NodeStorage} from './BaseNode';
 
 /**
  * Base class of all Nodes.
  * @author Joshua Chaitin-Pollak
  */
-export class Base<S extends BlueshellState, E> {
+export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 	private _parent: string;
 
 	// Hard to properly type this since the static can't
@@ -66,7 +67,7 @@ export class Base<S extends BlueshellState, E> {
 	}
 
 	/**
-	 * Return nothing
+	 * Return an empty object
 	 * @ignore
 	 * @param state
 	 * @param event
@@ -79,6 +80,11 @@ export class Base<S extends BlueshellState, E> {
 		// If this is the root node, increment the event counter
 		if (!this._parent) {
 			pStorage.eventCounter = ++pStorage.eventCounter || 1;
+		}
+
+		// Reset the lastResult unless it was previously RUNNING and we're not a parent
+		if (nodeStorage.lastResult !== rc.RUNNING || isParentNode(this)) {
+			nodeStorage.lastResult = '';
 		}
 
 		// Record the last event we've seen
@@ -135,14 +141,14 @@ export class Base<S extends BlueshellState, E> {
 	}
 
 	get path() {
-		return (this._parent ? this._parent + '_' : '') + this.name;
+		return (!!this._parent ? `${this._parent}_` : '') + this.name;
 	}
 
 	/**
 	 * Returns storage unique to this Node, keyed on the Node's path.
 	 * @param state
 	 */
-	public getNodeStorage(state: S) {
+	public getNodeStorage(state: S): NodeStorage {
 		const path = this.path;
 		const blueshell = this._privateStorage(state);
 
@@ -152,9 +158,15 @@ export class Base<S extends BlueshellState, E> {
 
 	/**
 	 * Resets the storage unique to this Node, via the Node's path.
+	 * If this node is a parent, then also reset all children.
 	 * @param state
 	 */
 	resetNodeStorage(state: S) {
+		if (isParentNode(this)) {
+			for (const child of this.getChildren()) {
+				child.resetNodeStorage(state);
+			}
+		}
 		const path = this.path;
 		const blueshell = this._privateStorage(state);
 

@@ -1,9 +1,9 @@
 /**
  * Created by jpollak on 5/29/16.
  */
-import {Base} from './Base';
 import {BlueshellState} from './BlueshellState';
 import {resultCodes as rc} from '../utils/resultCodes';
+import {Parent} from './Parent';
 
 export interface Conditional<S, E> {
 	(state: S, event: E): boolean;
@@ -22,18 +22,21 @@ export interface Conditional<S, E> {
  * 5/29/16
  * @author Joshua Chaitin-Pollak
  */
-export class IfElse<S extends BlueshellState, E> extends Base<S, E> {
+export class IfElse<S extends BlueshellState, E> extends Parent<S, E> {
 	constructor(name: string,
 	            private conditional: Conditional<S, E>,
 	            private consequent: any,
 	            private alternative?: any) {
 		super(name);
+		this.initChildren(!!alternative ? [consequent, alternative] : [consequent]);
 	}
 
 	/**
 	 * Returns the children of this node, i.e. the `consequent` and the optional `alternative`.
+	 * this is to support the DOT & Archy visualizers
+	 * see Composite<S,E>.addEventCounterToChildren
 	 */
-	get children() {
+	getChildren() {
 		const children = [this.consequent];
 
 		if (this.alternative) {

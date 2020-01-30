@@ -1,12 +1,15 @@
 import {Base} from './Base';
 import {BlueshellState} from './BlueshellState';
-import {ResultCode} from '../utils/resultCodes';
+import {ResultCode, resultCodes} from '../utils/resultCodes';
+import {Parent} from './Parent';
+import {setEventCounter} from './ParentNode';
 
 /**
- * Base class for all Composite Nodes (nodes which have children).
+ * Base class for all Composite Nodes (nodes which have an array of children).
+ * Includes support for latching and keeping track of running status.
  * @author Joshua Chaitin-Pollak
  */
-export abstract class Composite<S extends BlueshellState, E> extends Base<S, E> {
+export abstract class Composite<S extends BlueshellState, E> extends Parent<S, E> {
 	/**
 	 * @constructor
 	 * @param name
@@ -17,30 +20,57 @@ export abstract class Composite<S extends BlueshellState, E> extends Base<S, E> 
 	            private _children: Base<S, E>[],
 	            private _latched: boolean = false) {
 		super(name);
-
-		for (const child of this.children) {
-			child.parent = this.name;
-		}
+		this.initChildren(_children);
 	}
 
-	/**
-	 * Sets the parent of this Node, and all children Nodes.
-	 * @override
-	 */
-	set parent(parent: string) {
-		super.parent = parent;
-
-		for (const child of this.children) {
-			child.parent = parent + '_' + this.name;
-		}
-	}
-
-	get children() {
+	getChildren() {
 		return this._children;
 	}
 
 	get latched() {
 		return this._latched;
+	}
+
+	/**
+	 * Return an empty object
+	 * @ignore
+	 * @param state
+	 * @param event
+	 */
+	_beforeEvent(state: S, event: E) {
+		const res = super._beforeEvent(state, event);
+		const nodeStorage = this.getNodeStorage(state);
+		const pStorage = this._privateStorage(state);
+		const running = (nodeStorage.running !== undefined) ? nodeStorage.running : -1;
+		this.getChildren().forEach((child, i) => {
+			if (i < running) {
+				// set event counter for each child before our latch point so they are registered
+				// as participating in this event (using the previous results)
+				setEventCounter(pStorage, state, child);
+			}	// else do nothing with the running node or nodes after latch point
+		});
+		return res;
+	}
+
+	/**
+	 * Logging
+	 * @ignore
+	 * @param res
+	 * @param state
+	 * @param event
+	 */
+	_afterEvent(res: ResultCode, state: S, event: E): ResultCode {
+		res = super._afterEvent(res, state, event);
+
+		if (this.latched) {
+			const storage = this.getNodeStorage(state);
+			// clear latched status if the node is no longer running after processing the event
+			if (storage.running !== undefined && res !== resultCodes.RUNNING) {
+				storage.running = undefined;
+			}
+		}
+
+		return res;
 	}
 
 	/**
@@ -73,17 +103,4 @@ export abstract class Composite<S extends BlueshellState, E> extends Base<S, E> 
 	 * @param i
 	 */
 	abstract handleChild(state: S, event: E, i: number): ResultCode;
-
-	/**
-	 * Resets Node Storage for this node and all children.
-	 * @override
-	 * @param state
-	 */
-	resetNodeStorage(state: S) {
-		super.resetNodeStorage(state);
-
-		for (const child of this.children) {
-			child.resetNodeStorage(state);
-		}
-	}
 }

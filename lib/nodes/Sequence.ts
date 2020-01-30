@@ -20,11 +20,11 @@ export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 		const storage = this.getNodeStorage(state);
 
 		// If we finished all processing without failure return success.
-		if (i >= this.children.length) {
+		if (i >= this.getChildren().length) {
 			return rc.SUCCESS;
 		}
 
-		const child = this.children[i];
+		const child = this.getChildren()[i];
 
 		const res = child.handleEvent(state, event);
 		const {res: res_, state: state_, event: event_} =

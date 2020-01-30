@@ -3,6 +3,7 @@ import {BlueshellState} from '../nodes/BlueshellState';
 import {resultCodes as rc} from './resultCodes';
 import {Decorator} from '../nodes/Decorator';
 import {Composite} from '../nodes/Composite';
+import {isParentNode} from '../nodes/ParentNode';
 
 import {v4} from 'uuid';
 
@@ -16,6 +17,7 @@ const SuccessColor = 'fillcolor="#4daf4a"';
 const FailureColor = 'fillcolor="#984ea3"';
 const RunningColor = 'fillcolor="#377eb8"';
 const ErrorColor = 'fillcolor="#e41a1c"';
+const EnteredColor = 'fillcolor="#ff7f00"';
 const DefaultColor = 'fillcolor="#e5e5e5"';
 
 const DefaultEdgeColor ='color="#000000"';
@@ -36,16 +38,20 @@ function getColor<S extends BlueshellState, E>(node: Base<S, E>, state?: S): str
 		const lastEventSeen = node!.getLastEventSeen(state);
 		const lastResult = node!.getLastResult(state);
 
-		if (lastEventSeen === eventCounter && lastResult) {
-			switch (lastResult) {
-			case rc.ERROR:
-				return ErrorColor;
-			case rc.SUCCESS:
-				return SuccessColor;
-			case rc.RUNNING:
-				return RunningColor;
-			case rc.FAILURE:
-				return FailureColor;
+		if (lastEventSeen === eventCounter) {
+			if (lastResult) {
+				switch (lastResult) {
+				case rc.ERROR:
+					return ErrorColor;
+				case rc.SUCCESS:
+					return SuccessColor;
+				case rc.RUNNING:
+					return RunningColor;
+				case rc.FAILURE:
+					return FailureColor;
+				}
+			} else {
+				return EnteredColor;
 			}
 		}
 	}
@@ -80,6 +86,7 @@ export function serializeDotTree<S extends BlueshellState, E>(root: Base<S, E>, 
 	const nodesToVisit: Base<S, E>[] = [];
 
 	let resultingString = `digraph G {
+	graph [ordering=out]
 	node [${DefaultShape} ${DefaultColor} ${DefaultStyle}]
 	edge [${DefaultEdgeColor}]
 `;
@@ -95,11 +102,11 @@ export function serializeDotTree<S extends BlueshellState, E>(root: Base<S, E>, 
 		resultingString += `[${getLabel(currentNode!)} ${getShape(currentNode!)} ${getTooltip(currentNode!)}`;
 		resultingString += ` ${getColor(currentNode!, state)}];\n`;
 
-		if ((<any>currentNode).children) {
-			resultingString = (<any>currentNode).children.reduce(
+		if (!!currentNode && isParentNode(currentNode)) {
+			resultingString = currentNode.getChildren().reduce(
 				(acc: string, child: Base<S, E>) => (`${acc}\t${nodeId}->${getNodeId(child)};\n`),
 				resultingString);
-			for (const child of [...(<any>currentNode).children].reverse()) {
+			for (const child of [...currentNode.getChildren()].reverse()) {
 				nodesToVisit.push(child);
 			}
 		}

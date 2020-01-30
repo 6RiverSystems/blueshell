@@ -58,13 +58,13 @@ describe('Base', function() {
 			const state1 = new TestState();
 			const state2 = new TestState();
 
-			const storage = node.getNodeStorage(state1);
+			const storage: any = node.getNodeStorage(state1);
 
 			storage.testData = 'Node Data';
 
-			assert.equal(node.getNodeStorage(state1).testData, 'Node Data', 'Testing Storage');
+			assert.equal((<any>node.getNodeStorage(state1)).testData, 'Node Data', 'Testing Storage');
 			assert.ok(node.getNodeStorage(state2), 'state2 storage found');
-			assert.notOk(node.getNodeStorage(state2).testData, 'state2 testData not found');
+			assert.notOk((<any>node.getNodeStorage(state2)).testData, 'state2 testData not found');
 		});
 	});
 
