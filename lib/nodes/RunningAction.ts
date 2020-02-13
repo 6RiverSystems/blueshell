@@ -2,8 +2,6 @@ import {BlueshellState, ResultCode, rc} from '../models';
 import {Action} from '.';
 
 export abstract class RunningAction<S extends BlueshellState, E> extends Action<S, E> {
-	public reactivatable = false;
-
 	constructor(name: string) {
 		super(name);
 	}
