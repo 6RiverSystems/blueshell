@@ -2,6 +2,8 @@ import {BlueshellState, ResultCode, rc, BaseNode} from '../models';
 import {IfElse} from '.';
 
 export class IfElseWithNodeCondition<S extends BlueshellState, E> extends IfElse<S, E> {
+	// below variable is used to communicate the result of running the conditionNode between
+	// onEvent() and the callback passed to IfElse in the super() call
 	private conditionResult: boolean = false;
 
 	constructor(
