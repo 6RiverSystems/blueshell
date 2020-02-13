@@ -5,11 +5,18 @@ import {assert} from 'chai';
 
 const parse = require('dotparser');
 
-import {resultCodes as rc, ResultCode} from '../../lib/utils/resultCodes';
+import {} from '../../lib';
 
-import {renderTree, LatchedSelector, LatchedSequence, Action} from '../../lib';
+import {
+	renderTree,
+	LatchedSelector,
+	LatchedSequence,
+	Action,
+	rc,
+	ResultCode,
+	BlueshellState,
+} from '../../lib';
 import {RobotState, waitAi} from '../nodes/test/RobotActions';
-import {BlueshellState} from '../../lib/nodes/BlueshellState';
 
 class ConsumeOnce extends Action<any, any> {
 	onEvent(state: any): ResultCode {

@@ -1,7 +1,6 @@
 import {assert} from 'chai';
 
-import {resultCodes as rc, ResultCode} from '../../../lib/utils/resultCodes';
-
+import {rc} from '../../../lib';
 import * as Behavior from '../../../lib';
 import {DroneState} from '../test/DroneActions';
 
@@ -14,7 +13,7 @@ class SuccessAction extends Action<DroneState, string> {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	onEvent(state: DroneState, event: string): ResultCode {
+	onEvent(state: DroneState, event: string): Behavior.ResultCode {
 		return rc.SUCCESS;
 	}
 }
@@ -25,7 +24,7 @@ class FailureAction extends Action<DroneState, string> {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	onEvent(state: DroneState, event: string): ResultCode {
+	onEvent(state: DroneState, event: string): Behavior.ResultCode {
 		return rc.FAILURE;
 	}
 }

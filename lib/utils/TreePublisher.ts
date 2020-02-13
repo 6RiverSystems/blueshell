@@ -1,4 +1,4 @@
-import {BlueshellState} from '../nodes/BlueshellState';
+import {BlueshellState} from '../models';
 
 export interface TreePublisher<B extends BlueshellState, V> {
 	publishResult(state: B, event: V, topLevel: boolean): void;

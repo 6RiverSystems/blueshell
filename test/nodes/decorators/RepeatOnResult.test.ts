@@ -3,8 +3,7 @@
  */
 import {assert} from 'chai';
 
-import {resultCodes as rc, ResultCode} from '../../../lib/utils/resultCodes';
-
+import {rc} from '../../../lib';
 import * as Behavior from '../../../lib';
 import {DroneState} from '../test/DroneActions';
 
@@ -12,7 +11,7 @@ const Action = Behavior.Action;
 const RepeatOnResult = Behavior.decorators.RepeatOnResult;
 
 class CountUntil extends Action<DroneState, number> {
-	onEvent(state: DroneState, event: number): ResultCode {
+	onEvent(state: DroneState, event: number): Behavior.ResultCode {
 		state.flares += 1;
 
 		return state.flares <= event ? rc.RUNNING : rc.SUCCESS;

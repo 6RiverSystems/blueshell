@@ -1,7 +1,5 @@
-import {BlueshellState} from './BlueshellState';
-import {Base} from './Base';
-import {Composite} from './Composite';
-import {resultCodes as rc, ResultCode} from '../utils/resultCodes';
+import {BlueshellState, ResultCode, rc, BaseNode} from '../models';
+import {Composite} from '.';
 
 /**
  * Base Class for all Decorator Nodes. Can only have one child.
@@ -16,7 +14,7 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param name
 	 * @param child
 	 */
-	constructor(name: string, child: Base<S, E>, latched = true) {
+	constructor(name: string, child: BaseNode<S, E>, latched = true) {
 		super(name, [child], latched);
 	}
 
@@ -29,7 +27,7 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param state
 	 * @param event
 	 */
-	handleChild(state: S, event: E): ResultCode {
+	protected handleChild(state: S, event: E): ResultCode {
 		// Passthrough
 		event = this.decorateEvent(event);
 		const res = this.decorateResult(
@@ -48,16 +46,16 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 		return res;
 	}
 
-	decorateEvent(event: E): E {
+	protected decorateEvent(event: E): E {
 		return event;
 	}
 
-	decorateCall(handleEvent: (state: S, event: E) => ResultCode, state: S, event: E) {
+	protected decorateCall(handleEvent: (state: S, event: E) => ResultCode, state: S, event: E) {
 		return handleEvent(state, event);
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	decorateResult(res: ResultCode, state: S, event: E): ResultCode {
+	protected decorateResult(res: ResultCode, state: S, event: E): ResultCode {
 		return res;
 	}
 }

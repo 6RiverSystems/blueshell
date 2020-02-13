@@ -1,9 +1,8 @@
 /**
  * Created by josh on 1/10/16.
  */
-import {Base} from './Base';
-import {Selector} from './Selector';
-import {BlueshellState} from './BlueshellState';
+import {BlueshellState, BaseNode} from '../models';
+import {Selector} from '.';
 
 /**
  * Sends an event to each child until one of them returns `SUCCESS` or `RUNNING`, then returns that value.
@@ -13,7 +12,7 @@ import {BlueshellState} from './BlueshellState';
  * @author Joshua Chaitin-Pollak
  */
 export class LatchedSelector<S extends BlueshellState, E> extends Selector<S, E> {
-	constructor(name: string, children: Base<S, E>[]) {
+	constructor(name: string, children: BaseNode<S, E>[]) {
 		super(name, children, true);
 	}
 

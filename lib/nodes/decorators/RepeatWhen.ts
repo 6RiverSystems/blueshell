@@ -1,8 +1,6 @@
-import {BlueshellState} from '../BlueshellState';
-import {Base} from '../Base';
-import {Decorator} from '../Decorator';
-import {ResultCode} from '../../utils/resultCodes';
-import {clearChildEventSeen} from '../ParentNode';
+import {ResultCode, BlueshellState, BaseNode} from '../../models';
+import {Action, Decorator} from '..';
+import {clearChildEventSeen} from '../Parent';
 
 /**
  * Given a state, event, and result code (from a child Node), return a boolean.
@@ -10,7 +8,7 @@ import {clearChildEventSeen} from '../ParentNode';
  * @author Joshua Chaitin-Pollak
  */
 export interface Conditional<S, E> {
-	(state: S, event: E, res: string): boolean;
+	(state: S, event: E, res: ResultCode): boolean;
 }
 
 /**
@@ -20,7 +18,7 @@ export interface Conditional<S, E> {
  */
 export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 	constructor(desc: string,
-	            child: Base<S, E>,
+	            child: BaseNode<S, E>,
 	            private conditional: Conditional<S, E>) {
 		super('RepeatWhen-' + desc, child);
 	}
@@ -32,10 +30,10 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 	 * @param state The state when the event occured.
 	 * @param event The event to handle.
 	 */
-	decorateResult(res: ResultCode, state: S, event: E): ResultCode {
+	protected decorateResult(res: ResultCode, state: S, event: E): ResultCode {
 		if (this.conditional(state, event, res)) {
 			// publish the tree before we reset so we can see the result
-			Base.treePublisher.publishResult(state, event, false);
+			Action.treePublisher.publishResult(state, event, false);
 			clearChildEventSeen(this, state);
 			return this.handleEvent(state, event);
 		} else {

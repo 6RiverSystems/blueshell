@@ -1,13 +1,43 @@
-import {BlueshellState} from './BlueshellState';
-import {BaseNode} from './BaseNode';
-import {Base} from './Base';
+import {BlueshellState, BaseNode, ParentNode, isParentNode} from '../models';
+import {Action} from '.';
+import {PrivateNodeStorage} from './Base';
 
 /**
- * Interface for a node that exposes a list of children.
- * Note: because you can't have an abstract getter/property, getChildren is just a normal method.
+ * Sets the event counter of the nocde and any child nodes to indicate
+ * the node has been visited for this event
+ * @param pStorage Private node storage containing current eventCounter
+ * @param state The state holding the node storage
+ * @param node The node to set
  */
-export interface ParentNode<S extends BlueshellState, E> extends BaseNode<S, E> {
-	getChildren(): Base<S, E>[];
+export function setEventCounter<S extends BlueshellState, E>(
+	pStorage: PrivateNodeStorage,
+	state: S,
+	node: BaseNode<S, E>
+) {
+	const nodeStorage = node.getNodeStorage(state);
+	if (nodeStorage.lastEventSeen !== undefined) {
+		nodeStorage.lastEventSeen = pStorage.eventCounter;
+		if (isParentNode(node)) {
+			node.getChildren().forEach((child) => {
+				setEventCounter(pStorage, state, child);
+			});
+		}
+	}
+}
+
+/**
+ * Clears the last event seen property of node and all of node's children
+ * @param node The node to clear
+ * @param state The state holding the node storage
+ */
+export function clearChildEventSeen<S extends BlueshellState, E>(node: BaseNode<S, E>, state: S) {
+	if (isParentNode(node)) {
+		node.getChildren().forEach((child: any) => {
+			clearChildEventSeen(child, state);
+		});
+	}
+	const nodeStorage = node.getNodeStorage(state);
+	nodeStorage.lastEventSeen = undefined;
 }
 
 /**
@@ -17,7 +47,7 @@ export interface ParentNode<S extends BlueshellState, E> extends BaseNode<S, E> 
  *
  * @author Mark Asdoorian
  */
-export abstract class Parent<S extends BlueshellState, E> extends Base<S, E> implements ParentNode<S, E> {
+export abstract class Parent<S extends BlueshellState, E> extends Action<S, E> implements ParentNode<S, E> {
 	/**
 	 * @constructor
 	 * @param name
@@ -34,19 +64,19 @@ export abstract class Parent<S extends BlueshellState, E> extends Base<S, E> imp
 	 * anything (this isn't this yet), which is why we have to pass children in as a parameter
 	 * @param children list of children to init (can't call getChildren() yet because this is called from the constructor)
 	 */
-	initChildren(children: Base<S, E>[]) {
+	public initChildren(children: BaseNode<S, E>[]) {
 		for (const child of children) {
 			child.parent = this.name;
 		}
 	}
 
-	abstract getChildren(): Base<S, E>[];
+	public abstract getChildren(): BaseNode<S, E>[];
 
 	/**
 	 * Sets the parent of this Node, and all children Nodes.
 	 * @override
 	 */
-	set parent(parent: string) {
+	public set parent(parent: string) {
 		super.parent = parent;
 
 		for (const child of this.getChildren()) {

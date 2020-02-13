@@ -1,7 +1,6 @@
 import {assert} from 'chai';
 
-import {resultCodes as rc} from '../../lib/utils/resultCodes';
-
+import {rc} from '../../lib';
 import * as Behavior from '../../lib';
 
 describe('Success', function() {

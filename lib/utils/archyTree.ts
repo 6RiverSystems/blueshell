@@ -1,12 +1,10 @@
-import {Base} from '../nodes/Base';
-import {BlueshellState} from '../nodes/BlueshellState';
-
 import * as archy from 'archy';
 import {Data} from 'archy';
-import {isParentNode} from '../nodes/ParentNode';
+
+import {BlueshellState, isParentNode, BaseNode} from '../models';
 
 function buildArchyTree<S extends BlueshellState, E>(
-	node: Base<S, E>, contextDepth: number, state?: S
+	node: BaseNode<S, E>, contextDepth: number, state?: S
 ): Required<Data>|undefined {
 	let label = node.name;
 
@@ -45,7 +43,7 @@ function buildArchyTree<S extends BlueshellState, E>(
 	if (isParentNode(node)) {
 		for (const child of node.getChildren()) {
 			const childDepth = contextDepth - (onPath ? 0 : 1);
-			const subTree = buildArchyTree(<Base<S, E>>child, childDepth, state);
+			const subTree = buildArchyTree(<BaseNode<S, E>>child, childDepth, state);
 			if (subTree) {
 				nodes.push(subTree);
 			}
@@ -59,7 +57,7 @@ function buildArchyTree<S extends BlueshellState, E>(
 }
 
 export function serializeArchyTree<S extends BlueshellState, E>(
-	tree: Base<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
+	tree: BaseNode<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
 ): string {
 	const archyTree = buildArchyTree(tree, contextDepth, state);
 	if (archyTree) {
