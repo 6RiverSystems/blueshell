@@ -1,15 +1,10 @@
-import {BlueshellState} from './BlueshellState';
-import {Base} from './Base';
-import {resultCodes as rc} from '../utils/resultCodes';
+import {BlueshellState, rc} from '../models';
+import {Constant} from '.';
 
-export class Success<S extends BlueshellState, E> extends Base<S, E> {
+export class Success<S extends BlueshellState, E> extends Constant<S, E> {
 	constructor(
 		name = 'Success'
 	) {
-		super(name);
-	}
-
-	onEvent() {
-		return rc.SUCCESS;
+		super(rc.SUCCESS, name);
 	}
 }

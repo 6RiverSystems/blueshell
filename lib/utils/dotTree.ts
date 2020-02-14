@@ -1,16 +1,13 @@
-import {Base} from '../nodes/Base';
-import {BlueshellState} from '../nodes/BlueshellState';
-import {resultCodes as rc} from './resultCodes';
-import {Decorator} from '../nodes/Decorator';
-import {Composite} from '../nodes/Composite';
-import {isParentNode} from '../nodes/ParentNode';
-
 import {v4} from 'uuid';
+
+import {BlueshellState, rc, BaseNode, isParentNode} from '../models';
+import {Decorator, IfElse} from '../nodes';
 
 const DefaultStyle = 'style="filled,bold"';
 
 const DecoratorShape = 'shape=ellipse';
-const CompositeShape = 'shape=diamond height=1';
+const CompositeShape = 'shape=house height=1';
+const IfElseShape = 'shape=diamond height=1';
 const DefaultShape = 'shape=box';
 
 const SuccessColor = 'fillcolor="#4daf4a"';
@@ -22,17 +19,19 @@ const DefaultColor = 'fillcolor="#e5e5e5"';
 
 const DefaultEdgeColor ='color="#000000"';
 
-function getShape<S extends BlueshellState, E>(node: Base<S, E>): string {
+function getShape<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
 	if (node instanceof Decorator) {
 		return DecoratorShape;
-	} else if (node instanceof Composite) {
+	} else if (node instanceof IfElse) {
+		return IfElseShape;
+	} else if (isParentNode(node)) {
 		return CompositeShape;
 	} else {
 		return '';
 	}
 }
 
-function getColor<S extends BlueshellState, E>(node: Base<S, E>, state?: S): string {
+function getColor<S extends BlueshellState, E>(node: BaseNode<S, E>, state?: S): string {
 	if (state) {
 		const eventCounter = node!.getTreeEventCounter(state);
 		const lastEventSeen = node!.getLastEventSeen(state);
@@ -58,7 +57,7 @@ function getColor<S extends BlueshellState, E>(node: Base<S, E>, state?: S): str
 	return '';
 }
 
-function getNodeId<S extends BlueshellState, E>(node: Base<S, E>): string {
+function getNodeId<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
 	const nodeUnsafe: any = node;
 	if (!nodeUnsafe.__nodeId) {
 		nodeUnsafe.__nodeId = `n${v4().replace(/\-/g, '')}`;
@@ -66,7 +65,7 @@ function getNodeId<S extends BlueshellState, E>(node: Base<S, E>): string {
 	return nodeUnsafe.__nodeId;
 }
 
-function getLabel<S extends BlueshellState, E>(node: Base<S, E>): string {
+function getLabel<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
 	if (node.symbol) {
 		return `label="${node.name}\\n${node.symbol}"`;
 	} else {
@@ -74,16 +73,16 @@ function getLabel<S extends BlueshellState, E>(node: Base<S, E>): string {
 	}
 }
 
-function getTooltip<S extends BlueshellState, E>(node: Base<S, E>): string {
+function getTooltip<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
 	return `tooltip="${node.constructor.name}"`;
 }
 
-export function serializeDotTree<S extends BlueshellState, E>(root: Base<S, E>, state?: S): any {
+export function serializeDotTree<S extends BlueshellState, E>(root: BaseNode<S, E>, state?: S): any {
 	if (!root) {
 		return '';
 	}
 
-	const nodesToVisit: Base<S, E>[] = [];
+	const nodesToVisit: BaseNode<S, E>[] = [];
 
 	let resultingString = `digraph G {
 	graph [ordering=out]
@@ -104,7 +103,7 @@ export function serializeDotTree<S extends BlueshellState, E>(root: Base<S, E>, 
 
 		if (!!currentNode && isParentNode(currentNode)) {
 			resultingString = currentNode.getChildren().reduce(
-				(acc: string, child: Base<S, E>) => (`${acc}\t${nodeId}->${getNodeId(child)};\n`),
+				(acc: string, child: BaseNode<S, E>) => (`${acc}\t${nodeId}->${getNodeId(child)};\n`),
 				resultingString);
 			for (const child of [...currentNode.getChildren()].reverse()) {
 				nodesToVisit.push(child);

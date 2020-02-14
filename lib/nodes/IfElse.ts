@@ -1,9 +1,8 @@
 /**
  * Created by jpollak on 5/29/16.
  */
-import {BlueshellState} from './BlueshellState';
-import {resultCodes as rc} from '../utils/resultCodes';
-import {Parent} from './Parent';
+import {BlueshellState, ResultCode, isResultCode, rc, BaseNode} from '../models';
+import {Parent, Constant} from '.';
 
 export interface Conditional<S, E> {
 	(state: S, event: E): boolean;
@@ -17,18 +16,31 @@ export interface Conditional<S, E> {
  *
  * If `conditional(state: S, event: E)` returns false,
  * control is passed to the alternative node, or
+ * if alternative is a result code, that is returned, or
  * if one is not provided, 'FAILURE' is returned.
  *
  * 5/29/16
  * @author Joshua Chaitin-Pollak
  */
 export class IfElse<S extends BlueshellState, E> extends Parent<S, E> {
+	private alternative?: BaseNode<S, E>;
+	private children: BaseNode<S, E>[];
+
 	constructor(name: string,
 	            private conditional: Conditional<S, E>,
-	            private consequent: any,
-	            private alternative?: any) {
+	            private consequent: BaseNode<S, E>,
+	            alternative?: BaseNode<S, E> | ResultCode) {
 		super(name);
-		this.initChildren(!!alternative ? [consequent, alternative] : [consequent]);
+		this.children = [consequent];
+		if (!!alternative) {
+			if (isResultCode(alternative)) {
+				this.alternative = new Constant(alternative);
+			} else {
+				this.alternative = alternative;
+			}
+			this.children.push(this.alternative);
+		}
+		this.initChildren(this.children);
 	}
 
 	/**
@@ -37,13 +49,7 @@ export class IfElse<S extends BlueshellState, E> extends Parent<S, E> {
 	 * see Composite<S,E>.addEventCounterToChildren
 	 */
 	getChildren() {
-		const children = [this.consequent];
-
-		if (this.alternative) {
-			children.push(this.alternative);
-		}
-
-		return children;
+		return this.children;
 	}
 
 	/**
@@ -55,7 +61,7 @@ export class IfElse<S extends BlueshellState, E> extends Parent<S, E> {
 	 * @param event The event to handle.
 	 * @param i The child index.
 	 */
-	onEvent(state: S, event: E) {
+	protected onEvent(state: S, event: E) {
 		if (this.conditional(state, event)) {
 			return this.consequent.handleEvent(state, event);
 		} else if (this.alternative) {

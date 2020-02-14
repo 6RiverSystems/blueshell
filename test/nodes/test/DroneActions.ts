@@ -1,4 +1,4 @@
-import {BlueshellState} from '../../../lib/nodes/BlueshellState';
+import {BlueshellState} from '../../../lib';
 
 export class DroneState implements BlueshellState {
 	public flares: number = 0;

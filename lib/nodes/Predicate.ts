@@ -1,12 +1,12 @@
-import {BlueshellState} from './BlueshellState';
-import {Base} from './Base';
-import {resultCodes} from '..';
+import {BlueshellState, rc} from '../models';
+import {Action} from '.';
 
-export class Predicate<S extends BlueshellState, E> extends Base<S, E> {
+export class Predicate<S extends BlueshellState, E> extends Action<S, E> {
 	constructor(name: string, private readonly predicate: (state: S, event: E) => boolean) {
 		super(name);
 	}
-	onEvent(state: S, event: E) {
-		return this.predicate(state, event) ? resultCodes.SUCCESS : resultCodes.FAILURE;
+
+	protected onEvent(state: S, event: E) {
+		return this.predicate(state, event) ? rc.SUCCESS : rc.FAILURE;
 	}
 }

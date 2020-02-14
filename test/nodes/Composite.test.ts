@@ -4,7 +4,7 @@
 
 import {assert} from 'chai';
 
-import {resultCodes as rc} from '../../lib/utils/resultCodes';
+import {rc} from '../../lib';
 import {RobotState, waitAi} from './test/RobotActions';
 
 describe('Composite', function() {

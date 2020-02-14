@@ -1,8 +1,5 @@
-import {BlueshellState} from '../BlueshellState';
-
-import {resultCodes as rc, ResultCode} from '../../utils/resultCodes';
-import {Decorator} from '../Decorator';
-import {Base} from '../Base';
+import {BlueshellState, rc, ResultCode, BaseNode} from '../../models';
+import {Decorator} from '..';
 
 /**
  * !Node
@@ -19,7 +16,7 @@ export class Not<S extends BlueshellState, E> extends Decorator<S, E> {
 	 * @param name
 	 * @param child
 	 */
-	constructor(name: string, child: Base<S, E>, latched = true) {
+	constructor(name: string, child: BaseNode<S, E>, latched = true) {
 		super(name, child, latched);
 	}
 
@@ -28,7 +25,7 @@ export class Not<S extends BlueshellState, E> extends Decorator<S, E> {
 	 * @param state The state when the event occured.
 	 * @param event The event to handle.
 	 */
-	decorateResult(res: ResultCode): ResultCode {
+	protected decorateResult(res: ResultCode): ResultCode {
 		switch (res) {
 		case rc.SUCCESS:
 			res = rc.FAILURE;

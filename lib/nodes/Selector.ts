@@ -1,7 +1,6 @@
-import {Composite} from './Composite';
-import {BlueshellState} from './BlueshellState';
+import {BlueshellState, rc, ResultCode} from '../models';
+import {Composite} from '.';
 
-import {resultCodes as rc, ResultCode} from '../utils/resultCodes';
 
 /**
  * Selector Node (a.k.a. Fallback)
@@ -18,7 +17,7 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param event The event to handle.
 	 * @param i The child index.
 	 */
-	handleChild(state: S, event: E, i: number): ResultCode {
+	protected handleChild(state: S, event: E, i: number): ResultCode {
 		const storage = this.getNodeStorage(state);
 
 		// If we finished all processing without success return failure.
@@ -50,7 +49,7 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param state
 	 * @param event
 	 */
-	_afterChild(res: ResultCode, state: S, event: E) {
+	protected _afterChild(res: ResultCode, state: S, event: E) {
 		return {res, state, event};
 	}
 

@@ -2,15 +2,13 @@
  * Created by josh on 1/10/16.
  */
 import {assert} from 'chai';
+import {rc} from '../../lib';
 import * as Behavior from '../../lib';
-import {BlueshellState} from '../../lib/nodes/BlueshellState';
-import {resultCodes as rc} from '../../lib/utils/resultCodes';
-import {TreeNonPublisher} from '../../lib/utils/TreePublisher';
 
 const Base = Behavior.Action;
 const Decorator = Behavior.Decorator;
 
-class TestState implements BlueshellState {
+class TestState implements Behavior.BlueshellState {
 	public errorReason?: Error;
 	public __blueshell: any;
 }
@@ -122,7 +120,7 @@ describe('Base', function() {
 
 	describe('publisher', function() {
 		it('Has a non publisher by default', function() {
-			assert.isTrue(Base.treePublisher instanceof TreeNonPublisher);
+			assert.isTrue(Base.treePublisher instanceof Behavior.TreeNonPublisher);
 		});
 
 		it('We can make a publisher', function() {

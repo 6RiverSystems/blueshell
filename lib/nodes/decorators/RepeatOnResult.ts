@@ -1,9 +1,8 @@
 /**
  * Created by josh on 1/12/16.
  */
-import {BlueshellState} from '../BlueshellState';
-import {Base} from '../Base';
-import {RepeatWhen} from './RepeatWhen';
+import {BlueshellState, BaseNode} from '../../models';
+import {RepeatWhen} from '.';
 
 /**
  * The child Node repeats handling the event if the child resulted in a specified status.
@@ -11,7 +10,7 @@ import {RepeatWhen} from './RepeatWhen';
  * @author Joshua Chaitin-Pollak
  */
 export class RepeatOnResult<S extends BlueshellState, E> extends RepeatWhen<S, E> {
-	constructor(repeatRes: string, child: Base<S, E>) {
+	constructor(repeatRes: string, child: BaseNode<S, E>) {
 		super('ResultEquals-' + repeatRes, child,
 			(state, event, res) => res === repeatRes);
 	}

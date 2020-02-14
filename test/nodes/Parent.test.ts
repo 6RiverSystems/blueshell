@@ -2,7 +2,7 @@ import {assert} from 'chai';
 
 import {RobotState, waitAi} from './test/RobotActions';
 import {isParentNode} from '../../lib';
-import {setEventCounter, clearChildEventSeen} from '../../lib/nodes/ParentNode';
+import {setEventCounter, clearChildEventSeen} from '../../lib/nodes/Parent';
 
 
 describe('Composite', function() {
@@ -17,7 +17,7 @@ describe('Composite', function() {
 	context('#setEventCounter', function() {
 		it('should set event counter for parent and all previously visited children', function() {
 			const state = new RobotState(false);
-			const pStorage = waitAi._privateStorage(state);
+			const pStorage = (<any>waitAi)._privateStorage(state);
 			pStorage.eventCounter = 2;
 			waitAi.getNodeStorage(state).lastEventSeen = 1;
 			waitAi.getChildren()[0].getNodeStorage(state).lastEventSeen = 1;
@@ -43,7 +43,7 @@ describe('Composite', function() {
 	context('#clearChildEventSeen', function() {
 		it('should clear last event seen from the node and all child nodes', function() {
 			const state = new RobotState(false);
-			const pStorage = waitAi._privateStorage(state);
+			const pStorage = (<any>waitAi)._privateStorage(state);
 			pStorage.eventCounter = 2;
 			waitAi.getChildren()[0].getNodeStorage(state).lastEventSeen = 1;
 			waitAi.getChildren()[1].getNodeStorage(state).lastEventSeen = 0;

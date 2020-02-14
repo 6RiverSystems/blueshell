@@ -1,6 +1,5 @@
-import {Sequence} from './Sequence';
-import {Base} from './Base';
-import {BlueshellState} from './BlueshellState';
+import {BlueshellState, BaseNode} from '../models';
+import {Sequence} from '.';
 
 /**
  * Sends an event to each child until one of the returns `FAILURE`, or `RUNNING`, then returns that value.
@@ -10,7 +9,7 @@ import {BlueshellState} from './BlueshellState';
  * @author Joshua Chaitin-Pollak
  */
 export class LatchedSequence<S extends BlueshellState, E> extends Sequence<S, E> {
-	constructor(name: string, children: Base<S, E>[]) {
+	constructor(name: string, children: BaseNode<S, E>[]) {
 		super(name, children, true);
 	}
 

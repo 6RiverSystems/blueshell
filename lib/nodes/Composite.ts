@@ -1,8 +1,6 @@
-import {Base} from './Base';
-import {BlueshellState} from './BlueshellState';
-import {ResultCode, resultCodes} from '../utils/resultCodes';
-import {Parent} from './Parent';
-import {setEventCounter} from './ParentNode';
+import {BlueshellState, ResultCode, resultCodes, BaseNode} from '../models';
+import {Parent} from '.';
+import {setEventCounter} from './Parent';
 
 /**
  * Base class for all Composite Nodes (nodes which have an array of children).
@@ -17,7 +15,7 @@ export abstract class Composite<S extends BlueshellState, E> extends Parent<S, E
 	 * @param _latched
 	 */
 	constructor(name: string,
-	            private _children: Base<S, E>[],
+	            private _children: BaseNode<S, E>[],
 	            private _latched: boolean = false) {
 		super(name);
 		this.initChildren(_children);
@@ -37,7 +35,7 @@ export abstract class Composite<S extends BlueshellState, E> extends Parent<S, E
 	 * @param state
 	 * @param event
 	 */
-	_beforeEvent(state: S, event: E) {
+	protected _beforeEvent(state: S, event: E) {
 		const res = super._beforeEvent(state, event);
 		const nodeStorage = this.getNodeStorage(state);
 		const pStorage = this._privateStorage(state);
@@ -59,7 +57,7 @@ export abstract class Composite<S extends BlueshellState, E> extends Parent<S, E
 	 * @param state
 	 * @param event
 	 */
-	_afterEvent(res: ResultCode, state: S, event: E): ResultCode {
+	protected _afterEvent(res: ResultCode, state: S, event: E): ResultCode {
 		res = super._afterEvent(res, state, event);
 
 		if (this.latched) {
@@ -79,7 +77,7 @@ export abstract class Composite<S extends BlueshellState, E> extends Parent<S, E
 	 * @param state
 	 * @param event
 	 */
-	onEvent(state: S, event: E): ResultCode {
+	protected onEvent(state: S, event: E): ResultCode {
 		const storage = this.getNodeStorage(state);
 
 		let firstChild = 0;
@@ -102,5 +100,5 @@ export abstract class Composite<S extends BlueshellState, E> extends Parent<S, E
 	 * @param event
 	 * @param i
 	 */
-	abstract handleChild(state: S, event: E, i: number): ResultCode;
+	protected abstract handleChild(state: S, event: E, i: number): ResultCode;
 }
