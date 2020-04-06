@@ -13,6 +13,4 @@ export const resultCodes: {[K in ResultCode]: ResultCode} = {
 
 export type ResultCode = 'SUCCESS' | 'FAILURE' | 'RUNNING' | 'ERROR';
 
-export function isResultCode(res: unknown): res is ResultCode {
-	return isLiteral(Object.values(resultCodes))(res);
-}
+export const isResultCode = isLiteral(Object.values(resultCodes));
