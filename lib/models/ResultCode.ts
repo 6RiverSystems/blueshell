@@ -1,3 +1,5 @@
+import {isLiteral} from '@6river/reason-guard';
+
 /**
  * 5/30/16
  * @author Joshua Chaitin-Pollak
@@ -11,6 +13,6 @@ export const resultCodes: {[K in ResultCode]: ResultCode} = {
 
 export type ResultCode = 'SUCCESS' | 'FAILURE' | 'RUNNING' | 'ERROR';
 
-export function isResultCode(res: any): res is ResultCode {
-	return Object.values(resultCodes).includes(res);
+export function isResultCode(res: unknown): res is ResultCode {
+	return isLiteral(Object.values(resultCodes))(res);
 }
