@@ -77,7 +77,7 @@ function getTooltip<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
 	return `tooltip="${node.constructor.name}"`;
 }
 
-export function serializeDotTree<S extends BlueshellState, E>(root: BaseNode<S, E>, state?: S): any {
+export function serializeDotTree<S extends BlueshellState, E>(root: BaseNode<S, E>, state?: S): string {
 	if (!root) {
 		return '';
 	}
