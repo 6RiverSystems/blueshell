@@ -75,7 +75,7 @@ describe('renderTree', function() {
 				state = {
 					errorReason: undefined,
 					__blueshell: {},
-					nodePath: '',				};
+					nodePath: ''};
 			});
 			function runContextDepthTest(
 				expectedNodes: number,
