@@ -4,4 +4,5 @@
 export interface BlueshellState {
 	errorReason?: Error;
 	__blueshell: any;
+	nodePath: string;
 }
