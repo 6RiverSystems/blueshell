@@ -32,6 +32,9 @@ export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 		if (res_ === rc.SUCCESS) {
 			// Call the next child
 			return this.handleChild(state_, event_, ++i);
+		} else if (res_ === rc.UNDO) {
+			// Call the previous child
+			return this.handleChild(state_, event_, --i);
 		} else {
 			if (this.latched && res_ === rc.RUNNING) {
 				storage.running = i;
@@ -49,6 +52,11 @@ export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 	 */
 	protected _afterChild(res: ResultCode, state: S, event: E) {
 		return {res, state, event};
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	protected undo(state: S, event: E, res: ResultCode) {
+		// no-op
 	}
 
 	get symbol(): string {

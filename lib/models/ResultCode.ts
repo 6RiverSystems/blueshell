@@ -7,9 +7,10 @@ export const resultCodes: {[K in ResultCode]: ResultCode} = {
 	FAILURE: 'FAILURE',
 	RUNNING: 'RUNNING',
 	ERROR: 'ERROR',
+	UNDO: 'UNDO'
 };
 
-export type ResultCode = 'SUCCESS' | 'FAILURE' | 'RUNNING' | 'ERROR';
+export type ResultCode = 'SUCCESS' | 'FAILURE' | 'RUNNING' | 'ERROR' | 'UNDO';
 
 export function isResultCode(res: any): res is ResultCode {
 	return Object.values(resultCodes).includes(res);
