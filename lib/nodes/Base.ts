@@ -9,7 +9,9 @@ import {
 	BaseNode,
 	isParentNode,
 } from '../models';
-import {TreePublisher, TreeNonPublisher} from '../utils';
+import {v4} from 'uuid';
+
+import {TreePublisher, TreeNonPublisher, NodeManager} from '../utils';
 
 /**
  * Interface that defines what is stored in private node storage at the root
@@ -24,6 +26,7 @@ export interface PrivateNodeStorage {
  * @author Joshua Chaitin-Pollak
  */
 export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
+	private nodeId: string = '';
 	private _parent: string;
 
 	// Hard to properly type this since the static can't
@@ -148,8 +151,31 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 		return rc.SUCCESS;
 	}
 
-	public set parent(path: string) {
+	public set parent(path: string) {	
+		let existingNode = NodeManager.getInstance().getNode(this.path);
+		if(existingNode) {
+			NodeManager.getInstance().removeNode(this.path);
+		}
+
 		this._parent = path;
+
+		// existingNode = NodeManager.getInstance().getNode(this.path);
+		// if(!existingNode) {
+		NodeManager.getInstance().addNode(this.path, this);
+		// }
+		// else if(existingNode === this) {
+		// 	NodeManager.getInstance().updateNode(this.path, this);
+		// }
+		// else {
+			// throw new Error('Trying to assign a duplicate path to a node!');
+		// }
+	}
+
+	public get id(): string {
+		if(!this.nodeId) {
+			this.nodeId = `n${v4().replace(/\-/g, '')}`;
+		}
+		return this.nodeId;
 	}
 
 	public get path() {

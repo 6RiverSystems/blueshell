@@ -6,6 +6,7 @@ import {BlueshellState, NodeStorage, ResultCode} from '../models';
 export interface BaseNode<S extends BlueshellState, E> {
 	name: string;
 	parent: string;
+	id: string;
 	path: string;
 	symbol: string;
 

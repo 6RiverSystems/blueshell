@@ -2,6 +2,8 @@ import {v4} from 'uuid';
 
 import {BlueshellState, rc, BaseNode, isParentNode} from '../models';
 import {Decorator, IfElse} from '../nodes';
+import { NodeIdMap } from './nodeIdMap';
+import { NodeManager } from './nodeManager';
 
 const DefaultStyle = 'style="filled,bold"';
 
@@ -57,12 +59,16 @@ function getColor<S extends BlueshellState, E>(node: BaseNode<S, E>, state?: S):
 	return '';
 }
 
-function getNodeId<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
-	const nodeUnsafe: any = node;
-	if (!nodeUnsafe.__nodeId) {
-		nodeUnsafe.__nodeId = `n${v4().replace(/\-/g, '')}`;
-	}
-	return nodeUnsafe.__nodeId;
+// function getNodeId<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
+// 	const nodeUnsafe: any = node;
+// 	if (!nodeUnsafe.__nodeId) {
+// 		nodeUnsafe.__nodeId = `n${v4().replace(/\-/g, '')}`;
+// 	}
+// 	return nodeUnsafe.__nodeId;
+// }
+
+function getPath<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
+	return `path="${node.path}"`;
 }
 
 function getLabel<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
@@ -91,19 +97,21 @@ export function serializeDotTree<S extends BlueshellState, E>(root: BaseNode<S, 
 `;
 
 	nodesToVisit.push(root);
+	// NodeIdMap.getInstance().clearMap();
 
 	while (nodesToVisit.length) {
 		const currentNode = nodesToVisit.pop();
 
-		const nodeId = getNodeId(currentNode!);
+		const nodeId = currentNode!.id; //getNodeId(currentNode!);
 
 		resultingString += `\t${nodeId} `;
 		resultingString += `[${getLabel(currentNode!)} ${getShape(currentNode!)} ${getTooltip(currentNode!)}`;
-		resultingString += ` ${getColor(currentNode!, state)}];\n`;
+		resultingString += ` ${getPath(currentNode!)} ${getColor(currentNode!, state)}];\n`;
 
 		if (!!currentNode && isParentNode(currentNode)) {
 			resultingString = currentNode.getChildren().reduce(
-				(acc: string, child: BaseNode<S, E>) => (`${acc}\t${nodeId}->${getNodeId(child)};\n`),
+				// (acc: string, child: BaseNode<S, E>) => (`${acc}\t${nodeId}->${getNodeId(child)};\n`),
+				(acc: string, child: BaseNode<S, E>) => (`${acc}\t${nodeId}->${child!.id};\n`),
 				resultingString);
 			for (const child of [...currentNode.getChildren()].reverse()) {
 				nodesToVisit.push(child);
