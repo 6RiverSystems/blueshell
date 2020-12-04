@@ -44,8 +44,8 @@ describe('Base', function() {
 			const parent2 = new Decorator('parent2_foo', parent1);
 
 			assert.ok(parent2);
-			assert.equal(leaf.path, 'parent2_foo_parent1_leaf');
-			assert.equal(parent1.path, 'parent2_foo_parent1');
+			assert.equal(leaf.path, 'parent2_foo_0_parent1_0_leaf');
+			assert.equal(parent1.path, 'parent2_foo_0_parent1');
 		});
 	});
 

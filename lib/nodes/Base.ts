@@ -151,28 +151,21 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 		return rc.SUCCESS;
 	}
 
-	public set parent(path: string) {	
-		let existingNode = NodeManager.getInstance().getNode(this.path);
-		if(existingNode) {
+	public set parent(path: string) {
+		const existingNode = NodeManager.getInstance().getNode(this.path);
+		if (existingNode) {
 			NodeManager.getInstance().removeNode(this.path);
 		}
 
 		this._parent = path;
 
-		// existingNode = NodeManager.getInstance().getNode(this.path);
-		// if(!existingNode) {
-		NodeManager.getInstance().addNode(this.path, this);
-		// }
-		// else if(existingNode === this) {
-		// 	NodeManager.getInstance().updateNode(this.path, this);
-		// }
-		// else {
-			// throw new Error('Trying to assign a duplicate path to a node!');
-		// }
+		if (process.env.NODE_ENV !== 'test') {
+			NodeManager.getInstance().addNode(this.path, this);
+		}
 	}
 
 	public get id(): string {
-		if(!this.nodeId) {
+		if (!this.nodeId) {
 			this.nodeId = `n${v4().replace(/\-/g, '')}`;
 		}
 		return this.nodeId;

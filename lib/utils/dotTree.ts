@@ -1,9 +1,5 @@
-import {v4} from 'uuid';
-
 import {BlueshellState, rc, BaseNode, isParentNode} from '../models';
 import {Decorator, IfElse} from '../nodes';
-import { NodeIdMap } from './nodeIdMap';
-import { NodeManager } from './nodeManager';
 
 const DefaultStyle = 'style="filled,bold"';
 
@@ -102,7 +98,7 @@ export function serializeDotTree<S extends BlueshellState, E>(root: BaseNode<S, 
 	while (nodesToVisit.length) {
 		const currentNode = nodesToVisit.pop();
 
-		const nodeId = currentNode!.id; //getNodeId(currentNode!);
+		const nodeId = currentNode!.id; // getNodeId(currentNode!);
 
 		resultingString += `\t${nodeId} `;
 		resultingString += `[${getLabel(currentNode!)} ${getShape(currentNode!)} ${getTooltip(currentNode!)}`;

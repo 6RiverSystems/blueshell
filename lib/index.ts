@@ -1,4 +1,4 @@
-import { NodeManager } from './utils';
+import {NodeManager} from './utils';
 
 NodeManager.getInstance();
 export * from './models';

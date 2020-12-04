@@ -3,20 +3,24 @@
  */
 import {assert} from 'chai';
 
-import {rc} from '../../lib';
+import {rc, BlueshellState} from '../../lib';
 import * as Behavior from '../../lib';
 
 import * as TestActions from './test/RobotActions';
 import {RobotState} from './test/RobotActions';
 
-const waitAi = new Behavior.Selector('shutdownWithWaitAi',
-	[
-		new TestActions.Recharge(),
-		new TestActions.WaitForCooldown(),
-		new TestActions.EmergencyShutdown(),
-	]);
-
 describe('Selector', function() {
+	let waitAi: Behavior.Selector<BlueshellState, any>;
+
+	beforeEach(function() {
+		waitAi = new Behavior.Selector('shutdownWithWaitAi',
+			[
+				new TestActions.Recharge(),
+				new TestActions.WaitForCooldown(),
+				new TestActions.EmergencyShutdown(),
+			]);
+	});
+
 	it('should return success', function() {
 		// With a happy bot
 		const botState = new RobotState();
