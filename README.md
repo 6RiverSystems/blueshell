@@ -28,6 +28,8 @@ It is synchronous for performance - asynchronous operations can be handled by re
 
 ### Composites (aka Control Flow Nodes)
 
+A composite is a Behavior Tree Node that has children.
+
 #### Selector
 
 (aka Priority or Fallback)
