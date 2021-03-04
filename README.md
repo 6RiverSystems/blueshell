@@ -107,7 +107,7 @@ The following are sources used when designing this library
 * [Difference between a Decision Tree and a Behavior Tree](http://gamedev.stackexchange.com/questions/51693/decision-tree-vs-behavior-tree)
 * [Behavior Trees for AI](http://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php)
 * [Wikipedia Article](https://en.wikipedia.org/wiki/Behavior_tree_(artificial_intelligence,_robotics_and_control))
-* [What is a Behavior Tree?](http://www.opsive.com/assets/BehaviorDesigner/documentation.php?id=44)
+* [What is a Behavior Tree?](https://opsive.com/support/documentation/behavior-designer/what-is-a-behavior-tree/)
 * [Halo 2's AI](http://www.gamasutra.com/view/feature/130663/gdc_2005_proceeding_handling_.php)
   * Halo 2 was the first game to popularize Behavior Trees.
 
