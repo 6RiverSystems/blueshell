@@ -12,6 +12,8 @@ export {Predicate} from './Predicate';
 export {SideEffect} from './SideEffect';
 export {Constant} from './Constant';
 export {Success} from './Success';
+export {Failure} from './Failure';
+export {Error} from './Error';
 export {LatchedSelector} from './LatchedSelector';
 export {LatchedSequence} from './LatchedSequence';
 export {IfElse} from './IfElse';
