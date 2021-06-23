@@ -25,7 +25,7 @@ const LATCHED_RUNNING_ALTERNATIVE = 2;
  * 06/23/21
  * @author Mark Asdoorian
  */
-export class IfElseLatched<S extends BlueshellState, E> extends IfElse<S, E> {
+export class LatchedIfElse<S extends BlueshellState, E> extends IfElse<S, E> {
 	constructor(
 		name: string,
 		private conditionalToLatch: Conditional<S, E>,

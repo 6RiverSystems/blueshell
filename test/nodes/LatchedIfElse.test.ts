@@ -38,7 +38,7 @@ class LatchedAction extends Behavior.Action<TestState, string> {
 	}
 }
 
-describe('IfElseLatched', function() {
+describe('LatchedIfElse', function() {
 	let state: TestState;
 
 	beforeEach(function() {
@@ -48,7 +48,7 @@ describe('IfElseLatched', function() {
 	context('conditional is true', function() {
 		it('should return success (consequent) when conditional is true with no alternative (1x)', function() {
 			const successAction = new LatchedAction('testLatchedAction', 1, rc.SUCCESS);
-			const ifElse = new Behavior.IfElseLatched('testIfElseLatched',
+			const ifElse = new Behavior.LatchedIfElse('testLatchedIfElse',
 				(state) => {
 					return state.runCounter === 0;
 				},
@@ -70,7 +70,7 @@ describe('IfElseLatched', function() {
 		});
 		it('should return success (consequent) when conditional is true with alternative (2x)', function() {
 			const successAction = new LatchedAction('testLatchedAction', 2, rc.SUCCESS);
-			const ifElse = new Behavior.IfElseLatched('testIfElseLatched',
+			const ifElse = new Behavior.LatchedIfElse('testLatchedIfElse',
 				(state) => {
 					return state.runCounter === 0;
 				},
@@ -107,7 +107,7 @@ describe('IfElseLatched', function() {
 
 		it('should restart latching if resetNodeStorage is called', function() {
 			const successAction = new LatchedAction('testLatchedAction', 2, rc.SUCCESS);
-			const ifElse = new Behavior.IfElseLatched('testIfElseLatched',
+			const ifElse = new Behavior.LatchedIfElse('testLatchedIfElse',
 				(state) => {
 					return state.runCounter === 0;
 				},
@@ -151,7 +151,7 @@ describe('IfElseLatched', function() {
 		});
 
 		it('should return failure (alternative) when conditional is false with an alternative rc', function() {
-			const ifElse = new Behavior.IfElseLatched('testIfElse',
+			const ifElse = new Behavior.LatchedIfElse('testIfElse',
 				() => false,
 				new LatchedAction('testLatchedAction', 1, rc.SUCCESS),
 				rc.FAILURE,
@@ -167,7 +167,7 @@ describe('IfElseLatched', function() {
 
 		it('should return success (alternative) when conditional is false with an alternative node (1x)', function() {
 			const successAction = new LatchedAction('testLatchedAction', 1, rc.SUCCESS);
-			const ifElse = new Behavior.IfElseLatched('testIfElseLatched',
+			const ifElse = new Behavior.LatchedIfElse('testLatchedIfElse',
 				(state) => {
 					return state.runCounter !== 0;
 				},
@@ -191,7 +191,7 @@ describe('IfElseLatched', function() {
 
 		it('should return success (alternative) when conditional is false with an alternative node (2x)', function() {
 			const successAction = new LatchedAction('testLatchedAction', 2, rc.SUCCESS);
-			const ifElse = new Behavior.IfElseLatched('testIfElseLatched',
+			const ifElse = new Behavior.LatchedIfElse('testLatchedIfElse',
 				(state) => {
 					return state.runCounter !== 0;
 				},
