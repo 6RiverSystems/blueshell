@@ -1,5 +1,5 @@
 /**
- * Created by jpollak on 5/29/16.
+ * Created by masdoorian on 06/23/21
  */
 import {BlueshellState, ResultCode, rc, BaseNode} from '../models';
 import {IfElse, Conditional} from '.';
