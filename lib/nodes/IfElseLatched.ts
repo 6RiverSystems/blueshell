@@ -8,7 +8,11 @@ const LATCHED_RUNNING_CONSEQUENT = 1;
 const LATCHED_RUNNING_ALTERNATIVE = 2;
 
 /**
- * If-Else Conditional Composite Node.
+ * Latched If-Else Latched Composite Node.
+ *
+ * The conditional function is not called if the previous result was RUNNING - instead
+ * the saved result of calling the conditional is used until the consequent/alternative
+ * returns not RUNNING again and the state is reset
  *
  * If `conditional(state: S, event: E)` returns true,
  * control is passed to the consequent node.
@@ -18,8 +22,8 @@ const LATCHED_RUNNING_ALTERNATIVE = 2;
  * if alternative is a result code, that is returned, or
  * if one is not provided, 'FAILURE' is returned.
  *
- * 5/29/16
- * @author Joshua Chaitin-Pollak
+ * 06/23/21
+ * @author Mark Asdoorian
  */
 export class IfElseLatched<S extends BlueshellState, E> extends IfElse<S, E> {
 	constructor(
@@ -48,9 +52,7 @@ export class IfElseLatched<S extends BlueshellState, E> extends IfElse<S, E> {
 		);
 	}
 
-	/**
-	 * cosmetic only so a behavior tree viewer can render this as a latched node
-	 */
+	// cosmetic only so a behavior tree viewer can render this as a latched node
 	get latched() {
 		return true;
 	}
