@@ -14,7 +14,8 @@ export {Constant} from './Constant';
 export {Success} from './Success';
 export {LatchedSelector} from './LatchedSelector';
 export {LatchedSequence} from './LatchedSequence';
-export {IfElse} from './IfElse';
+export {Conditional, IfElse} from './IfElse';
+export {IfElseLatched} from './IfElseLatched';
 export {IfElseWithNodeCondition} from './IfElseWithNodeCondition';
 
 import * as decorators from './decorators';
