@@ -69,12 +69,13 @@ describe('renderTree', function() {
 			let state: BlueshellState = {
 				errorReason: undefined,
 				__blueshell: {},
+				nodePath: '',
 			};
 			beforeEach(function() {
 				state = {
 					errorReason: undefined,
 					__blueshell: {},
-				};
+					nodePath: ''};
 			});
 			function runContextDepthTest(
 				expectedNodes: number,

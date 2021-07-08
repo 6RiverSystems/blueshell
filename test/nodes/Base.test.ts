@@ -11,6 +11,7 @@ const Decorator = Behavior.Decorator;
 class TestState implements Behavior.BlueshellState {
 	public errorReason?: Error;
 	public __blueshell: any;
+	public nodePath: string = '';
 }
 
 class TestAction extends Base<TestState, string> {
@@ -46,6 +47,20 @@ describe('Base', function() {
 			assert.ok(parent2);
 			assert.equal(leaf.path, 'parent2_foo_parent1_leaf');
 			assert.equal(parent1.path, 'parent2_foo_parent1');
+		});
+
+		it('updates the active node path', function() {
+			const leaf = new TestAction('leaf');
+			const parent1 = new Decorator('parent1', leaf);
+			const parent2 = new Decorator('parent2_foo', parent1);
+
+			const testState = new TestState();
+
+			assert.equal('', testState.nodePath);
+
+			parent2.handleEvent(testState, 'test event');
+
+			assert.equal(testState.nodePath, leaf.path);
 		});
 	});
 

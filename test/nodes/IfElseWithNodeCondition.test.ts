@@ -11,6 +11,7 @@ class TestState implements Behavior.BlueshellState {
 	public failureCount: number = 0;
 	public errorReason?: Error;
 	public __blueshell: any;
+	public nodePath: string = '';
 }
 
 class TestRunningAction extends Behavior.Action<TestState, string> {

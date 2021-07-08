@@ -11,6 +11,7 @@ class TestState implements Behavior.BlueshellState {
 	public failure: boolean = false;
 	public errorReason?: Error;
 	public __blueshell: any;
+	public nodePath: string = '';
 }
 
 describe('IfElse', function() {
