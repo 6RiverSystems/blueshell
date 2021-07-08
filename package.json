@@ -44,6 +44,7 @@
   "homepage": "https://github.com/6RiverSystems/blueshell#readme",
   "devDependencies": {
     "@6river/commitlint-config-6river": "2.1.0",
+    "@6river/reason-guard": "3.7.4",
     "@commitlint/cli": "8.3.4",
     "@types/archy": "0.0.31",
     "@types/chai": "4.1.7",
