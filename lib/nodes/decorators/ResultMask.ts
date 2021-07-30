@@ -10,7 +10,7 @@ import {Decorator} from '..';
  * 1/21/16
  * @author Joshua Chaitin-Pollak
  */
-export class ResultSwap<S extends BlueshellState, E> extends Decorator<S, E> {
+export class ResultMask<S extends BlueshellState, E> extends Decorator<S, E> {
 	/**
 	 * @constructor
 	 * @param _inResult The result to swap out (mask).
@@ -21,7 +21,7 @@ export class ResultSwap<S extends BlueshellState, E> extends Decorator<S, E> {
 	constructor(private _inResult: ResultCode,
 							private _outResult: ResultCode,
 							child: BaseNode<S, E>,
-							desc = `ResultSwap_${_inResult}-${_outResult}-${child.name}`) {
+							desc = `ResultMask_${_inResult}-${_outResult}-${child.name}`) {
 		super(desc, child);
 	}
 

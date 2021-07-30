@@ -5,7 +5,7 @@ import * as Behavior from '../../../lib';
 import {DroneState} from '../test/DroneActions';
 
 const Action = Behavior.Action;
-const ResultSwap = Behavior.decorators.ResultSwap;
+const ResultMask = Behavior.decorators.ResultMask;
 
 class SuccessAction extends Action<DroneState, string> {
 	constructor() {
@@ -29,36 +29,36 @@ class FailureAction extends Action<DroneState, string> {
 	}
 }
 
-describe('ResultSwap', function() {
+describe('ResultMask', function() {
 	it('success in action should return success', function() {
 		const successAction = new SuccessAction();
-		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, successAction);
+		const resultMask = new ResultMask(rc.FAILURE, rc.SUCCESS, successAction);
 
-		const response = resultSwap.handleEvent(new DroneState(), '');
+		const response = resultMask.handleEvent(new DroneState(), '');
 
 		assert.equal(response, rc.SUCCESS);
 	});
 
 	it('failure in action should return success', function() {
 		const failureAction = new FailureAction();
-		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction);
+		const resultMask = new ResultMask(rc.FAILURE, rc.SUCCESS, failureAction);
 
-		const response = resultSwap.handleEvent(new DroneState(), '');
+		const response = resultMask.handleEvent(new DroneState(), '');
 
 		assert.equal(response, rc.SUCCESS);
 	});
 
 	it('should use default name', function() {
 		const failureAction = new FailureAction();
-		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction);
+		const resultMask = new ResultMask(rc.FAILURE, rc.SUCCESS, failureAction);
 
-		assert.equal(resultSwap.name, 'ResultSwap_FAILURE-SUCCESS-failureAction');
+		assert.equal(resultMask.name, 'ResultMask_FAILURE-SUCCESS-failureAction');
 	});
 
 	it('should use overridden name', function() {
 		const failureAction = new FailureAction();
-		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction, 'foo');
+		const resultMask = new ResultMask(rc.FAILURE, rc.SUCCESS, failureAction, 'foo');
 
-		assert.equal(resultSwap.name, 'foo');
+		assert.equal(resultMask.name, 'foo');
 	});
 });

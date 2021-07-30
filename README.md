@@ -75,7 +75,7 @@ Decorators intercept and can modify the event sent to or the result from the chi
 
 * Repeats the child if it returns the specified status.
 
-#### ResultSwap
+#### ResultMask
 
 * Allows you to swap one result of a child node for another.
 * For example, you can use this to mask `FAILURE` as `SUCCESS`.
