@@ -1,3 +1,23 @@
 {
-	"extends": "6river/typescript"
+	"env": {
+		"es6": true,
+		"node": true
+	},
+	"extends": ["6river/typescript"],
+	"globals": {
+		"Atomics": "readonly",
+		"SharedArrayBuffer": "readonly"
+	},
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": 2018,
+		"sourceType": "module"
+	},
+	"plugins": ["@typescript-eslint"],
+	"rules": {
+		"no-unused-vars": "off",
+		"comma-dangle": "off",
+		"@typescript-eslint/no-unused-vars": "off",
+		"@typescript-eslint/explicit-module-boundary-types": "off"
+	}
 }
