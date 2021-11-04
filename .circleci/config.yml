@@ -37,7 +37,7 @@ jobs:
       - attach_workspace:
           at: ./
       - sixrs-gke/run-release
-      - sixrs-gke/publish-public-npm
+      - sixrs-gke/npm-public-publish
   test:
     docker:
       - image: cimg/node:10.17.0
