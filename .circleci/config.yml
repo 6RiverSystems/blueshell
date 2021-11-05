@@ -1,4 +1,8 @@
-version: 2
+version: 2.1
+
+orbs:
+  sixrs-gke: sixriversystems/sixrs-gke@3
+
 jobs:
   setup:
     docker:
@@ -19,6 +23,7 @@ jobs:
           key: dependency-cache-v1-{{ checksum "package-lock.json" }}
           paths:
             - ./node_modules
+      - run: npm run compile
       - persist_to_workspace:
           root: ./
           paths:
@@ -31,14 +36,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ./
-      - run:
-          name: Set NPM auth token
-          command: |
-             echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-      - run:
-          name: npm publish via script
-          command: |
-            ./scripts/release.sh
+      - sixrs-gke/run-release
+      - sixrs-gke/npm-public-publish
   test:
     docker:
       - image: cimg/node:14.17.6
