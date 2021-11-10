@@ -46,7 +46,7 @@ describe('While', function() {
 			'test',
 			countUntil,
 			(state: DroneState, event: number) => {
-				return state.flares < 1;
+				return state.flares < 2;
 			},
 		);
 
@@ -55,7 +55,7 @@ describe('While', function() {
 		const result = uut.handleEvent(state, 0);
 
 		assert.strictEqual(rc.SUCCESS, result);
-		assert.strictEqual(state.flares, 1);
-		assert.strictEqual(countUntil.eventCount, 1);
+		assert.strictEqual(state.flares, 2);
+		assert.strictEqual(countUntil.eventCount, 2);
 	});
 });
