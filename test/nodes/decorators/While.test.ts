@@ -26,6 +26,7 @@ describe('While', function() {
 			(state: DroneState, event: number) => {
 				return state.flares < 1;
 			},
+			rc.FAILURE,
 		);
 
 		const state = new DroneState();
