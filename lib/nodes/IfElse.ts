@@ -1,12 +1,9 @@
 /**
  * Created by jpollak on 5/29/16.
  */
-import {BlueshellState, ResultCode, isResultCode, rc, BaseNode} from '../models';
-import {Parent, Constant} from '.';
-
-export interface Conditional<S, E> {
-	(state: S, event: E): boolean;
-}
+import {BlueshellState, ResultCode, isResultCode, rc, BaseNode, Conditional} from '../models';
+import {Parent} from './Parent';
+import {Constant} from './Constant';
 
 /**
  * If-Else Conditional Composite Node.

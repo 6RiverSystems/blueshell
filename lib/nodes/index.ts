@@ -1,7 +1,5 @@
-import {Base} from './Base';
-export {Base as Action};
-export {Base as Condition};
-
+export {Action} from './Base';
+export {Condition} from './Base';
 export {RunningAction} from './RunningAction';
 export {Parent} from './Parent';
 export {Composite} from './Composite';
@@ -14,7 +12,7 @@ export {Constant} from './Constant';
 export {Success} from './Success';
 export {LatchedSelector} from './LatchedSelector';
 export {LatchedSequence} from './LatchedSequence';
-export {Conditional, IfElse} from './IfElse';
+export {IfElse} from './IfElse';
 export {LatchedIfElse} from './LatchedIfElse';
 export {IfElseWithNodeCondition} from './IfElseWithNodeCondition';
 

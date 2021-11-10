@@ -1,5 +1,5 @@
 import {BlueshellState, rc, ResultCode, BaseNode} from '../../models';
-import {Decorator} from '..';
+import {Decorator} from '../Decorator';
 
 /**
  * !Node

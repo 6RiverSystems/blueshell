@@ -1,5 +1,5 @@
 import {ResultCode, BlueshellState} from '../models';
-import {Action} from '.';
+import {Action} from './Base';
 
 export class Constant<S extends BlueshellState, E> extends Action<S, E> {
 	constructor(

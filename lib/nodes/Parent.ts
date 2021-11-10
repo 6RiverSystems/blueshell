@@ -1,6 +1,5 @@
 import {BlueshellState, BaseNode, ParentNode, isParentNode} from '../models';
-import {Action} from '.';
-import {PrivateNodeStorage} from './Base';
+import {Action, PrivateNodeStorage} from './Base';
 
 /**
  * Sets the event counter of the nocde and any child nodes to indicate

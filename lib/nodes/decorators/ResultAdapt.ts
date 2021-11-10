@@ -1,5 +1,5 @@
 import {ResultCode, BlueshellState, BaseNode} from '../../models';
-import {Decorator} from '..';
+import {Decorator} from '../Decorator';
 
 /**
  * Given a state, event, and result code (from a child Node), return a result code.

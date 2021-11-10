@@ -224,3 +224,6 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 		return '';
 	}
 }
+
+export {Base as Action};
+export {Base as Condition};
