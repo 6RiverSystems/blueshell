@@ -58,4 +58,3 @@ describe('While', function() {
 		assert.strictEqual(countUntil.eventCount, 1);
 	});
 });
- 
