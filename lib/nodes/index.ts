@@ -12,7 +12,7 @@ export {Constant} from './Constant';
 export {Success} from './Success';
 export {LatchedSelector} from './LatchedSelector';
 export {LatchedSequence} from './LatchedSequence';
-export {Conditional, IfElse} from './IfElse';
+export {IfElse} from './IfElse';
 export {LatchedIfElse} from './LatchedIfElse';
 export {IfElseWithNodeCondition} from './IfElseWithNodeCondition';
 

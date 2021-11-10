@@ -1,8 +1,8 @@
 /**
  * Created by masdoorian on 06/23/21
  */
-import {BlueshellState, ResultCode, rc, BaseNode} from '../models';
-import {IfElse, Conditional} from './IfElse';
+import {BlueshellState, ResultCode, rc, BaseNode, Conditional} from '../models';
+import {IfElse} from './IfElse';
 
 const LATCHED_RUNNING_CONSEQUENT = 1;
 const LATCHED_RUNNING_ALTERNATIVE = 2;
