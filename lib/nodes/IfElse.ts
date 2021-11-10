@@ -2,7 +2,8 @@
  * Created by jpollak on 5/29/16.
  */
 import {BlueshellState, ResultCode, isResultCode, rc, BaseNode} from '../models';
-import {Parent, Constant} from '.';
+import {Parent} from './Parent';
+import {Constant} from './Constant';
 
 export interface Conditional<S, E> {
 	(state: S, event: E): boolean;

@@ -2,7 +2,7 @@
  * Created by masdoorian on 06/23/21
  */
 import {BlueshellState, ResultCode, rc, BaseNode} from '../models';
-import {IfElse, Conditional} from '.';
+import {IfElse, Conditional} from './IfElse';
 
 const LATCHED_RUNNING_CONSEQUENT = 1;
 const LATCHED_RUNNING_ALTERNATIVE = 2;

@@ -1,6 +1,5 @@
 import {BlueshellState, ResultCode, resultCodes, BaseNode} from '../models';
-import {Parent} from '.';
-import {setEventCounter} from './Parent';
+import {Parent, setEventCounter} from './Parent';
 
 /**
  * Base class for all Composite Nodes (nodes which have an array of children).

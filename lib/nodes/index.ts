@@ -1,7 +1,5 @@
-import {Base} from './Base';
-export {Base as Action};
-export {Base as Condition};
-
+export {Action} from './Base';
+export {Condition} from './Base';
 export {RunningAction} from './RunningAction';
 export {Parent} from './Parent';
 export {Composite} from './Composite';

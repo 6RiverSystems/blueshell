@@ -1,5 +1,5 @@
 import {BlueshellState, rc} from '../models';
-import {Constant} from '.';
+import {Constant} from './Constant';
 
 export class Success<S extends BlueshellState, E> extends Constant<S, E> {
 	constructor(
