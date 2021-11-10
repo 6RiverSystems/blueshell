@@ -1,5 +1,6 @@
 import {ResultCode, BlueshellState, BaseNode} from '../../models';
-import {Action, Decorator} from '..';
+import {Action} from '../Base';
+import {Decorator} from '../Decorator';
 import {clearChildEventSeen} from '../Parent';
 
 /**

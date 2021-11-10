@@ -1,5 +1,5 @@
 import {BlueshellState, ResultCode, BaseNode} from '../../models';
-import {Decorator} from '..';
+import {Decorator} from '../Decorator';
 
 /**
  * Swaps one result from a child node for another.
