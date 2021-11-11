@@ -38,17 +38,6 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		}
 	}
 
-	protected _afterEvent(res: ResultCode, state: S, event: E): ResultCode {
-		res = super._afterEvent(res, state, event);
-
-		if (res !== rc.RUNNING) {
-			const storage = this.getNodeStorage(state);
-			storage.running = undefined;
-		}
-
-		return res;
-	}
-
 	get latched() {
 		return true;
 	}
