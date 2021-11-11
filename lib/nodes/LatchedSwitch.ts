@@ -38,7 +38,7 @@ export class LatchedSwitch<S extends BlueshellState, E> extends Parent<S, E> {
 	protected onEvent(state: S, event: E) {
 		const storage = this.getNodeStorage(state);
 
-		if (storage.running) {
+		if (storage.running !== undefined) {
 			const entry = this.entries[storage.running];
 			return entry.child.handleEvent(state, event);
 		}
@@ -47,8 +47,7 @@ export class LatchedSwitch<S extends BlueshellState, E> extends Parent<S, E> {
 
 		if (entry) {
 			const storage = this.getNodeStorage(state);
-			const entryNumber = this.entries.indexOf(entry) + 1;
-			storage.running = entryNumber;
+			storage.running = this.entries.indexOf(entry);
 			return entry.child.handleEvent(state, event);
 		}
 
