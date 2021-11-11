@@ -15,7 +15,7 @@ export {LatchedSequence} from './LatchedSequence';
 export {IfElse} from './IfElse';
 export {LatchedIfElse} from './LatchedIfElse';
 export {IfElseWithNodeCondition} from './IfElseWithNodeCondition';
-export {Switch} from './Switch';
+export {Switch, SwitchEntry} from './Switch';
 export {LatchedSwitch} from './LatchedSwitch';
 
 import * as decorators from './decorators';
