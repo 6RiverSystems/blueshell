@@ -18,11 +18,11 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		super('While-' + desc, child);
 	}
 
-	protected onEvent(state: S, event: E): ResultCode {
+	protected decorateCall(handleEvent: (state: S, event: E) => ResultCode, state: S, event: E) {
 		const storage = this.getNodeStorage(state);
 
 		if (storage.running || this.conditional(state, event)) {
-			return super.onEvent(state, event);
+			return handleEvent(state, event);
 		} else {
 			return this.defaultResult;
 		}
