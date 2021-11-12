@@ -13,7 +13,7 @@ interface AdaptedSwitchEntry<S extends BlueshellState, E> {
 }
 
 /**
- * Executes the child associated with the first matching conditional.
+ * Executes the child action associated with the first matching conditional.
  * Returns defaultResult if no conditionals match.
  *
  * 11/9/21

@@ -9,8 +9,9 @@ interface AdaptedSwitchEntry<S extends BlueshellState, E> {
 }
 
 /**
- * Executes the child associated with the first matching conditional.
- * Returns defaultResult if no conditionals match.
+ * Executes the child action associated with the first matching conditional.
+ * Latches on that child action without re-checking the corresponding conditional until
+ * it returns a result other than RUNNING. Returns defaultResult if no conditionals match.
  *
  * 11/9/21
  * @author Timothy Deignan
