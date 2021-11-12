@@ -20,13 +20,13 @@ interface AdaptedSwitchEntry<S extends BlueshellState, E> {
  * @author Timothy Deignan
  */
 export class Switch<S extends BlueshellState, E> extends Parent<S, E> {
-	private children: BaseNode<S, E>[];
-	private entries: AdaptedSwitchEntry<S, E>[];
+	protected children: BaseNode<S, E>[];
+	protected entries: AdaptedSwitchEntry<S, E>[];
 
 	constructor(
 		name: string,
 		entries: SwitchEntry<S, E>[],
-		private readonly defaultResult: ResultCode = rc.SUCCESS,
+		protected readonly defaultResult: ResultCode = rc.SUCCESS,
 	) {
 		super(name);
 		this.entries = entries.map((e) => {
