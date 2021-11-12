@@ -39,15 +39,20 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 
 		const storage: WhileNodeStorage = this.getNodeStorage(state);
 
-		if (res !== rc.RUNNING && !storage.break) {
+		if (res === rc.RUNNING) {
+			// yield to the behavior tree because the child node is running
+			return res;
+		} else if (storage.break) {
+			// teardown internal state and yield to the behavior tree beause the loop has completed
+			storage.break = undefined;
+			storage.lastLoopResult = undefined;
+			return res;
+		} else {
+			// begin another iteration of the loop
 			storage.lastLoopResult = res;
 			Action.treePublisher.publishResult(state, event, false);
 			clearChildEventSeen(this, state);
 			return this.handleEvent(state, event);
-		} else {
-			storage.break = undefined;
-			storage.lastLoopResult = undefined;
-			return res;
 		}
 	}
 
