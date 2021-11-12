@@ -4,7 +4,7 @@ import {Decorator} from '../Decorator';
 import {clearChildEventSeen} from '../Parent';
 
 interface WhileNodeStorage extends NodeStorage {
-	ranAtLeastOnce?: boolean,
+	lastLoopResult?: ResultCode,
 	break?: boolean,
 }
 
@@ -27,11 +27,10 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		const storage: WhileNodeStorage = this.getNodeStorage(state);
 
 		if (storage.running || this.conditional(state, event)) {
-			storage.ranAtLeastOnce = true;
 			return handleEvent(state, event);
 		} else {
 			storage.break = true;
-			return storage.ranAtLeastOnce ? storage.lastResult as ResultCode : this.defaultResult;
+			return storage.lastLoopResult || this.defaultResult;
 		}
 	}
 
@@ -41,12 +40,13 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		const storage: WhileNodeStorage = this.getNodeStorage(state);
 
 		if (res !== rc.RUNNING && !storage.break) {
+			storage.lastLoopResult = res;
 			Action.treePublisher.publishResult(state, event, false);
 			clearChildEventSeen(this, state);
 			return this.handleEvent(state, event);
 		} else {
 			storage.break = undefined;
-			storage.ranAtLeastOnce = undefined;
+			storage.lastLoopResult = undefined;
 			return res;
 		}
 	}
