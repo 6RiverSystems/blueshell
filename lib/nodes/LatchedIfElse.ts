@@ -4,8 +4,8 @@
 import {BlueshellState, ResultCode, rc, BaseNode, Conditional} from '../models';
 import {IfElse} from './IfElse';
 
-const LATCHED_RUNNING_CONSEQUENT = 1;
-const LATCHED_RUNNING_ALTERNATIVE = 2;
+const LATCHED_RUNNING_CONSEQUENT = 0;
+const LATCHED_RUNNING_ALTERNATIVE = 1;
 
 /**
  * Latched If-Else Latched Composite Node.
@@ -37,7 +37,7 @@ export class LatchedIfElse<S extends BlueshellState, E> extends IfElse<S, E> {
 			(state: S, event: E) => {
 				const storage = this.getNodeStorage(state);
 				let res: boolean;
-				if (!storage.running) {
+				if (storage.running === undefined) {
 					// we're not latched, so run the conditional and save the result
 					res = this.conditionalToLatch(state, event);
 					storage.running = res ? LATCHED_RUNNING_CONSEQUENT : LATCHED_RUNNING_ALTERNATIVE;
@@ -52,7 +52,6 @@ export class LatchedIfElse<S extends BlueshellState, E> extends IfElse<S, E> {
 		);
 	}
 
-	// cosmetic only so a behavior tree viewer can render this as a latched node
 	get latched() {
 		return true;
 	}
@@ -60,9 +59,8 @@ export class LatchedIfElse<S extends BlueshellState, E> extends IfElse<S, E> {
 	protected _afterEvent(res: ResultCode, state: S, event: E): ResultCode {
 		res = super._afterEvent(res, state, event);
 
-		const storage = this.getNodeStorage(state);
 		if (res !== rc.RUNNING) {
-			// clear latched status if the node is no longer running after processing the event
+			const storage = this.getNodeStorage(state);
 			storage.running = undefined;
 		}
 
