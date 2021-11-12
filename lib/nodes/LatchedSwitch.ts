@@ -43,7 +43,7 @@ export class LatchedSwitch<S extends BlueshellState, E> extends Parent<S, E> {
 			return entry.child.handleEvent(state, event);
 		}
 
-		const entry = this.entries.find((e) => e.conditional ? e.conditional(state, event) : true);
+		const entry = this.entries.find((e) => e.conditional(state, event));
 
 		if (entry) {
 			const storage = this.getNodeStorage(state);

@@ -40,7 +40,7 @@ export class Switch<S extends BlueshellState, E> extends Parent<S, E> {
 	}
 
 	protected onEvent(state: S, event: E) {
-		const entry = this.entries.find((e) => e.conditional ? e.conditional(state, event) : true);
+		const entry = this.entries.find((e) => e.conditional(state, event));
 
 		if (entry) {
 			return entry.child.handleEvent(state, event);
