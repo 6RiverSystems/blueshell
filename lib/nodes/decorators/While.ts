@@ -4,6 +4,7 @@ import {Decorator} from '../Decorator';
 import {clearChildEventSeen} from '../Parent';
 
 interface WhileNodeStorage extends NodeStorage {
+	ranAtLeastOnce?: boolean,
 	break?: boolean,
 }
 
@@ -26,10 +27,11 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		const storage: WhileNodeStorage = this.getNodeStorage(state);
 
 		if (storage.running || this.conditional(state, event)) {
+			storage.ranAtLeastOnce = true;
 			return handleEvent(state, event);
 		} else {
 			storage.break = true;
-			return this.defaultResult;
+			return storage.ranAtLeastOnce ? storage.lastResult as ResultCode : this.defaultResult;
 		}
 	}
 
@@ -44,6 +46,7 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 			return this.handleEvent(state, event);
 		} else {
 			storage.break = undefined;
+			storage.ranAtLeastOnce = undefined;
 			return res;
 		}
 	}
