@@ -43,7 +43,7 @@ describe('While', function() {
 		const uut = new decorators.While<TestState, number>(
 			'uut',
 			(state: TestState, event: number) => {
-				return state.counter < 3;
+				return state.counter < 1;
 			},
 			testAction,
 		);
@@ -56,8 +56,8 @@ describe('While', function() {
 		const result = uut.handleEvent(state, 0);
 
 		assert.strictEqual(rc.FAILURE, result);
-		assert.strictEqual(state.counter, 3);
-		assert.strictEqual(testAction.eventCount, 3);
+		assert.strictEqual(state.counter, 1);
+		assert.strictEqual(testAction.eventCount, 1);
 	});
 
 	it('returns defaultResult when the condition is already met', function() {
