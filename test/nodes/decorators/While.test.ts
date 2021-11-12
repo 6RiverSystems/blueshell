@@ -37,13 +37,13 @@ interface TestState extends BlueshellState {
 }
 
 describe('While', function() {
-	it('executes the child action until condition is met and returns the final result', function() {
-		const testAction = new TestAction();
+	it('executes the child action until condition is met and returns the child result', function() {
+		const testAction = new TestAction('testAction', [{rc: rc.FAILURE, inc: true}]);
 
 		const uut = new decorators.While<TestState, number>(
 			'uut',
 			(state: TestState, event: number) => {
-				return state.counter < 3;
+				return state.counter < 1;
 			},
 			testAction,
 		);
@@ -55,9 +55,9 @@ describe('While', function() {
 
 		const result = uut.handleEvent(state, 0);
 
-		assert.strictEqual(rc.SUCCESS, result);
-		assert.strictEqual(state.counter, 3);
-		assert.strictEqual(testAction.eventCount, 3);
+		assert.strictEqual(rc.FAILURE, result);
+		assert.strictEqual(state.counter, 1);
+		assert.strictEqual(testAction.eventCount, 1);
 	});
 
 	it('returns defaultResult when the condition is already met', function() {
