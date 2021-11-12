@@ -20,7 +20,7 @@ interface AdaptedSwitchEntry<S extends BlueshellState, E> {
  * @author Timothy Deignan
  */
 export class Switch<S extends BlueshellState, E> extends Parent<S, E> {
-	protected children: BaseNode<S, E>[];
+	private children: BaseNode<S, E>[];
 	protected entries: AdaptedSwitchEntry<S, E>[];
 
 	constructor(
