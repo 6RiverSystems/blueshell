@@ -15,8 +15,8 @@ interface WhileNodeStorage extends NodeStorage {
 export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 	constructor(
 		desc: string,
-		child: BaseNode<S, E>,
 		private conditional: Conditional<S, E>,
+		child: BaseNode<S, E>,
 		private readonly defaultResult: ResultCode = rc.SUCCESS,
 	) {
 		super('While-' + desc, child);

@@ -42,10 +42,10 @@ describe('While', function() {
 
 		const uut = new decorators.While<TestState, number>(
 			'uut',
-			testAction,
 			(state: TestState, event: number) => {
 				return state.counter < 3;
 			},
+			testAction,
 		);
 
 		const state: TestState = {
@@ -65,10 +65,10 @@ describe('While', function() {
 
 		const uut = new decorators.While<TestState, number>(
 			'uut',
-			testAction,
 			(state: TestState, event: number) => {
 				return state.counter < 1;
 			},
+			testAction,
 			rc.FAILURE,
 		);
 
@@ -89,10 +89,10 @@ describe('While', function() {
 
 		const uut = new decorators.While<TestState, number>(
 			'uut',
-			testAction,
 			(state: TestState, event: number) => {
 				return state.counter < 1;
 			},
+			testAction,
 		);
 
 		const state: TestState = {
@@ -118,10 +118,10 @@ describe('While', function() {
 
 		const uut = new decorators.While<TestState, number>(
 			'uut',
-			testAction,
 			(state: TestState, event: number) => {
 				return state.counter < 3;
 			},
+			testAction,
 		);
 
 		const state: TestState = {
