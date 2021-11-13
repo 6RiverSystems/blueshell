@@ -27,6 +27,8 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		const storage: WhileNodeStorage = this.getNodeStorage(state);
 
 		if (storage.running || this.conditional(state, event)) {
+			Action.treePublisher.publishResult(state, event, false);
+			clearChildEventSeen(this, state);
 			return handleEvent(state, event);
 		} else {
 			storage.break = true;
@@ -44,14 +46,18 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 			return res;
 		} else if (storage.break) {
 			// teardown internal state and yield to the behavior tree because the loop has completed
+			if (storage.lastLoopResult) {
+				// Parent will see one additiona event than the child when it evaluates the conditional
+				// and breaks out of the loop. We still want that child's lastResult to be shown in btv
+				// though, so we must pretend that it saw the last event.
+				this.child.getNodeStorage(state).lastEventSeen = storage.lastEventSeen;
+			}
 			storage.break = undefined;
 			storage.lastLoopResult = undefined;
 			return res;
 		} else {
 			// begin another iteration of the loop
 			storage.lastLoopResult = res;
-			Action.treePublisher.publishResult(state, event, false);
-			clearChildEventSeen(this, state);
 			return this.handleEvent(state, event);
 		}
 	}
