@@ -29,10 +29,10 @@ export function setEventCounter<S extends BlueshellState, E>(
  * @param node The node to clear
  * @param state The state holding the node storage
  */
-export function clearChildEventSeen<S extends BlueshellState, E>(node: BaseNode<S, E>, state: S) {
+export function clearEventSeenRecursive<S extends BlueshellState, E>(node: BaseNode<S, E>, state: S) {
 	if (isParentNode(node)) {
 		node.getChildren().forEach((child: any) => {
-			clearChildEventSeen(child, state);
+			clearEventSeenRecursive(child, state);
 		});
 	}
 	const nodeStorage = node.getNodeStorage(state);

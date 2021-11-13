@@ -1,9 +1,10 @@
 import {ResultCode, BlueshellState, BaseNode, rc, Conditional, NodeStorage} from '../../models';
 import {Action} from '../Base';
 import {Decorator} from '../Decorator';
-import {clearChildEventSeen} from '../Parent';
+import {clearEventSeenRecursive} from '../Parent';
 
 interface WhileNodeStorage extends NodeStorage {
+	ranAtLeastOnce?: boolean;
 	lastLoopResult?: ResultCode,
 	break?: boolean,
 }
@@ -27,8 +28,11 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		const storage: WhileNodeStorage = this.getNodeStorage(state);
 
 		if (storage.running || this.conditional(state, event)) {
-			Action.treePublisher.publishResult(state, event, false);
-			clearChildEventSeen(this, state);
+			if (storage.ranAtLeastOnce) {
+				Action.treePublisher.publishResult(state, event, false);
+				clearEventSeenRecursive(this.child, state);
+			}
+			storage.ranAtLeastOnce = true;
 			return handleEvent(state, event);
 		} else {
 			storage.break = true;
@@ -52,8 +56,9 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 				// though, so we must pretend that it saw the last event.
 				this.child.getNodeStorage(state).lastEventSeen = storage.lastEventSeen;
 			}
-			storage.break = undefined;
+			storage.ranAtLeastOnce = undefined;
 			storage.lastLoopResult = undefined;
+			storage.break = undefined;
 			return res;
 		} else {
 			// begin another iteration of the loop
