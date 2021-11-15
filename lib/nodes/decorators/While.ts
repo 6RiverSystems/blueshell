@@ -51,9 +51,10 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		} else if (storage.break) {
 			// teardown internal state and yield to the behavior tree because the loop has completed
 			if (storage.lastLoopResult) {
-				// Parent will see one additiona event than the child when it evaluates the conditional
+				// Parent will see one additional event than the child when it evaluates the conditional
 				// and breaks out of the loop. We still want that child's lastResult to be shown in btv
 				// though, so we must pretend that it saw the last event.
+				// FIXME: this should be recursive for the last child of every descendant
 				this.child.getNodeStorage(state).lastEventSeen = storage.lastEventSeen;
 			}
 			storage.ranAtLeastOnce = undefined;
