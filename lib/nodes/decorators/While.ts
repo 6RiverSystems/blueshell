@@ -1,7 +1,7 @@
 import {ResultCode, BlueshellState, BaseNode, rc, Conditional, NodeStorage} from '../../models';
 import {Action} from '../Base';
 import {Decorator} from '../Decorator';
-import {modifyLastEventSeenRecursive} from '../Parent';
+import {clearEventSeenRecursive} from '../Parent';
 
 interface WhileNodeStorage extends NodeStorage {
 	beganAtLeastOneLoop?: boolean;
@@ -30,7 +30,7 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		if (storage.running || this.conditional(state, event)) {
 			if (storage.beganAtLeastOneLoop) {
 				Action.treePublisher.publishResult(state, event, false);
-				modifyLastEventSeenRecursive(this.child, state, () => ({action: 'clear'}));
+				clearEventSeenRecursive(this.child, state);
 			}
 			storage.beganAtLeastOneLoop = true;
 			return handleEvent(state, event);

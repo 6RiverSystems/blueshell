@@ -2,7 +2,7 @@ import {assert} from 'chai';
 
 import {RobotState, waitAi} from './test/RobotActions';
 import {isParentNode} from '../../lib';
-import {setEventCounter, modifyLastEventSeenRecursive} from '../../lib/nodes/Parent';
+import {setEventCounter, clearEventSeenRecursive} from '../../lib/nodes/Parent';
 
 
 describe('Composite', function() {
@@ -47,7 +47,7 @@ describe('Composite', function() {
 			pStorage.eventCounter = 2;
 			waitAi.getChildren()[0].getNodeStorage(state).lastEventSeen = 1;
 			waitAi.getChildren()[1].getNodeStorage(state).lastEventSeen = 0;
-			modifyLastEventSeenRecursive(waitAi, state, () => ({action: 'clear'}));
+			clearEventSeenRecursive(waitAi, state);
 			assert.isUndefined(waitAi.getNodeStorage(state).lastEventSeen, 'waitAi lastEventSeen not undefined');
 			assert.isUndefined(
 				waitAi.getChildren()[0].getNodeStorage(state).lastEventSeen,

@@ -25,36 +25,18 @@ export function setEventCounter<S extends BlueshellState, E>(
 }
 
 /**
- * Modify the lastEventSeen property recursively from a root node according to the supplied nodeQuery
+ * Clears the last event seen property of node and all of node's children
  * @param node The node to clear
  * @param state The state holding the node storage
- * @param nodeQuery Criteria which dictates how to modify lastEventSeen on each node
  */
-export function modifyLastEventSeenRecursive<S extends BlueshellState, E>(
-	node: BaseNode<S, E>,
-	state: S,
-	nodeQuery: (node: BaseNode<S, E>,) => (
-		{action: 'none'} | {action: 'clear'} | {action: 'set', value: number}
-	),
-): void {
+export function clearEventSeenRecursive<S extends BlueshellState, E>(node: BaseNode<S, E>, state: S) {
 	if (isParentNode(node)) {
-		const children = node.getChildren();
-		children.forEach((child: any, index: number) => {
-			modifyLastEventSeenRecursive(child, state, nodeQuery);
+		node.getChildren().forEach((child: any) => {
+			clearEventSeenRecursive(child, state);
 		});
 	}
-
-	const nodeQueryResult = nodeQuery(node);
-
 	const nodeStorage = node.getNodeStorage(state);
-
-	if (nodeQueryResult.action === 'none') {
-		// do nothing
-	} else if (nodeQueryResult.action === 'clear') {
-		nodeStorage.lastEventSeen = undefined;
-	} else if (nodeQueryResult.action === 'set') {
-		nodeStorage.lastEventSeen = nodeQueryResult.value;
-	}
+	nodeStorage.lastEventSeen = undefined;
 }
 
 /**
