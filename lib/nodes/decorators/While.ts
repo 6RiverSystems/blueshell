@@ -51,9 +51,9 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		} else if (storage.break) {
 			// teardown internal state and yield to the behavior tree because the loop has completed
 
-			// FIXME - it is likely that if While is used as the root node, the that lastEventSeen
-			// property of the decendants may not be correct due to the extra call to _beforeEvent
-			// required for the while loop to break.
+			// FIXME - It is likely that if While is used as the root node, then that lastEventSeen
+			// property of the descendants may not be correct due to the extra call to _beforeEvent
+			// required for the loop to break.
 			storage.beganAtLeastOneLoop = undefined;
 			storage.lastLoopResult = undefined;
 			storage.break = undefined;
