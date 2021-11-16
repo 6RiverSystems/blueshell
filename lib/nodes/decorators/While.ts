@@ -54,7 +54,7 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 
 			// FIXME - it is likely that if While is used as the root node, the that lastEventSeen
 			// property of the decendants may not be correct due to the extra call to _beforeEvent
-			// required for the while loop to break.			
+			// required for the while loop to break.
 			storage.beganAtLeastOneLoop = undefined;
 			storage.lastLoopResult = undefined;
 			storage.break = undefined;
