@@ -1,7 +1,7 @@
 import {ResultCode, BlueshellState, BaseNode, ConditionalWithResult} from '../../models';
 import {Action} from '../Base';
 import {Decorator} from '../Decorator';
-import {clearEventSeenRecursive} from '../Parent';
+import {modifyLastEventSeenRecursive} from '../Parent';
 
 /**
  * Given a conditional, have the child Node repeat handling of the event.
@@ -26,7 +26,7 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 		if (this.conditional(state, event, res)) {
 			// publish the tree before we reset so we can see the result
 			Action.treePublisher.publishResult(state, event, false);
-			clearEventSeenRecursive(this, state);
+			modifyLastEventSeenRecursive(this, state, () => ({action: 'clear'}));
 			return this.handleEvent(state, event);
 		} else {
 			return res;
