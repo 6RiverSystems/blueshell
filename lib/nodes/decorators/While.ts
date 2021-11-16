@@ -30,7 +30,8 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		if (storage.running || this.conditional(state, event)) {
 			if (storage.beganAtLeastOneLoop) {
 				Action.treePublisher.publishResult(state, event, false);
-				clearEventSeenRecursive(this.child, state);
+				// clearEventSeenRecursive(this.child, state);
+				clearEventSeenRecursive(this, state);
 			}
 			storage.beganAtLeastOneLoop = true;
 			return handleEvent(state, event);
