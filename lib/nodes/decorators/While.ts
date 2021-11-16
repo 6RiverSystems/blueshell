@@ -50,21 +50,10 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 			return res;
 		} else if (storage.break) {
 			// teardown internal state and yield to the behavior tree because the loop has completed
-			// if (storage.lastLoopResult) {
-			// 	// While will see one additional event than the descendants when it evaluates the conditional
-			// 	// and breaks out of the loop. We still want all descendants who ran on the last loop iteration
-			// 	// to display their result in btv, so we will advance those that are behind by one event one event
-			// 	// forward to compensate.
-			// 	modifyLastEventSeenRecursive(this.child, state, (node: BaseNode<S, E>) => {
-			// 		const s = node.getNodeStorage(state);
 
-			// 		if (s.lastEventSeen && s.lastEventSeen === storage.lastEventSeen! - 1) {
-			// 			return {action: 'set', value: storage.lastEventSeen!};
-			// 		} else {
-			// 			return {action: 'none'};
-			// 		}
-			// 	});
-			// }
+			// FIXME - it is likely that if While is used as the root node, the that lastEventSeen
+			// property of the decendants may not be correct due to the extra call to _beforeEvent
+			// required for the while loop to break.			
 			storage.ranAtLeastOnce = undefined;
 			storage.lastLoopResult = undefined;
 			storage.break = undefined;
