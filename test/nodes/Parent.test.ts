@@ -40,7 +40,7 @@ describe('Composite', function() {
 			);
 		});
 	});
-	context('#modifyLastEventSeenRecursive', function() {
+	context('#clearChildEventSeen', function() {
 		it('should clear last event seen from the node and all child nodes', function() {
 			const state = new RobotState(false);
 			const pStorage = (<any>waitAi)._privateStorage(state);
