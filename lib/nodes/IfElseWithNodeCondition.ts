@@ -1,5 +1,5 @@
 import {BlueshellState, ResultCode, rc, BaseNode} from '../models';
-import {IfElse} from '.';
+import {IfElse} from './IfElse';
 
 export class IfElseWithNodeCondition<S extends BlueshellState, E> extends IfElse<S, E> {
 	// below variable is used to communicate the result of running the conditionNode between

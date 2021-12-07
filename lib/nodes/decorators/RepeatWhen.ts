@@ -1,15 +1,7 @@
-import {ResultCode, BlueshellState, BaseNode} from '../../models';
-import {Action, Decorator} from '..';
-import {clearChildEventSeen} from '../Parent';
-
-/**
- * Given a state, event, and result code (from a child Node), return a boolean.
- * 1/12/16
- * @author Joshua Chaitin-Pollak
- */
-export interface Conditional<S, E> {
-	(state: S, event: E, res: ResultCode): boolean;
-}
+import {ResultCode, BlueshellState, BaseNode, ConditionalWithResult} from '../../models';
+import {Action} from '../Base';
+import {Decorator} from '../Decorator';
+import {clearEventSeenRecursive} from '../Parent';
 
 /**
  * Given a conditional, have the child Node repeat handling of the event.
@@ -19,7 +11,7 @@ export interface Conditional<S, E> {
 export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 	constructor(desc: string,
 	            child: BaseNode<S, E>,
-	            private conditional: Conditional<S, E>) {
+	            private conditional: ConditionalWithResult<S, E>) {
 		super('RepeatWhen-' + desc, child);
 	}
 
@@ -34,7 +26,7 @@ export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
 		if (this.conditional(state, event, res)) {
 			// publish the tree before we reset so we can see the result
 			Action.treePublisher.publishResult(state, event, false);
-			clearChildEventSeen(this, state);
+			clearEventSeenRecursive(this, state);
 			return this.handleEvent(state, event);
 		} else {
 			return res;

@@ -7,3 +7,6 @@ export {resultCodes as rc};
 
 export {BaseNode} from './BaseNode';
 export {ParentNode, isParentNode} from './ParentNode';
+
+export * from './Conditional';
+export * from './ConditionalWithResult';

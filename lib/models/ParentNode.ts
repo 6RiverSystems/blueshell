@@ -1,4 +1,5 @@
-import {BlueshellState, BaseNode} from '.';
+import {BaseNode} from './BaseNode';
+import {BlueshellState} from './BlueshellState';
 
 /**
  * NOTE: this file is separate from Parent.ts so that Base can reference items from here

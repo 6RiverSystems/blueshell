@@ -1,5 +1,5 @@
 import {BlueshellState, rc} from '../models';
-import {Action} from '.';
+import {Action} from './Base';
 
 export class Predicate<S extends BlueshellState, E> extends Action<S, E> {
 	constructor(name: string, private readonly predicate: (state: S, event: E) => boolean) {

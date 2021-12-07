@@ -104,7 +104,7 @@ export class NodeManager {
 
 	private setBreakpoint(nodeId: string, methodName: string, condition: string, callback: (success: boolean) => void) {
 		if (!this.nodeIdMap.has(nodeId)) {
-			throw new Error(`Attempting to set breakpoint on node ${nodeId}\ 
+			throw new Error(`Attempting to set breakpoint on node ${nodeId}\
 			 in method: ${methodName} but node does not exist.`);
 		} else {
 			const node = this.nodeIdMap.get(nodeId);
@@ -144,7 +144,12 @@ export class NodeManager {
 									callback(false);
 									return;
 								}
-								this.breakpointIdMap.set(key, result.breakpointId);
+								if (!result) {
+									console.error('Got no result in Debugger.setBreakpointOnFunctionCall');
+									callback(false);
+									return;
+								}
+								this.breakpointIdMap.set(key, (result as any).breakpointId);	// HACK: types are not defined
 								callback(true);
 							});
 						});
@@ -239,7 +244,7 @@ export class NodeManager {
 	}
 
 	public async shutdown() {
-		return new Promise((resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 			if (this.server) {
 				this.server.close((err) => {
 					if (err) {
