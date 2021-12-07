@@ -26,7 +26,7 @@ export interface PrivateNodeStorage {
  * @author Joshua Chaitin-Pollak
  */
 export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
-	private nodeId: string = '';
+	private _id: string = '';
 	private _parent: string;
 
 	// Hard to properly type this since the static can't
@@ -38,6 +38,14 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 
 	public static registerTreePublisher<S extends BlueshellState, E>(publisher: TreePublisher<S, E>): void {
 		Base.treePublisher = publisher;
+	}
+
+	public static registerNodeForDebug<S extends BlueshellState, E>(node: BaseNode<S, E>): void {
+		NodeManager.getInstance<S, E>().addNode(node);
+	}
+
+	public static unregisterNodeForDebug<S extends BlueshellState, E>(node: BaseNode<S, E>): void {
+		NodeManager.getInstance<S, E>().removeNode(node);
 	}
 
 	/**
@@ -152,23 +160,14 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 	}
 
 	public set parent(path: string) {
-		const existingNode = NodeManager.getInstance().getNode(this.path);
-		if (existingNode) {
-			NodeManager.getInstance().removeNode(this.path);
-		}
-
 		this._parent = path;
-
-		if (process.env.NODE_ENV !== 'test') {
-			NodeManager.getInstance().addNode(this.path, this);
-		}
 	}
 
 	public get id(): string {
-		if (!this.nodeId) {
-			this.nodeId = `n${v4().replace(/\-/g, '')}`;
+		if (!this._id) {
+			this._id = `n${v4().replace(/\-/g, '')}`;
 		}
-		return this.nodeId;
+		return this._id;
 	}
 
 	public get path() {

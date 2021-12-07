@@ -55,14 +55,6 @@ function getColor<S extends BlueshellState, E>(node: BaseNode<S, E>, state?: S):
 	return '';
 }
 
-// function getNodeId<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
-// 	const nodeUnsafe: any = node;
-// 	if (!nodeUnsafe.__nodeId) {
-// 		nodeUnsafe.__nodeId = `n${v4().replace(/\-/g, '')}`;
-// 	}
-// 	return nodeUnsafe.__nodeId;
-// }
-
 function getPath<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
 	return `path="${node.path}"`;
 }
@@ -98,7 +90,7 @@ export function serializeDotTree<S extends BlueshellState, E>(root: BaseNode<S, 
 	while (nodesToVisit.length) {
 		const currentNode = nodesToVisit.pop();
 
-		const nodeId = currentNode!.id; // getNodeId(currentNode!);
+		const nodeId = currentNode!.id;
 
 		resultingString += `\t${nodeId} `;
 		resultingString += `[${getLabel(currentNode!)} ${getShape(currentNode!)} ${getTooltip(currentNode!)}`;
@@ -106,7 +98,6 @@ export function serializeDotTree<S extends BlueshellState, E>(root: BaseNode<S, 
 
 		if (!!currentNode && isParentNode(currentNode)) {
 			resultingString = currentNode.getChildren().reduce(
-				// (acc: string, child: BaseNode<S, E>) => (`${acc}\t${nodeId}->${getNodeId(child)};\n`),
 				(acc: string, child: BaseNode<S, E>) => (`${acc}\t${nodeId}->${child!.id};\n`),
 				resultingString);
 			for (const child of [...currentNode.getChildren()].reverse()) {

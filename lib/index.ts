@@ -1,6 +1,6 @@
 import {NodeManager} from './utils';
 
-NodeManager.getInstance();
+// NodeManager.getInstance();
 export * from './models';
 export * from './nodes';
 export * from './utils';

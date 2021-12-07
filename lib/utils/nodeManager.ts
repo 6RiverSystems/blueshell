@@ -1,18 +1,17 @@
-import {Base} from '../nodes/Base';
-import {BlueshellState} from '../models';
+import {BaseNode, BlueshellState, isParentNode} from '../models';
 import {Server} from 'ws';
 import {Session, Debugger} from 'inspector';
 
-export class NodeManager {
-	private nodePathMap: Map<string, Base<BlueshellState, any>> = new Map();
-	private nodeIdMap: Map<string, Base<BlueshellState, any>> = new Map();
+export class NodeManager<S extends BlueshellState, E> {
+	private nodePathMap: Map<string, BaseNode<S, E>> = new Map();
+	private nodeIdMap: Map<string, BaseNode<S, E>> = new Map();
 
 	private breakpointIdMap: Map<string, Debugger.BreakpointId> = new Map();
 	private server: Server|undefined;
 
 	private session = new Session();
 
-	private static instance: NodeManager|null = null;
+	private static instance: NodeManager<BlueshellState, any>|null = null;
 	private constructor() {
 		(<any>global).breakpointMethods = new Map<string, Function>();
 
@@ -209,7 +208,7 @@ export class NodeManager {
 		}
 	}
 
-	private getMethodType(node: Base<BlueshellState, any>, methodName: string) {
+	private getMethodType(node: BaseNode<S, E>, methodName: string) {
 		try {
 			return typeof (<any>node)[methodName] === 'function';
 		} catch (ex) {
@@ -219,27 +218,39 @@ export class NodeManager {
 		}
 	}
 
-	public static getInstance(): NodeManager {
+	public static getInstance<S extends BlueshellState, E>(): NodeManager<S, E> {
 		if (!this.instance) {
 			this.instance = new NodeManager();
 		}
 		return this.instance;
 	}
 
-	public addNode(path: string, node: Base<BlueshellState, any>) {
+	public addNode(node: BaseNode<S, E>) {
+		const path = node.path;
 		if (this.nodePathMap.has(path)) {
 			throw new Error(`Key ${path} already exists! Cannot add new node.`);
 		} else {
 			this.nodePathMap.set(path, node);
 			this.nodeIdMap.set(node.id, node);
 		}
+		if (isParentNode(node)) {
+			node.getChildren().forEach((child) => {
+				this.addNode(child);
+			});
+		}
 	}
 
-	public removeNode(path: string) {
-		this.nodePathMap.delete(path);
+	public removeNode(node: BaseNode<S, E>) {
+		if (isParentNode(node)) {
+			node.getChildren().forEach((child) => {
+				this.removeNode(child);
+			});
+		}
+		this.nodePathMap.delete(node.path);
+		this.nodeIdMap.delete(node.id);
 	}
 
-	public getNode(path: string): Base<BlueshellState, any>|undefined {
+	public getNode(path: string): BaseNode<S, E>|undefined {
 		return this.nodePathMap.get(path);
 	}
 

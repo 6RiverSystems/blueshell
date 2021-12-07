@@ -64,13 +64,9 @@ export abstract class Parent<S extends BlueshellState, E> extends Action<S, E> i
 	 * @param children list of children to init (can't call getChildren() yet because this is called from the constructor)
 	 */
 	public initChildren(children: BaseNode<S, E>[]) {
-		// for (const child of children) {
-		// 	child.parent = this.name;
-		// }
-
-		children.forEach((child, index) => {
-			child.parent = `${this.path}_${index}`;
-		});
+		for (const child of children) {
+			child.parent = this.name;
+		}
 	}
 
 	public abstract getChildren(): BaseNode<S, E>[];
@@ -82,12 +78,8 @@ export abstract class Parent<S extends BlueshellState, E> extends Action<S, E> i
 	public set parent(parent: string) {
 		super.parent = parent;
 
-		this.getChildren().forEach((child, index) => {
-			child.parent = `${this.path}_${index}`;
-		});
-
-		// for (const child of this.getChildren()) {
-		// 	child.parent = this.path;
-		// }
+		for (const child of this.getChildren()) {
+			child.parent = this.path;
+		}
 	}
 }
