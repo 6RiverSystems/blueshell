@@ -108,17 +108,21 @@ export class NodeManager<S extends BlueshellState, E> {
 	private removeBreakpoint(nodePath: string, methodName: string) {
 		const key = `${nodePath}::${methodName}`;
 		console.log(`NodeManager - remove breakpoint for: ${key}`);
-		const node = this.nodePathMap.get(nodePath);
-		const breakpointId = this.breakpointInfoMap.get(key);
+		const breakpointInfo = this.breakpointInfoMap.get(key);
 
-		if (breakpointId) {
-			console.log(`NodeManager - remove breakpoint - found breakpoint id for: ${key}`);
+		if (breakpointInfo) {
+			console.log(`NodeManager - remove breakpoint - found breakpoint id: ${breakpointInfo.breakpointId} for: ${key}`);
 			this.session.post('Debugger.removeBreakpoint', {
-				breakpointId,
-			}, () => {
-				console.log(`NodeManager - remove breakpoint - removed breakpoint successfully for: ${key}`);
-				this.breakpointInfoMap.delete(key);
-				(<any>global).breakpointMethods.delete(key);
+				breakpointId: breakpointInfo.breakpointId,
+			}, (err: Error|null) => {
+				if(err) {
+					console.error(`NodeManager - remove breakpoint - error removing breakpoint for: ${key}`, err);
+				}
+				else {
+					console.log(`NodeManager - remove breakpoint - removed breakpoint successfully for: ${key}`);
+					this.breakpointInfoMap.delete(key);
+					(<any>global).breakpointMethods.delete(key);
+				}
 			});
 		}
 		else {
