@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import {BaseNode, BlueshellState, isParentNode} from '../models';
 import {Server} from 'ws';
 import {Session, Debugger} from 'inspector';
@@ -107,6 +109,7 @@ export class NodeManager<S extends BlueshellState, E> {
 
 	private removeBreakpoint(nodePath: string, methodName: string) {
 		const key = `${nodePath}::${methodName}`;
+
 		console.log(`NodeManager - remove breakpoint for: ${key}`);
 		const breakpointInfo = this.breakpointInfoMap.get(key);
 
@@ -115,17 +118,15 @@ export class NodeManager<S extends BlueshellState, E> {
 			this.session.post('Debugger.removeBreakpoint', {
 				breakpointId: breakpointInfo.breakpointId,
 			}, (err: Error|null) => {
-				if(err) {
+				if (err) {
 					console.error(`NodeManager - remove breakpoint - error removing breakpoint for: ${key}`, err);
-				}
-				else {
+				} else {
 					console.log(`NodeManager - remove breakpoint - removed breakpoint successfully for: ${key}`);
 					this.breakpointInfoMap.delete(key);
 					(<any>global).breakpointMethods.delete(key);
 				}
 			});
-		}
-		else {
+		} else {
 			console.log(`NodeManager - remove breakpoint - did not find breakpoint id for: ${key}`);
 			(<any>global).breakpointMethods.delete(key);
 		}
@@ -133,7 +134,6 @@ export class NodeManager<S extends BlueshellState, E> {
 
 	private setBreakpoint(nodePath: string, methodName: string, condition: string, callback: (success: boolean) => void) {
 		const key = `${nodePath}::${methodName}`;
-
 		console.log(`NodeManager - set breakpoint: ${key}`);
 		if (!this.nodePathMap.has(nodePath)) {
 			console.error(`NodeManager - set breakpoint - Attempting to set breakpoint for ${key}\
@@ -148,7 +148,6 @@ export class NodeManager<S extends BlueshellState, E> {
 				this.session.post('Runtime.evaluate', {expression: `global.breakpointMethods.get('${key}')`},
 				 (err, {result}) => {
 						if (err) {
-						/* eslint no-console: ["error", { allow: ["error"] }] */
 							console.error(`NodeManager - set breakpoint - Error in Runtime.evaluate for: ${key}`, err);
 							callback(false);
 							return;
@@ -158,7 +157,6 @@ export class NodeManager<S extends BlueshellState, E> {
 
 						this.session.post('Runtime.getProperties', {objectId}, (err, result) => {
 							if (err) {
-							/* eslint no-console: ["error", { allow: ["error"] }] */
 								console.error(`NodeManager - set breakpoint - Error in Runtime.getProperties for ${key}`, err);
 								callback(false);
 								return;
@@ -172,13 +170,14 @@ export class NodeManager<S extends BlueshellState, E> {
 							},
 							(err, result) => {
 								if (err) {
-								/* eslint no-console: ["error", { allow: ["error"] }] */
-									console.error(`NodeManager - set breakpoint - Error in Debugger.setBreakpointOnFunctionCall for: ${key}`, err);
+									console.error(`NodeManager - set breakpoint - Error in \
+										Debugger.setBreakpointOnFunctionCall for: ${key}`, err);
 									callback(false);
 									return;
 								}
 								if (!result) {
-									console.error(`NodeManager - set breakpoint - Got no result in Debugger.setBreakpointOnFunctionCall for: ${key}`);
+									console.error(`NodeManager - set breakpoint - Got no result in \
+										Debugger.setBreakpointOnFunctionCall for: ${key}`);
 									callback(false);
 									return;
 								}
@@ -192,8 +191,7 @@ export class NodeManager<S extends BlueshellState, E> {
 							});
 						});
 					});
-			}
-			else {
+			} else {
 				console.error(`NodeManager - set breakpoint - breakpoint already exists: ${key}`);
 			}
 		}
