@@ -23,12 +23,12 @@ export class NodeManager<S extends BlueshellState, E> {
 
 		this.session.connect();
 	}
-	
+
 	public runServer() {
 		this.session.post('Debugger.enable', () => {
 		});
 
-		
+
 		if (process.env.NO_SERVER !== 'true') {
 			this.server = new Server({
 				host: 'localhost',
@@ -172,7 +172,7 @@ export class NodeManager<S extends BlueshellState, E> {
 									breakpointId: (result as any).breakpointId, // HACK: types are not defined
 									methodName,
 									nodePath
-								});	
+								});
 								callback(true);
 							});
 						});
