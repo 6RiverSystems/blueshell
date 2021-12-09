@@ -82,7 +82,7 @@ export class NodeManager<S extends BlueshellState, E> {
 							const node = this.nodePathMap.get(nodePath);
 							clientSocket.send(JSON.stringify({
 								request: 'placeBreakpoint',
-								nodePath: node!.path,
+								nodePath: node?.path,
 								methodName,
 								success,
 							}));
