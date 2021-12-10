@@ -234,7 +234,7 @@ export class NodeManager<S extends BlueshellState, E> {
 				// climb up the inheritance tree
 			} while (node = Object.getPrototypeOf(node));
 
-			return {listOfMethods: Array.from(setOfMethods), nodeName, nodeParent};
+			return {listOfMethods: Array.from(setOfMethods).sort(), nodeName, nodeParent};
 		}
 	}
 
