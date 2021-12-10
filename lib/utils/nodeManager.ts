@@ -8,6 +8,14 @@ interface BreakpointInfo {
 	breakpointId: Debugger.BreakpointId;
 	methodName: string;
 	nodePath: string;
+	nodeName?: string;
+	nodeParent?: string;
+}
+
+interface NodeMethodInfo {
+	listOfMethods: string[],
+	nodeName: string,
+	nodeParent: string,
 }
 
 export class NodeManager<S extends BlueshellState, E> {
@@ -56,6 +64,8 @@ export class NodeManager<S extends BlueshellState, E> {
 						request: 'placeBreakpoint',
 						nodePath: breakpointInfo.nodePath,
 						methodName: breakpointInfo.methodName,
+						nodeName: breakpointInfo.nodeName,
+						nodeParent: breakpointInfo.nodeParent,
 						success: true,
 					}));
 				});
@@ -66,12 +76,12 @@ export class NodeManager<S extends BlueshellState, E> {
 					const nodePath = dataObj.nodePath;
 					switch (request) {
 					case 'getMethodsForNode': {
-						const listOfMethods: string[] = this.getMethodsForNode(nodePath);
+						const methodInfo = this.getMethodsForNode(nodePath);
 
 						clientSocket.send(JSON.stringify({
 							request: 'getMethodsForNode',
 							nodePath,
-							listOfMethods,
+							...methodInfo,
 						}));
 
 						break;
@@ -82,10 +92,14 @@ export class NodeManager<S extends BlueshellState, E> {
 
 						this.setBreakpoint(nodePath, methodName, conditional, (success) => {
 							const node = this.nodePathMap.get(nodePath);
+							const nodeName = node?.name;
+							const nodeParent = node?.parent;
 							clientSocket.send(JSON.stringify({
 								request: 'placeBreakpoint',
 								nodePath: node?.path,
 								methodName,
+								nodeName,
+								nodeParent,
 								success,
 							}));
 						});
@@ -185,7 +199,9 @@ export class NodeManager<S extends BlueshellState, E> {
 								this.breakpointInfoMap.set(key, {
 									breakpointId: (result as any).breakpointId, // HACK: types are not defined
 									methodName,
-									nodePath
+									nodePath,
+									nodeName: node?.name,
+									nodeParent: node?.parent,
 								});
 								callback(true);
 							});
@@ -197,11 +213,13 @@ export class NodeManager<S extends BlueshellState, E> {
 		}
 	}
 
-	private getMethodsForNode(nodePath: string): string[] {
+	private getMethodsForNode(nodePath: string): NodeMethodInfo {
 		if (!this.nodePathMap.has(nodePath)) {
 			throw new Error(`Requesting methods for node path: ${nodePath} which does not exist`);
 		} else {
-			let node = this.nodePathMap.get(nodePath);
+			let node = this.nodePathMap.get(nodePath)!;
+			const nodeName = node.name;
+			const nodeParent = node.parent;
 			const setOfMethods: Set<string> = new Set();
 			do {
 				const methods = Object.getOwnPropertyNames(node);
@@ -216,7 +234,7 @@ export class NodeManager<S extends BlueshellState, E> {
 				// climb up the inheritance tree
 			} while (node = Object.getPrototypeOf(node));
 
-			return Array.from(setOfMethods);
+			return {listOfMethods: Array.from(setOfMethods), nodeName, nodeParent};
 		}
 	}
 

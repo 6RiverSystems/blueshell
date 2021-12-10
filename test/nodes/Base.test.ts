@@ -115,6 +115,7 @@ describe('Base', function() {
 			assert.equal(root.getLastEventSeen(state), 2);
 			assert.equal(child.getTreeEventCounter(state), 2);
 			assert.equal(child.getLastEventSeen(state), 2, 'last event seen should be updated');
+			assert.equal(child.parent, root.name);
 		});
 	});
 

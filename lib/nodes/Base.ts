@@ -163,6 +163,10 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 		this._parent = path;
 	}
 
+	public get parent() {
+		return this._parent;
+	}
+
 	public get id(): string {
 		if (!this._id) {
 			this._id = `n${v4().replace(/\-/g, '')}`;
