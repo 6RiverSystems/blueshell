@@ -54,7 +54,7 @@ export class NodeManager<S extends BlueshellState, E> {
 		if (process.env.NO_SERVER !== 'true') {
 			this.server = new Server({
 				host: 'localhost',
-				port: 10001,
+				port: 8990,
 			});
 
 			// should be empty but clear everything for good measure
