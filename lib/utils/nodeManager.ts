@@ -79,6 +79,7 @@ export class NodeManager<S extends BlueshellState, E> {
 							methodName: breakpointInfo.methodInfo.methodName,
 							nodeName: breakpoint.nodeName,
 							nodeParent: breakpoint.nodeParent,
+							condition: breakpoint.condition,
 							success: true,
 						}));
 					});
@@ -192,7 +193,28 @@ export class NodeManager<S extends BlueshellState, E> {
 		breakpointInfo: BreakpointInfo,
 		callback: (success: boolean) => void
 	) {
-		(<any>global).breakpointMethods.set(key, (<any>node)[breakpointInfo.methodInfo.methodName].bind(node));
+		const nodeName = node.name;
+		// find the class in the inheritance chain which contains the method or property
+		while(	node && 
+				!Object.getOwnPropertyDescriptor(node, breakpointInfo.methodInfo.methodName)) {
+			node = Object.getPrototypeOf(node);
+		}
+		// if we climbed to the top of the inheritance chain and still can't find the method or property, return failure
+		if(!node || !Object.getOwnPropertyDescriptor(node, breakpointInfo.methodInfo.methodName)) {
+			console.error(`Could not find method ${breakpointInfo.methodInfo.methodName} in inheritance chain for ${nodeName}`);
+			callback(false);
+			return;
+		}
+
+		if(	Object.getOwnPropertyDescriptor(node, breakpointInfo.methodInfo.methodName)!.get) {
+			(<any>global).breakpointMethods.set(key, Object.getOwnPropertyDescriptor(node, breakpointInfo.methodInfo.methodName)?.get?.bind(node));
+		} else if(Object.getOwnPropertyDescriptor(node, breakpointInfo.methodInfo.methodName)!.set) {
+			(<any>global).breakpointMethods.set(key, Object.getOwnPropertyDescriptor(node, breakpointInfo.methodInfo.methodName)?.set?.bind(node));
+		}
+		else {
+			(<any>global).breakpointMethods.set(key, (<any>node)[breakpointInfo.methodInfo.methodName].bind(node));
+		}
+		
 		this.session.post('Runtime.evaluate', {expression: `global.breakpointMethods.get('${key}')`},
 			(err, {result}) => {
 			 if (err) {
@@ -334,7 +356,16 @@ export class NodeManager<S extends BlueshellState, E> {
 			const setOfMethods: Set<string> = new Set();
 			const methodsData: NodeMethodInfo[] = [];
 			do {
-				const methods = Object.getOwnPropertyNames(node).filter((prop) => typeof (node as any)[prop] === 'function');
+				const methods = Object.getOwnPropertyNames(node).filter((prop) => {
+					// if the prop name is a getter or setter, if we simply just check that it's a function
+					// that will end up invoking the getter or setter, which could lead to a crash
+					if(	Object.getOwnPropertyDescriptor(node, prop) && 
+						(Object.getOwnPropertyDescriptor(node, prop)?.get || 
+					   	Object.getOwnPropertyDescriptor(node, prop)?.set)) {
+						return true;
+					}
+					return typeof (node as any)[prop] === 'function';
+				});
 				const className = node.constructor.name;
 				methods.forEach((methodName) => {
 					// de-duplicate any inherited methods
@@ -362,16 +393,6 @@ export class NodeManager<S extends BlueshellState, E> {
 			};
 		}
 	}
-
-	// private getMethodType(node: BaseNode<S, E>, methodName: string) {
-	// 	try {
-	// 		return typeof (<any>node)[methodName] === 'function';
-	// 	} catch (ex) {
-	// 		// if we catch an error, it's likely because we called a property and it threw
-	// 		// in which case it's a method and we should return false to reflect that
-	// 		return false;
-	// 	}
-	// }
 
 	public static getInstance<S extends BlueshellState, E>(): NodeManager<S, E> {
 		if (!this.instance) {
