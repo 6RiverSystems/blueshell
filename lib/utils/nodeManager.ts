@@ -4,25 +4,37 @@ import {BaseNode, BlueshellState, isParentNode} from '../models';
 import {Server} from 'ws';
 import {Session, Debugger} from 'inspector';
 
-interface BreakpointInfo {
-	breakpointId: Debugger.BreakpointId;
-	methodName: string;
+type NodePathKey = string;
+type ClassMethodNameKey = string;
+
+interface BreakpointData {
 	nodePath: string;
+	condition?: string;
 	nodeName?: string;
 	nodeParent?: string;
 }
+interface BreakpointInfo {
+	methodInfo: NodeMethodInfo,
+	breakpointId?: Debugger.BreakpointId;
+	breakpoints: Map<NodePathKey, BreakpointData>,
+}
 
 interface NodeMethodInfo {
-	listOfMethods: string[],
-	nodeName: string,
-	nodeParent: string,
+	methodName: string;
+	className: string;
+}
+
+interface NodeMethodsInfo {
+	listOfMethods: NodeMethodInfo[];
+	nodeName: string;
+	nodeParent: string;
 }
 
 export class NodeManager<S extends BlueshellState, E> {
-	private nodePathMap: Map<string, BaseNode<S, E>> = new Map();
+	private nodePathMap: Map<NodePathKey, BaseNode<S, E>> = new Map();
 	// private nodeIdMap: Map<string, BaseNode<S, E>> = new Map();
 
-	private breakpointInfoMap: Map<string, BreakpointInfo> = new Map();
+	private breakpointInfoMap: Map<ClassMethodNameKey, BreakpointInfo> = new Map();
 	private server: Server|undefined;
 
 	private session = new Session();
@@ -60,14 +72,16 @@ export class NodeManager<S extends BlueshellState, E> {
 				// send the current cached breakpoints to the client
 
 				this.breakpointInfoMap.forEach((breakpointInfo) => {
-					clientSocket.send(JSON.stringify({
-						request: 'placeBreakpoint',
-						nodePath: breakpointInfo.nodePath,
-						methodName: breakpointInfo.methodName,
-						nodeName: breakpointInfo.nodeName,
-						nodeParent: breakpointInfo.nodeParent,
-						success: true,
-					}));
+					breakpointInfo.breakpoints.forEach((breakpoint) => {
+						clientSocket.send(JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: breakpoint.nodePath,
+							methodName: breakpointInfo.methodInfo.methodName,
+							nodeName: breakpoint.nodeName,
+							nodeParent: breakpoint.nodeParent,
+							success: true,
+						}));
+					});
 				});
 
 				clientSocket.on('message', (data: string) => {
@@ -87,10 +101,10 @@ export class NodeManager<S extends BlueshellState, E> {
 						break;
 					}
 					case 'placeBreakpoint': {
-						const conditional = dataObj.conditional;
+						const condition = dataObj.condition;
 						const methodName = dataObj.methodName;
 
-						this.setBreakpoint(nodePath, methodName, conditional, (success) => {
+						this.setBreakpoint(nodePath, methodName, condition, (success) => {
 							const node = this.nodePathMap.get(nodePath);
 							const nodeName = node?.name;
 							const nodeParent = node?.parent;
@@ -100,6 +114,7 @@ export class NodeManager<S extends BlueshellState, E> {
 								methodName,
 								nodeName,
 								nodeParent,
+								condition,
 								success,
 							}));
 						});
@@ -122,98 +137,194 @@ export class NodeManager<S extends BlueshellState, E> {
 	}
 
 	private removeBreakpoint(nodePath: string, methodName: string) {
-		const key = `${nodePath}::${methodName}`;
+		// const key = `${nodePath}::${methodInfo.methodName}`;
+		const node = this.nodePathMap.get(nodePath);
+		if (!node) {
+			console.error(`NodeManager - remove breakpoint - node does not exist ${nodePath}`);
+			return;
+		}
+		const methodInfo = this.getNodeMethodInfo(node, methodName);
+		if (!methodInfo) {
+			console.error(`NodeManager - remove breakpoint - method ${methodName} does not exist on node ${nodePath}`);
+			return;
+		}
+		const key = `${methodInfo.className}::${methodInfo.methodName}`;
+		const keyAndPath = `${key}/${nodePath}`;
 
-		console.log(`NodeManager - remove breakpoint for: ${key}`);
+		console.log(`NodeManager - remove breakpoint for: ${keyAndPath}`);
 		const breakpointInfo = this.breakpointInfoMap.get(key);
 
 		if (breakpointInfo) {
-			console.log(`NodeManager - remove breakpoint - found breakpoint id: ${breakpointInfo.breakpointId} for: ${key}`);
-			this.session.post('Debugger.removeBreakpoint', {
-				breakpointId: breakpointInfo.breakpointId,
-			}, (err: Error|null) => {
-				if (err) {
-					console.error(`NodeManager - remove breakpoint - error removing breakpoint for: ${key}`, err);
-				} else {
-					console.log(`NodeManager - remove breakpoint - removed breakpoint successfully for: ${key}`);
-					this.breakpointInfoMap.delete(key);
-					(<any>global).breakpointMethods.delete(key);
-				}
-			});
+			const breakpointData = breakpointInfo.breakpoints.get(nodePath);
+			if (breakpointData) {
+				console.log(
+					`NodeManager - remove breakpoint - found breakpoint id: ${breakpointInfo.breakpointId} for: ${keyAndPath}`);
+				this.session.post('Debugger.removeBreakpoint', {
+					breakpointId: breakpointInfo.breakpointId,
+				}, (err: Error|null) => {
+					if (err) {
+						console.error(`NodeManager - remove breakpoint - error removing breakpoint for: ${keyAndPath}`, err);
+					} else {
+						console.log(`NodeManager - remove breakpoint - removed breakpoint successfully for: ${keyAndPath}`);
+						breakpointInfo.breakpoints.delete(nodePath);
+						if (breakpointInfo.breakpoints.size === 0) {
+							// this was the only breakpoint set for the key
+							this.breakpointInfoMap.delete(key);
+							(<any>global).breakpointMethods.delete(key);
+						} else {
+							this._setBreakpoint(
+								key, this.nodePathMap.get([...breakpointInfo.breakpoints][0][1].nodePath)!, breakpointInfo, () => {});
+						}
+					}
+				});
+			} else {
+				console.log(`NodeManager - remove breakpoint - did not find breakpoint for path: ${keyAndPath}`);
+			}
 		} else {
-			console.log(`NodeManager - remove breakpoint - did not find breakpoint id for: ${key}`);
+			console.log(`NodeManager - remove breakpoint - did not find breakpoint id at all: ${keyAndPath}`);
 			(<any>global).breakpointMethods.delete(key);
 		}
 	}
 
-	private setBreakpoint(nodePath: string, methodName: string, condition: string, callback: (success: boolean) => void) {
-		const key = `${nodePath}::${methodName}`;
-		console.log(`NodeManager - set breakpoint: ${key}`);
+	private _setBreakpoint(
+		key: string,
+		node: BaseNode<S, E>,
+		breakpointInfo: BreakpointInfo,
+		callback: (success: boolean) => void
+	) {
+		(<any>global).breakpointMethods.set(key, (<any>node)[breakpointInfo.methodInfo.methodName].bind(node));
+		this.session.post('Runtime.evaluate', {expression: `global.breakpointMethods.get('${key}')`},
+			(err, {result}) => {
+			 if (err) {
+				 console.error(`NodeManager - set breakpoint - Error in Runtime.evaluate for: ${key}`, err);
+				 callback(false);
+				 return;
+			 }
+			 console.log(`NodeManager - set breakpoint - got result from Runtime.evaluate for: ${key}`);
+			 const objectId = result.objectId;
+
+			 this.session.post('Runtime.getProperties', {objectId}, (err, result) => {
+				 if (err) {
+					 console.error(`NodeManager - set breakpoint - Error in Runtime.getProperties for ${key}`, err);
+					 callback(false);
+					 return;
+				 }
+				 console.log(`NodeManager - set breakpoint - got result from Runtime.getProperties for: ${key}`);
+				 const funcObjId = (<any>result).internalProperties[0].value.objectId;
+
+				 let condition = '';
+				 let first = true;
+				 [...breakpointInfo.breakpoints].forEach(([key, breakpointData]) => {
+					 if (first) {
+							first = false;
+					 } else {
+						 condition = condition + ' || ';
+					 }
+					 condition = condition +
+						`(this.path === '${breakpointData.nodePath}'` +
+						 (!!breakpointData.condition ? ` && ${breakpointData.condition}` : '')
+						 + ')';
+				 });
+				 this.session.post('Debugger.setBreakpointOnFunctionCall', {
+					 objectId: funcObjId,
+					 condition,
+				 },
+				 (err, result) => {
+					 if (err) {
+						 console.error(`NodeManager - set breakpoint - Error in \
+							 Debugger.setBreakpointOnFunctionCall for: ${key}`, err);
+						 callback(false);
+						 return;
+					 }
+					 if (!result) {
+						 console.error(`NodeManager - set breakpoint - Got no result in \
+							 Debugger.setBreakpointOnFunctionCall for: ${key}`);
+						 callback(false);
+						 return;
+					 }
+					 console.log(`NodeManager - set breakpoint - breakpoint set successfully: ${key}`);
+					 breakpointInfo.breakpointId = (result as any).breakpointId; // HACK: types are not defined
+					 callback(true);
+				 });
+			 });
+		 });
+	}
+
+	private getNodeMethodInfo(node: BaseNode<S, E>, methodName: string) {
+		return this.getMethodsForNode(node.path).listOfMethods.find((method) => method.methodName === methodName);
+	}
+
+	private setBreakpoint(
+		nodePath: string,
+		methodName: string,
+		breakpointCondition: string,
+		callback: (success: boolean) => void
+	) {
+		const debugString = `${nodePath}::${methodName}`;
 		if (!this.nodePathMap.has(nodePath)) {
-			console.error(`NodeManager - set breakpoint - Attempting to set breakpoint for ${key}\
+			console.error(`NodeManager - set breakpoint - Attempting to set breakpoint for ${debugString}\
 				but node does not exist.`);
 			callback(false);
 		} else {
-			const node = this.nodePathMap.get(nodePath);
-
-			if (!(<any>global).breakpointMethods.get(key)) {
-				(<any>global).breakpointMethods.set(key, (<any>node)[methodName].bind(node));
-
-				this.session.post('Runtime.evaluate', {expression: `global.breakpointMethods.get('${key}')`},
-				 (err, {result}) => {
-						if (err) {
-							console.error(`NodeManager - set breakpoint - Error in Runtime.evaluate for: ${key}`, err);
-							callback(false);
-							return;
-						}
-						console.log(`NodeManager - set breakpoint - got result from Runtime.evaluate for: ${key}`);
-						const objectId = result.objectId;
-
-						this.session.post('Runtime.getProperties', {objectId}, (err, result) => {
-							if (err) {
-								console.error(`NodeManager - set breakpoint - Error in Runtime.getProperties for ${key}`, err);
-								callback(false);
-								return;
-							}
-							console.log(`NodeManager - set breakpoint - got result from Runtime.getProperties for: ${key}`);
-							const funcObjId = (<any>result).internalProperties[0].value.objectId;
-
-							this.session.post('Debugger.setBreakpointOnFunctionCall', {
-								objectId: funcObjId,
-								condition: `this.path === '${node!.path}' && ${condition}`,
-							},
-							(err, result) => {
-								if (err) {
-									console.error(`NodeManager - set breakpoint - Error in \
-										Debugger.setBreakpointOnFunctionCall for: ${key}`, err);
-									callback(false);
-									return;
-								}
-								if (!result) {
-									console.error(`NodeManager - set breakpoint - Got no result in \
-										Debugger.setBreakpointOnFunctionCall for: ${key}`);
-									callback(false);
-									return;
-								}
-								console.log(`NodeManager - set breakpoint - breakpoint set successfully: ${key}`);
-								this.breakpointInfoMap.set(key, {
-									breakpointId: (result as any).breakpointId, // HACK: types are not defined
-									methodName,
-									nodePath,
-									nodeName: node?.name,
-									nodeParent: node?.parent,
-								});
-								callback(true);
-							});
-						});
-					});
+			const node = this.nodePathMap.get(nodePath)!;
+			const className = this.getNodeMethodInfo(node, methodName)?.className;
+			if (!className) {
+				console.error(`NodeManager - set breakpoint - Attempting to set breakpoint for ${debugString}\
+					but method does not exist`);
 			} else {
-				console.error(`NodeManager - set breakpoint - breakpoint already exists: ${key}`);
+				const key = `${className}::${methodName}`;
+				console.log(`NodeManager - set breakpoint: ${key}`);
+
+
+				let breakpointInfo = this.breakpointInfoMap.get(key);
+				let first = false;
+				if (!breakpointInfo) {
+					breakpointInfo = {
+						methodInfo: {className, methodName},
+						breakpoints: new Map(),
+					};
+					first = true;
+				}
+				const bp = breakpointInfo.breakpoints.get(nodePath);
+				if (!bp || bp.condition !== breakpointCondition) {
+					breakpointInfo!.breakpoints.set(nodePath, {
+						nodePath,
+						condition: breakpointCondition,
+						nodeName: node.name,
+						nodeParent: node.parent,
+					});
+					if (!first) {
+						// breakpoint exists for this class/method, need to remove it and then re-create it
+						this.session.post('Debugger.removeBreakpoint', {
+							breakpointId: breakpointInfo.breakpointId,
+						}, (err: Error|null) => {
+							if (err) {
+								console.error(`NodeManager - remove breakpoint - error removing breakpoint for: ${key}`, err);
+								callback(false);
+							} else {
+								console.log(`NodeManager - remove breakpoint - removed breakpoint successfully for: ${key}`);
+								this._setBreakpoint(key, node, breakpointInfo!, (success) => {
+									callback(success);
+								});
+							}
+						});
+					} else {
+						// breakpoint doesn't exist, so just create it
+						this._setBreakpoint(key, node, breakpointInfo!, (success) => {
+							if (success) {
+								this.breakpointInfoMap.set(key, breakpointInfo!);
+							}
+							callback(success);
+						});
+					}
+				} else {
+					console.error(`NodeManager - set breakpoint - breakpoint already exists: ${key}`);
+				}
 			}
 		}
 	}
 
-	private getMethodsForNode(nodePath: string): NodeMethodInfo {
+	private getMethodsForNode(nodePath: string): NodeMethodsInfo {
 		if (!this.nodePathMap.has(nodePath)) {
 			throw new Error(`Requesting methods for node path: ${nodePath} which does not exist`);
 		} else {
@@ -221,32 +332,46 @@ export class NodeManager<S extends BlueshellState, E> {
 			const nodeName = node.name;
 			const nodeParent = node.parent;
 			const setOfMethods: Set<string> = new Set();
+			const methodsData: NodeMethodInfo[] = [];
 			do {
-				const methods = Object.getOwnPropertyNames(node);
-				methods.forEach((method) => {
+				const methods = Object.getOwnPropertyNames(node).filter((prop) => typeof (node as any)[prop] === 'function');
+				const className = node.constructor.name;
+				methods.forEach((methodName) => {
 					// de-duplicate any inherited methods
-					if (!setOfMethods.has(method) &&
-						this.getMethodType(node!, method)
-					) {
-						setOfMethods.add(method);
+					if (!setOfMethods.has(methodName)) {
+						setOfMethods.add(methodName);
+						methodsData.push({methodName, className});
 					}
 				});
-				// climb up the inheritance tree
-			} while (node = Object.getPrototypeOf(node));
+				// climb up the inheritance tree until we get to Object
+				node = Object.getPrototypeOf(node);
+			} while (!!node && node.constructor.name !== 'Object');
 
-			return {listOfMethods: Array.from(setOfMethods).sort(), nodeName, nodeParent};
+			return {
+				listOfMethods: methodsData.sort((a, b) => {
+					if (a.methodName < b.methodName) {
+						return -1;
+					}
+					if (a.methodName > b.methodName) {
+						return 1;
+					}
+					return 0;
+				}),
+				nodeName,
+				nodeParent
+			};
 		}
 	}
 
-	private getMethodType(node: BaseNode<S, E>, methodName: string) {
-		try {
-			return typeof (<any>node)[methodName] === 'function';
-		} catch (ex) {
-			// if we catch an error, it's likely because we called a property and it threw
-			// in which case it's a method and we should return false to reflect that
-			return false;
-		}
-	}
+	// private getMethodType(node: BaseNode<S, E>, methodName: string) {
+	// 	try {
+	// 		return typeof (<any>node)[methodName] === 'function';
+	// 	} catch (ex) {
+	// 		// if we catch an error, it's likely because we called a property and it threw
+	// 		// in which case it's a method and we should return false to reflect that
+	// 		return false;
+	// 	}
+	// }
 
 	public static getInstance<S extends BlueshellState, E>(): NodeManager<S, E> {
 		if (!this.instance) {
