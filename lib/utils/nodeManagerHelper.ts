@@ -3,6 +3,7 @@ import {
 	ClassMethodNameKey,
 	BreakpointInfo,
     BreakpointData,
+	NodeMethodInfo,
 } from './nodeManagerTypes';
 
 export class NoObjectIdError extends Error{
@@ -144,4 +145,41 @@ export class Utils {
 		});
         return condition;
     }
+
+	public static getMethodInfoForObject(obj: Object): NodeMethodInfo[] {
+		const setOfMethods: Set<string> = new Set();
+		const methodsData: NodeMethodInfo[] = [];
+		do {
+			const methods = Object.getOwnPropertyNames(obj).filter((prop) => {
+				const nodePropDescriptor = Object.getOwnPropertyDescriptor(obj, prop);
+				// if the prop name is a getter or setter, if we simply just check that it's a function
+				// that will end up invoking the getter or setter, which could lead to a crash
+				if (nodePropDescriptor && (nodePropDescriptor.get || nodePropDescriptor.set)) {
+					return true;
+				}
+				return typeof (obj as any)[prop] === 'function';
+			});
+			const className = obj.constructor.name;
+			methods.forEach((methodName) => {
+				// de-duplicate any inherited methods
+				if (!setOfMethods.has(methodName)) {
+					setOfMethods.add(methodName);
+					methodsData.push({methodName, className});
+				}
+			});
+			// climb up the inheritance tree until we get to Object
+			obj = Object.getPrototypeOf(obj);
+		} while (!!obj && obj.constructor.name !== 'Object');
+
+		methodsData.sort((a, b) => {
+			if (a.methodName < b.methodName) {
+				return -1;
+			}
+			if (a.methodName > b.methodName) {
+				return 1;
+			}
+			return 0;
+		});
+		return methodsData;
+	}
 }

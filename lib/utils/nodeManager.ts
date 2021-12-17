@@ -12,6 +12,18 @@ import {
 	NodeMethodsInfo
 } from './nodeManagerTypes';
 
+export class DuplicateNodeAdded extends Error {
+	constructor(path:string) {
+		super(`Key ${path} already exists! Cannot add new node.`);
+	}
+}
+
+export class APIFunctionNotFound extends Error {
+	constructor(apiFunction:string) {
+		super(`Unknown request type: ${apiFunction}`);
+	}
+}
+
 // Manages information about what nodes are available in the BT for debugging (nodes must be registered
 // when they become available and unregistered when they are no longer available)
 export class NodeManager<S extends BlueshellState, E> {
@@ -35,7 +47,6 @@ export class NodeManager<S extends BlueshellState, E> {
 	public runServer() {
 		this.session.post('Debugger.enable', () => {});
 
-		if (process.env.NODE_ENV !== 'test') {
 			this.server = new Server({
 				host: 'localhost',
 				port: 8990,
@@ -76,10 +87,18 @@ export class NodeManager<S extends BlueshellState, E> {
 					switch (request) {
 					// client is requesting the methods for a given node path
 					case 'getMethodsForNode': {
-						const methodInfo = this.getMethodsForNode(nodePath);
+						let methodInfo;
+						let success = true;
+						try {
+							methodInfo = this.getMethodsForNode(nodePath);
+						}
+						catch {
+							success = false;
+						}
 
 						clientSocket.send(JSON.stringify({
 							request: 'getMethodsForNode',
+							success,
 							nodePath,
 							...methodInfo,
 						}));
@@ -123,11 +142,14 @@ export class NodeManager<S extends BlueshellState, E> {
 						break;
 					}
 					default:
-						throw new Error(`Unknown request type: ${dataObj.request}`);
+						clientSocket.send(JSON.stringify({
+							request: dataObj.request,
+							success: false,
+							err: new APIFunctionNotFound(dataObj.request).message
+						}));
 					}
 				});
 			});
-		}
 	}
 
 	// Returns the list of methods (and which class they are inherited from) for the
@@ -139,40 +161,10 @@ export class NodeManager<S extends BlueshellState, E> {
 			let node = this.nodePathMap.get(nodePath)!;
 			const nodeName = node.name;
 			const nodeParent = node.parent;
-			const setOfMethods: Set<string> = new Set();
-			const methodsData: NodeMethodInfo[] = [];
-			do {
-				const methods = Object.getOwnPropertyNames(node).filter((prop) => {
-					const nodePropDescriptor = Object.getOwnPropertyDescriptor(node, prop);
-					// if the prop name is a getter or setter, if we simply just check that it's a function
-					// that will end up invoking the getter or setter, which could lead to a crash
-					if (nodePropDescriptor && (nodePropDescriptor.get || nodePropDescriptor.set)) {
-						return true;
-					}
-					return typeof (node as any)[prop] === 'function';
-				});
-				const className = node.constructor.name;
-				methods.forEach((methodName) => {
-					// de-duplicate any inherited methods
-					if (!setOfMethods.has(methodName)) {
-						setOfMethods.add(methodName);
-						methodsData.push({methodName, className});
-					}
-				});
-				// climb up the inheritance tree until we get to Object
-				node = Object.getPrototypeOf(node);
-			} while (!!node && node.constructor.name !== 'Object');
+			const listOfMethods = Utils.getMethodInfoForObject(node);
 
 			return {
-				listOfMethods: methodsData.sort((a, b) => {
-					if (a.methodName < b.methodName) {
-						return -1;
-					}
-					if (a.methodName > b.methodName) {
-						return 1;
-					}
-					return 0;
-				}),
+				listOfMethods,
 				nodeName,
 				nodeParent
 			};
@@ -366,7 +358,7 @@ export class NodeManager<S extends BlueshellState, E> {
 	public addNode(node: BaseNode<S, E>) {
 		const path = node.path;
 		if (this.nodePathMap.has(path)) {
-			throw new Error(`Key ${path} already exists! Cannot add new node.`);
+			throw new DuplicateNodeAdded(path);
 		} else {
 			this.nodePathMap.set(path, node);
 		}

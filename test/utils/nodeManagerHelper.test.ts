@@ -5,7 +5,7 @@ import {Session, Runtime, Debugger} from 'inspector';
 import {NoFunctionObjectIdError, NoObjectIdError, RuntimeWrappers, Utils} from '../../lib/utils/nodeManagerHelper';
 import { BreakpointInfo, BreakpointData, NodePathKey } from '../../lib/utils/nodeManagerTypes';
 
-describe.only('nodeManagerHelper', function(){
+describe('nodeManagerHelper', function(){
 
 describe('RuntimeWrappers', function(){
     let session: Session|undefined = undefined;
@@ -385,6 +385,65 @@ describe('Utils', function(){
                 `(this.path === '${breakpointData2.nodePath}' && ${breakpointData2.condition})`
             );
         });
+    });
+
+    describe('getMethodInfoForObject', function(){
+        it('should give back an alphabetized list of methods with class', function(){
+            class Foo {
+                // should not work on member variables
+                private baseVar:any;
+
+                constructor() {}
+
+                // should work on properties
+                get getBaseProp():any{return 0;}
+                set setBaseProp(i:any){i;}
+
+                // should work on methods inherited from base class
+                public inheritedMethod():void{}
+
+                // should work on methods only in base class
+                public baseMethod():void{}
+            }
+
+            class Bar extends Foo {
+                // should not work on member variables
+                private childVar:any;
+
+                // should work on constructors
+                constructor() {
+                    super();
+                }
+
+                // should work on properties
+                get getChildProp():any{return 0;}
+                set setChildProp(i:any){i;}
+
+                // should work on methods inherited from base class
+                public inheritedMethod():void{}
+
+                // should work on methods only in child class
+                public childMethod():void{}
+
+                // should work on private methods
+                public privateChildMethod():void{}
+            }
+
+            const obj = new Bar();
+            const methodInfo = Utils.getMethodInfoForObject(obj);
+            assert.deepEqual(methodInfo, [
+                { methodName: 'baseMethod', className: 'Foo' },
+                { methodName: 'childMethod', className: 'Bar' },
+                { methodName: 'constructor', className: 'Bar' },
+                { methodName: 'getBaseProp', className: 'Foo' },
+                { methodName: 'getChildProp', className: 'Bar' },
+                { methodName: 'inheritedMethod', className: 'Bar' },
+                { methodName: 'privateChildMethod', className: 'Bar' },
+                { methodName: 'setBaseProp', className: 'Foo' },
+                { methodName: 'setChildProp', className: 'Bar' },
+            ]);
+        });
+
     });
 });
 
