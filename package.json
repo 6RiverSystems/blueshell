@@ -10,16 +10,16 @@
     "LICENSE"
   ],
   "scripts": {
-    "compile": "npm-run-all compile:js",
-    "compile:js": "tsc --pretty",
-    "compile:watch": "tsc --pretty --watch",
+    "build": "npm-run-all build:js",
+    "build:js": "tsc --pretty",
+    "build:watch": "tsc --pretty --watch",
     "pretest": "npm-run-all pretest:eslint",
     "pretest:eslint": "eslint --ext .ts,.js ${ESLINT_OPTS} .",
     "test": "NODE_ENV=test nyc mocha ${MOCHA_OPTS}",
     "test:no-cover": "NODE_ENV=test mocha",
     "test:debug": "npm run test:no-cover -- --inspect-brk test",
     "coverage": "NODE_ENV=test nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "prepublish": "npm-run-all compile"
+    "prepublish": "npm-run-all build"
   },
   "repository": {
     "type": "git",

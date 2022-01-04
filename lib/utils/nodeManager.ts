@@ -240,15 +240,15 @@ export class NodeManager<S extends BlueshellState, E> extends EventEmitter imple
 	private async setBreakpoint(nodePath: string, methodName: string, breakpointCondition: string) {
 		const debugString = `${nodePath}::${methodName}`;
 		if (!this.nodePathMap.has(nodePath)) {
-			console.error(`NodeManager - set breakpoint - Attempting to set breakpoint for ${debugString}\
-				but node does not exist.`);
+			console.error(`NodeManager - set breakpoint - Attempting to set breakpoint for ${debugString} ` +
+										`but node does not exist`);
 			return false;
 		} else {
 			const node = this.nodePathMap.get(nodePath)!;
 			const className = this.getNodeMethodInfo(node, methodName)?.className;
 			if (!className) {
-				console.error(`NodeManager - set breakpoint - Attempting to set breakpoint for ${debugString}\
-					but method does not exist`);
+				console.error(`NodeManager - set breakpoint - Attempting to set breakpoint for ${debugString} ` +
+											`but method does not exist`);
 				return false;
 			} else {
 				const key = `${className}::${methodName}`;

@@ -21,7 +21,7 @@
 				"NODE_OPTIONS": "--unhandled-rejections=strict"
 			},
 			"outFiles": ["${workspaceFolder}/dist/**/*"],
-			"preLaunchTask": "npm run compile",
+			"preLaunchTask": "npm run build",
 			"internalConsoleOptions": "openOnSessionStart"
 		},
 	],

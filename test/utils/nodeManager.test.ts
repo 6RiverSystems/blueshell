@@ -127,16 +127,6 @@ describe('nodeManager', function() {
 				port: 8990,
 			});
 			serverMock.emit('connection', clientMock);
-
-			// stub all the session post calls so we don't actually set breakpoints
-			// sinon.stub(session, <any>'post').callThrough()
-			// .withArgs(
-			// 	'Debugger.enable',
-			// 	sinon.match.func)
-			// .callsFake((callback: () => void
-			// ) => {
-			// 	callback();
-			// });
 		});
 
 		afterEach(function() {
@@ -196,7 +186,7 @@ describe('nodeManager', function() {
 			});
 		});
 
-		describe('placeBreakpoint', function() {
+		describe('breakpoints', function() {
 			let childNode: Action<BlueshellState, null>;
 			let rootNode: Sequence<BlueshellState, null>;
 			const rootNodeName = 'rootTestNode';
@@ -210,168 +200,604 @@ describe('nodeManager', function() {
 				nodeManager.addNode(rootNode);
 			});
 
-			it('should place a breakpoint with no additional condition', async function() {
-				clientMock.emit('message', JSON.stringify({
-					request: 'placeBreakpoint',
-					nodePath: childNodePath,
-					methodName: 'handleEvent',
-					condition: '',
-				}));
-				// this is required to get over the promises that happen in the async callback when we emit message above
-				await EventEmitter.once(clientMock, 'messageHandled');
-				sinon.assert.notCalled(removeBreakpointHelperStub);
-				const bps = new Map();
-				bps.set(childNodePath, {
-					nodePath: childNodePath,
-					condition: '',
-					nodeName: childNodeName,
-					nodeParent: rootNodeName,
+			describe('placeBreakpoint', function() {
+				it('should place a breakpoint with no additional condition', async function() {
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						condition: '',
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+					sinon.assert.notCalled(removeBreakpointHelperStub);
+					const bps = new Map();
+					bps.set(childNodePath, {
+						nodePath: childNodePath,
+						condition: '',
+						nodeName: childNodeName,
+						nodeParent: rootNodeName,
+					});
+					sinon.assert.calledWith(setBreakpointHelperStub,
+						sinon.match.object,
+						sinon.match.string,
+						`(this.path === '${childNodePath}')`,
+						{
+							methodInfo: {
+								className: 'Base',
+								methodName: 'handleEvent',
+							},
+							breakpointId: sinon.match.string,
+							breakpoints: bps,
+						}
+					);
+					sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						nodeName: childNodeName,
+						nodeParent: rootNodeName,
+						condition: '',
+						success: true,
+					}));
 				});
-				sinon.assert.calledWith(setBreakpointHelperStub,
-					sinon.match.object,
-					sinon.match.string,
-					`(this.path === '${childNodePath}')`,
-					{
-						methodInfo: {
-							className: 'Base',
+
+				it('should place a breakpoint with an additional condition', async function() {
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						condition,
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+					sinon.assert.notCalled(removeBreakpointHelperStub);
+					const bps = new Map();
+					bps.set(childNodePath, {
+						nodePath: childNodePath,
+						condition,
+						nodeName: childNodeName,
+						nodeParent: rootNodeName,
+					});
+					sinon.assert.calledWith(setBreakpointHelperStub,
+						sinon.match.object,
+						sinon.match.string,
+						`(this.path === '${childNodePath}' && ${condition})`,
+						{
+							methodInfo: {
+								className: 'Base',
+								methodName: 'handleEvent',
+							},
+							breakpointId: sinon.match.string,
+							breakpoints: bps,
+						}
+					);
+					sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						nodeName: childNodeName,
+						nodeParent: rootNodeName,
+						condition,
+						success: true,
+					}));
+				});
+
+				it('should place a breakpoint on a getter');	// @@@ I don't think this works yet- always would set it on getter
+				it('should place a breakpoint on a setter');	// @@@ I don't think this works yet- always would set it on getter
+				it('should place a 2nd breakpoint on the same function of another instance, same class', async function() {
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						condition: '',
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+					removeBreakpointHelperStub.resetHistory();
+					setBreakpointHelperStub.resetHistory();
+					clientSendSpy.resetHistory();
+
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: rootNodeName,
+						methodName: 'handleEvent',
+						condition,
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+
+					sinon.assert.called(removeBreakpointHelperStub);
+					const bps = new Map();
+					bps.set(childNodePath, {
+						nodePath: childNodePath,
+						condition: '',
+						nodeName: childNodeName,
+						nodeParent: rootNodeName,
+					});
+					bps.set(rootNodeName, {
+						nodePath: rootNodeName,
+						condition,
+						nodeName: rootNodeName,
+						nodeParent: '',
+					});
+					sinon.assert.calledWith(setBreakpointHelperStub,
+						sinon.match.object,
+						sinon.match.string,
+						`(this.path === '${childNodePath}') || (this.path === '${rootNodeName}' && ${condition})`,
+						{
+							methodInfo: {
+								className: 'Base',
+								methodName: 'handleEvent',
+							},
+							breakpointId: sinon.match.string,
+							breakpoints: bps,
+						}
+					);
+					sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: rootNodeName,
+						methodName: 'handleEvent',
+						nodeName: rootNodeName,
+						nodeParent: '',
+						condition,
+						success: true,
+					}));
+				});
+				it('should place a 2nd breakpoint on the same function of another instance, different class', async function() {
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: '_beforeEvent',
+						condition: '',
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+					removeBreakpointHelperStub.resetHistory();
+					setBreakpointHelperStub.resetHistory();
+					clientSendSpy.resetHistory();
+
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: rootNodeName,
+						methodName: '_beforeEvent',
+						condition: '',
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+
+					sinon.assert.notCalled(removeBreakpointHelperStub);
+					const bps = new Map();
+					bps.set(rootNodeName, {
+						nodePath: rootNodeName,
+						condition: '',
+						nodeName: rootNodeName,
+						nodeParent: '',
+					});
+					sinon.assert.calledWith(setBreakpointHelperStub,
+						sinon.match.object,
+						sinon.match.string,
+						`(this.path === '${rootNodeName}')`,
+						{
+							methodInfo: {
+								className: 'Composite',
+								methodName: '_beforeEvent',
+							},
+							breakpointId: sinon.match.string,
+							breakpoints: bps,
+						}
+					);
+					sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: rootNodeName,
+						methodName: '_beforeEvent',
+						nodeName: rootNodeName,
+						nodeParent: '',
+						condition: '',
+						success: true,
+					}));
+				});
+				it('should update the condition on an existing breakpoint', async function() {
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						condition: '',
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+					removeBreakpointHelperStub.resetHistory();
+					setBreakpointHelperStub.resetHistory();
+					clientSendSpy.resetHistory();
+
+					// test adding the condition
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						condition,
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+
+					sinon.assert.called(removeBreakpointHelperStub);
+					const bps = new Map();
+					bps.set(childNodePath, {
+						nodePath: childNodePath,
+						condition,
+						nodeName: childNodeName,
+						nodeParent: rootNodeName,
+					});
+					sinon.assert.calledWith(setBreakpointHelperStub,
+						sinon.match.object,
+						sinon.match.string,
+						`(this.path === '${childNodePath}' && ${condition})`,
+						{
+							methodInfo: {
+								className: 'Base',
+								methodName: 'handleEvent',
+							},
+							breakpointId: sinon.match.string,
+							breakpoints: bps,
+						}
+					);
+					sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						nodeName: childNodeName,
+						nodeParent: rootNodeName,
+						condition,
+						success: true,
+					}));
+					removeBreakpointHelperStub.resetHistory();
+					setBreakpointHelperStub.resetHistory();
+					clientSendSpy.resetHistory();
+
+					// test removing the condition
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						condition: '',
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+
+					sinon.assert.called(removeBreakpointHelperStub);
+					bps.get(childNodePath).condition = '';
+					sinon.assert.calledWith(setBreakpointHelperStub,
+						sinon.match.object,
+						sinon.match.string,
+						`(this.path === '${childNodePath}')`,
+						{
+							methodInfo: {
+								className: 'Base',
+								methodName: 'handleEvent',
+							},
+							breakpointId: sinon.match.string,
+							breakpoints: bps,
+						}
+					);
+					sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						nodeName: childNodeName,
+						nodeParent: rootNodeName,
+						condition: '',
+						success: true,
+					}));
+				});
+
+				describe('placeBreakpoint error cases', function() {
+					it('should fail to place a breakpoint for node that does not exist', async function() {
+						clientMock.emit('message', JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: 'foo',
 							methodName: 'handleEvent',
-						},
-						breakpointId: sinon.match.string,
-						breakpoints: bps,
-					}
-				);
-				sinon.assert.calledWith(clientSendSpy, JSON.stringify({
-					request: 'placeBreakpoint',
-					nodePath: childNodePath,
-					methodName: 'handleEvent',
-					nodeName: childNodeName,
-					nodeParent: rootNodeName,
-					condition: '',
-					success: true,
-				}));
-			});
-
-			it('should place a breakpoint with an additional condition', async function() {
-				const condition = 'this.name === \'foo\'';
-				clientMock.emit('message', JSON.stringify({
-					request: 'placeBreakpoint',
-					nodePath: childNodePath,
-					methodName: 'handleEvent',
-					condition,
-				}));
-				// this is required to get over the promises that happen in the async callback when we emit message above
-				await EventEmitter.once(clientMock, 'messageHandled');
-				sinon.assert.notCalled(removeBreakpointHelperStub);
-				const bps = new Map();
-				bps.set(childNodePath, {
-					nodePath: childNodePath,
-					condition,
-					nodeName: childNodeName,
-					nodeParent: rootNodeName,
-				});
-				sinon.assert.calledWith(setBreakpointHelperStub,
-					sinon.match.object,
-					sinon.match.string,
-					`(this.path === '${childNodePath}' && ${condition})`,
-					{
-						methodInfo: {
-							className: 'Base',
+							condition: '',
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						sinon.assert.notCalled(removeBreakpointHelperStub);
+						sinon.assert.notCalled(setBreakpointHelperStub);
+						sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+							request: 'placeBreakpoint',
 							methodName: 'handleEvent',
-						},
-						breakpointId: sinon.match.string,
-						breakpoints: bps,
-					}
-				);
-				sinon.assert.calledWith(clientSendSpy, JSON.stringify({
-					request: 'placeBreakpoint',
-					nodePath: childNodePath,
-					methodName: 'handleEvent',
-					nodeName: childNodeName,
-					nodeParent: rootNodeName,
-					condition,
-					success: true,
-				}));
-			});
-
-			it('should place a breakpoint on a getter');	// @@@ I don't think this works yet - always would set it on getter
-			it('should place a breakpoint on a setter');	// @@@ I don't think this works yet - always would set it on getter
-			it('should place a 2nd breakpoint on the same function of another instance (same class)', async function() {
-				clientMock.emit('message', JSON.stringify({
-					request: 'placeBreakpoint',
-					nodePath: childNodePath,
-					methodName: 'handleEvent',
-					condition: '',
-				}));
-				// this is required to get over the promises that happen in the async callback when we emit message above
-				await EventEmitter.once(clientMock, 'messageHandled');
-				removeBreakpointHelperStub.resetHistory();
-				setBreakpointHelperStub.resetHistory();
-				clientSendSpy.resetHistory();
-
-				const condition = 'this.name === \'foo\'';
-				clientMock.emit('message', JSON.stringify({
-					request: 'placeBreakpoint',
-					nodePath: rootNodeName,
-					methodName: 'handleEvent',
-					condition,
-				}));
-				// this is required to get over the promises that happen in the async callback when we emit message above
-				await EventEmitter.once(clientMock, 'messageHandled');
-
-				sinon.assert.called(removeBreakpointHelperStub);
-				const bps = new Map();
-				bps.set(childNodePath, {
-					nodePath: childNodePath,
-					condition: '',
-					nodeName: childNodeName,
-					nodeParent: rootNodeName,
-				});
-				bps.set(rootNodeName, {
-					nodePath: rootNodeName,
-					condition,
-					nodeName: rootNodeName,
-					nodeParent: '',
-				});
-				sinon.assert.calledWith(setBreakpointHelperStub,
-					sinon.match.object,
-					sinon.match.string,
-					`(this.path === '${childNodePath}') || (this.path === '${rootNodeName}' && ${condition})`,
-					{
-						methodInfo: {
-							className: 'Base',
+							condition: '',
+							success: false,
+						}));
+					});
+					it('should fail to place a breakpoint for a method that does not exist on the node', async function() {
+						clientMock.emit('message', JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'foo',
+							condition: '',
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						sinon.assert.notCalled(removeBreakpointHelperStub);
+						sinon.assert.notCalled(setBreakpointHelperStub);
+						sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'foo',
+							nodeName: childNodeName,
+							nodeParent: rootNodeName,
+							condition: '',
+							success: false,
+						}));
+					});
+					it('should fail to place the same breakpoint a second time with no condition', async function() {
+						clientMock.emit('message', JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: childNodePath,
 							methodName: 'handleEvent',
+							condition: '',
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						removeBreakpointHelperStub.resetHistory();
+						setBreakpointHelperStub.resetHistory();
+						clientSendSpy.resetHistory();
+
+						// try setting the breakpoint again
+						clientMock.emit('message', JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'handleEvent',
+							condition: '',
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						sinon.assert.notCalled(removeBreakpointHelperStub);
+						sinon.assert.notCalled(setBreakpointHelperStub);
+						sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'handleEvent',
+							nodeName: childNodeName,
+							nodeParent: rootNodeName,
+							condition: '',
+							success: false,
+						}));
+					});
+					it('should fail to place the same breakpoint a second time with the same condition', async function() {
+						clientMock.emit('message', JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'handleEvent',
+							condition,
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						removeBreakpointHelperStub.resetHistory();
+						setBreakpointHelperStub.resetHistory();
+						clientSendSpy.resetHistory();
+
+						// try setting the breakpoint again
+						clientMock.emit('message', JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'handleEvent',
+							condition,
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						sinon.assert.notCalled(removeBreakpointHelperStub);
+						sinon.assert.notCalled(setBreakpointHelperStub);
+						sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'handleEvent',
+							nodeName: childNodeName,
+							nodeParent: rootNodeName,
+							condition,
+							success: false,
+						}));
+					});
+				});
+			});
+
+			describe('removeBreakpoint', function() {
+				it('should remove a breakpoint when only one is set on the class/method', async function() {
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						condition: '',
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+					removeBreakpointHelperStub.resetHistory();
+					setBreakpointHelperStub.resetHistory();
+					clientSendSpy.resetHistory();
+
+					// remove the breakpoint
+					clientMock.emit('message', JSON.stringify({
+						request: 'removeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+
+					const bps = new Map();
+					bps.set(childNodePath, {
+						nodePath: childNodePath,
+						condition: '',
+						nodeName: childNodeName,
+						nodeParent: rootNodeName,
+					});
+					sinon.assert.calledWith(removeBreakpointHelperStub,
+						sinon.match.object,
+						{
+							methodInfo: {
+								className: 'Base',
+								methodName: 'handleEvent',
+							},
+							breakpointId: sinon.match.string,
+							breakpoints: new Map(),
 						},
-						breakpointId: sinon.match.string,
-						breakpoints: bps,
-					}
-				);
-				sinon.assert.calledWith(clientSendSpy, JSON.stringify({
-					request: 'placeBreakpoint',
-					nodePath: rootNodeName,
-					methodName: 'handleEvent',
-					nodeName: rootNodeName,
-					nodeParent: '',
-					condition,
-					success: true,
-				}));
-			});
-			it('should place a 2nd breakpoint on the same function of another instance (different class)');
-			it('should update the condition on an existing breakpoint');
+					);
+					sinon.assert.notCalled(setBreakpointHelperStub);
+					sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+						request: 'removeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						success: true,
+					}));
+				});
+				it('should remove a breakpoint for the specified node when more than one is set on the class/method',
+					async function() {
+						clientMock.emit('message', JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'handleEvent',
+							condition: '',
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						clientMock.emit('message', JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: rootNodeName,
+							methodName: 'handleEvent',
+							condition: '',
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						removeBreakpointHelperStub.resetHistory();
+						setBreakpointHelperStub.resetHistory();
+						clientSendSpy.resetHistory();
 
-			describe('placeBreakpoint error cases', function() {
-				it('should fail to place a breakpoint for node that does not exist');
-				it('should fail to place a breakpoint for a method that does not exist on the node');
-				it('should fail to place the same breakpoint a second time with no condition');
-				it('should fail to place the same breakpoint a second time with the same condition');
-			});
-		});
+						// remove one of the two breakpoints (one on the root node)
+						clientMock.emit('message', JSON.stringify({
+							request: 'removeBreakpoint',
+							nodePath: rootNodeName,
+							methodName: 'handleEvent',
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
 
-		describe('removeBreakpoint', function() {
-			it('should remove a breakpoint when only one is set on the class/method');
-			it('should remove a breakpoint for the specified node when more than one is set on the class/method');
-			describe('removeBreakpoint error cases', function() {
-				it('should fail to remove a breakpoint on a node that does not exist');
-				it('should fail to remove a breakpoint on a method that does not exist on the node');
+						const bps = new Map();
+						bps.set(childNodePath, {
+							nodePath: childNodePath,
+							condition: '',
+							nodeName: childNodeName,
+							nodeParent: rootNodeName,
+						});
+						sinon.assert.calledWith(removeBreakpointHelperStub,
+							sinon.match.object,
+							{
+								methodInfo: {
+									className: 'Base',
+									methodName: 'handleEvent',
+								},
+								breakpointId: sinon.match.string,
+								breakpoints: bps,
+							},
+						);
+						sinon.assert.calledWith(setBreakpointHelperStub,
+							sinon.match.object,
+							sinon.match.string,
+							`(this.path === '${childNodePath}')`,
+							{
+								methodInfo: {
+									className: 'Base',
+									methodName: 'handleEvent',
+								},
+								breakpointId: sinon.match.string,
+								breakpoints: bps,
+							}
+						);
+						sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+							request: 'removeBreakpoint',
+							nodePath: rootNodeName,
+							methodName: 'handleEvent',
+							success: true,
+						}));
+					});
+				describe('removeBreakpoint error cases', function() {
+					it('should fail to remove a breakpoint on a node that does not exist', async function() {
+						clientMock.emit('message', JSON.stringify({
+							request: 'removeBreakpoint',
+							nodePath: 'foo',
+							methodName: 'handleEvent',
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						sinon.assert.notCalled(removeBreakpointHelperStub);
+						sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+							request: 'removeBreakpoint',
+							methodName: 'handleEvent',
+							success: false,
+						}));
+					});
+					it('should fail to remove a breakpoint on a method that does not exist on the node', async function() {
+						clientMock.emit('message', JSON.stringify({
+							request: 'removeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'foo',
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						sinon.assert.notCalled(removeBreakpointHelperStub);
+						sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+							request: 'removeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'foo',
+							success: false,
+						}));
+					});
+					it('should fail to remove a breakpoint that is set, but not for this node', async function() {
+						clientMock.emit('message', JSON.stringify({
+							request: 'placeBreakpoint',
+							nodePath: rootNodeName,
+							methodName: 'handleEvent',
+							condition: '',
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						removeBreakpointHelperStub.resetHistory();
+						setBreakpointHelperStub.resetHistory();
+						clientSendSpy.resetHistory();
+
+						// try to remove a different breakpoint
+						clientMock.emit('message', JSON.stringify({
+							request: 'removeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'handleEvent',
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						sinon.assert.notCalled(removeBreakpointHelperStub);
+						sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+							request: 'removeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'handleEvent',
+							success: false,
+						}));
+					});
+					it('should fail to remove a breakpoint that is not set at all', async function() {
+						// remove the breakpoint
+						clientMock.emit('message', JSON.stringify({
+							request: 'removeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'handleEvent',
+						}));
+						// this is required to get over the promises that happen in the async callback when we emit message above
+						await EventEmitter.once(clientMock, 'messageHandled');
+						sinon.assert.notCalled(removeBreakpointHelperStub);
+						sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+							request: 'removeBreakpoint',
+							nodePath: childNodePath,
+							methodName: 'handleEvent',
+							success: false,
+						}));
+					});
+				});
 			});
 		});
 
