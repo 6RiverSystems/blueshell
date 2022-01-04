@@ -1,4 +1,4 @@
-import * as archy from 'archy';
+import archy = require('archy');
 import {Data} from 'archy';
 
 import {BlueshellState, isParentNode, BaseNode} from '../models';

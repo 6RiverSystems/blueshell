@@ -1,8 +1,14 @@
 import 'mocha';
 import * as sinon from 'sinon';
-import {assert} from 'chai';
-import {Session, Runtime, Debugger} from 'inspector';
+import * as chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
+const assert = chai.assert;
+import {Session} from 'inspector';
 import {
+	BreakPointIdRequiredError,
+	NoBreakpointForBreakpointError,
+	NoBreakpointIdForBreakpointError,
 	NoFunctionObjectIdError,
 	NoObjectIdError,
 	RuntimeWrappers,
@@ -16,101 +22,55 @@ import {
 
 describe('nodeManagerHelper', function() {
 	describe('RuntimeWrappers', function() {
-		let session: Session | undefined = undefined;
+		let session: Session;
 
 		beforeEach(function() {
 			session = new Session();
+		});
+		afterEach(function() {
+			sinon.reset();
 		});
 
 		describe('getObjectIdFromRuntimeEvaluate', function() {
 			const key = 'foo';
 
-			it('should return error if error present', async function() {
+			it('should throw error if error present', async function() {
 				const testError = new Error('test error');
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+				sinon.stub(session, <any>'post').withArgs(	// HACK - types not well defined for post
 					'Runtime.evaluate',
 					{expression: `global.breakpointMethods.get('${key}')`},
-					sinon.match.func
-				)
-				.callsFake(
-					(
-						functionString: string,
-						expression: Runtime.EvaluateParameterType,
-						callback: (
-								err: Error,
-								result: { result?: Runtime.RemoteObject }
-							) => void
-					) => {
-						callback(testError, {});
-					}
-				);
-
-				const result = await RuntimeWrappers.getObjectIdFromRuntimeEvaluate(
-					session!,
-					key
-				);
-				assert.equal(result.err, testError);
-				assert.isUndefined(result.objectId);
+					sinon.match.func,
+				).callsFake((_method, _params, callback) => {
+					callback(testError, {});
+				});
+				await assert.isRejected(RuntimeWrappers.getObjectIdFromRuntimeEvaluate(session!, key), testError.message);
 			});
 
-			it('should return error if no objectId', async function() {
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+			it('should throw error if no objectId', async function() {
+				sinon.stub(session, <any>'post').withArgs(
 					'Runtime.evaluate',
 					{expression: `global.breakpointMethods.get('${key}')`},
 					sinon.match.func
 				)
-				.callsFake(
-					(
-						functionString: string,
-						expression: Runtime.EvaluateParameterType,
-						callback: (
-								err: Error | null,
-								result: { result?: Runtime.RemoteObject }
-							) => void
-					) => {
-						callback(null, {result: {type: ''}});
-					}
-				);
+				.callsFake((_method, _params, callback) => {
+					callback(null, {result: {type: ''}});
+				});
 
-				const result = await RuntimeWrappers.getObjectIdFromRuntimeEvaluate(
-					session!,
-					key
-				);
-				assert.instanceOf(result.err, NoObjectIdError);
-				assert.isUndefined(result.objectId);
+				await assert.isRejected(
+					RuntimeWrappers.getObjectIdFromRuntimeEvaluate(session!, key), new NoObjectIdError(key).message);
 			});
 
 			it('should succeed if objectId exists', async function() {
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+				sinon.stub(session, <any>'post').withArgs(
 					'Runtime.evaluate',
 					{expression: `global.breakpointMethods.get('${key}')`},
 					sinon.match.func
 				)
-				.callsFake(
-					(
-						functionString: string,
-						expression: Runtime.EvaluateParameterType,
-						callback: (
-								err: Error | null,
-								result: { result?: Runtime.RemoteObject }
-							) => void
-					) => {
-						callback(null, {result: {type: '', objectId: 'foobar'}});
-					}
-				);
-
-				const result = await RuntimeWrappers.getObjectIdFromRuntimeEvaluate(
-					session!,
-					key
-				);
-				assert.isNull(result.err);
-				assert.equal(result.objectId, 'foobar');
+				.callsFake((_method, _params, callback) => {
+					callback(null, {result: {type: '', objectId: 'foobar'}});
+				});
+				await assert.isFulfilled(
+					RuntimeWrappers.getObjectIdFromRuntimeEvaluate(session!, key), 'foobar');
 			});
 		});
 
@@ -119,139 +79,74 @@ describe('nodeManagerHelper', function() {
 			const functionObjectId = 'mockFunctionObjectId';
 			it('should error if Runtime.getProperties has error', async function() {
 				const errMsg = 'test error';
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+				sinon.stub(session!, <any>'post').withArgs(
 					'Runtime.getProperties',
 					{
 						objectId,
 					},
 					sinon.match.func
 				)
-				.callsFake(
-					(
-						functionString: string,
-						params: {},
-						callback: (
-								err: Error | null,
-								result: Runtime.GetPropertiesReturnType
-							) => void
-					) => {
-						callback(new Error(errMsg), {result: []});
-					}
-				);
+				.callsFake((_method, _params, callback) => {
+					callback(new Error(errMsg), {});
+				});
 
-				const result =
-					await RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(
-						session!,
-						objectId
-					);
-				assert.equal(errMsg, result.err!.message);
-				assert.isUndefined(result.functionObjectId);
+				await assert.isRejected(RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(
+					session!,
+					objectId
+				), errMsg);
 			});
 
 			it('should error if Runtime.getProperties throw error when accessing function object id ', async function() {
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+				sinon.stub(session!, <any>'post').withArgs(
 					'Runtime.getProperties',
 					{
 						objectId,
 					},
 					sinon.match.func
 				)
-				.callsFake(
-					(
-						functionString: string,
-						params: {},
-						callback: (
-								err: Error | null,
-								result: Runtime.GetPropertiesReturnType
-							) => void
-					) => {
-						callback(null, {result: []});
-					}
-				);
-
-				const result =
-					await RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(
-						session!,
-						objectId
-					);
-				assert.instanceOf(result.err, NoFunctionObjectIdError);
-				assert.isUndefined(result.functionObjectId);
+				.callsFake((_method, _params, callback) => {
+					callback(null, {result: []});
+				});
+				await assert.isRejected(RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(
+					session!,
+					objectId
+				), new NoFunctionObjectIdError(objectId).message);
 			});
 
 			it('should error if Runtime.getProperties has no function object id ', async function() {
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+				sinon.stub(session!, <any>'post').withArgs(
 					'Runtime.getProperties',
 					{
 						objectId,
 					},
 					sinon.match.func
 				)
-				.callsFake(
-					(
-						functionString: string,
-						params: {},
-						callback: (
-								err: Error | null,
-								result: Runtime.GetPropertiesReturnType
-							) => void
-					) => {
-						callback(null, {
-							result: [],
-							internalProperties: [{name: '', value: {type: ''}}],
-						});
-					}
-				);
+				.callsFake((_method, _params, callback) => {
+					callback(null, {result: [], internalProperties: [{name: '', value: {type: ''}}]});
+				});
 
-				const result =
-					await RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(
-						session!,
-						objectId
-					);
-				assert.instanceOf(result.err, NoFunctionObjectIdError);
-				assert.isUndefined(result.functionObjectId);
+				await assert.isRejected(RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(
+					session!,
+					objectId
+				), new NoFunctionObjectIdError(objectId).message);
 			});
 
 			it('should return functionObjectId', async function() {
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+				sinon.stub(session!, <any>'post').withArgs(
 					'Runtime.getProperties',
 					{
 						objectId,
 					},
 					sinon.match.func
 				)
-				.callsFake(
-					(
-						functionString: string,
-						params: {},
-						callback: (
-								err: Error | null,
-								result: Runtime.GetPropertiesReturnType
-							) => void
-					) => {
-						callback(null, {
-							result: [],
-							internalProperties: [
-								{name: '', value: {type: '', objectId: functionObjectId}},
-							],
-						});
-					}
-				);
+				.callsFake((_method, _params, callback) => {
+					callback(null, {result: [], internalProperties: [{name: '', value: {type: '', objectId: functionObjectId}}]});
+				});
 
-				const result =
-					await RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(
+				await assert.isFulfilled(RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(
 						session!,
 						objectId
-					);
-				assert.isNull(result.err);
-				assert.equal(result.functionObjectId, functionObjectId);
+				), functionObjectId);
 			});
 		});
 
@@ -271,10 +166,8 @@ describe('nodeManagerHelper', function() {
 				};
 			});
 
-			it('should return false if Debugger.setBreakpointOnFunctionCall has error', async function() {
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+			it('should return reject if Debugger.setBreakpointOnFunctionCall has error', async function() {
+				sinon.stub(session!, <any>'post').withArgs(
 					'Debugger.setBreakpointOnFunctionCall',
 					{
 						objectId: functionObjectId,
@@ -282,32 +175,20 @@ describe('nodeManagerHelper', function() {
 					},
 					sinon.match.func
 				)
-				.callsFake(
-					(
-						functionString: string,
-						params: {},
-						callback: (
-								err: Error | null,
-								result: { breakpointId?: string } | undefined
-							) => void
-					) => {
-						callback(new Error('test error'), undefined);
-					}
-				);
+				.callsFake((_method, _params, callback) => {
+					callback(new Error('test error'), {});
+				});
 
-				const success = await RuntimeWrappers.setBreakpointOnFunctionCall(
+				await assert.isRejected(RuntimeWrappers.setBreakpointOnFunctionCall(
 					session!,
 					functionObjectId,
 					'',
 					breakpointInfo
-				);
-				assert.isFalse(success);
+				), 'test error');
 			});
 
-			it('should return false if Debugger.setBreakpointOnFunctionCall has empty result', async function() {
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+			it('should reject if Debugger.setBreakpointOnFunctionCall has empty result', async function() {
+				sinon.stub(session!, <any>'post').withArgs(
 					'Debugger.setBreakpointOnFunctionCall',
 					{
 						objectId: functionObjectId,
@@ -315,32 +196,20 @@ describe('nodeManagerHelper', function() {
 					},
 					sinon.match.func
 				)
-				.callsFake(
-					(
-						functionString: string,
-						params: {},
-						callback: (
-								err: Error | null,
-								result: { breakpointId?: string } | undefined
-							) => void
-					) => {
-						callback(null, undefined);
-					}
-				);
+				.callsFake((_method, _params, callback) => {
+					callback(null, undefined);
+				});
 
-				const success = await RuntimeWrappers.setBreakpointOnFunctionCall(
+				await assert.isRejected(RuntimeWrappers.setBreakpointOnFunctionCall(
 					session!,
 					functionObjectId,
 					'',
 					breakpointInfo
-				);
-				assert.isFalse(success);
+				), new NoBreakpointForBreakpointError(functionObjectId).message);
 			});
 
-			it('should return false if Debugger.setBreakpointOnFunctionCall has no breakpoind id', async function() {
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+			it('should reject if Debugger.setBreakpointOnFunctionCall has no breakpoind id', async function() {
+				sinon.stub(session!, <any>'post').withArgs(
 					'Debugger.setBreakpointOnFunctionCall',
 					{
 						objectId: functionObjectId,
@@ -348,32 +217,20 @@ describe('nodeManagerHelper', function() {
 					},
 					sinon.match.func
 				)
-				.callsFake(
-					(
-						functionString: string,
-						params: {},
-						callback: (
-								err: Error | null,
-								result: { breakpointId?: string } | undefined
-							) => void
-					) => {
-						callback(null, {});
-					}
-				);
+				.callsFake((_method, _params, callback) => {
+					callback(null, {});
+				});
 
-				const success = await RuntimeWrappers.setBreakpointOnFunctionCall(
+				await assert.isRejected(RuntimeWrappers.setBreakpointOnFunctionCall(
 					session!,
 					functionObjectId,
 					'',
 					breakpointInfo
-				);
-				assert.isFalse(success);
+				), new NoBreakpointIdForBreakpointError(functionObjectId).message);
 			});
 
-			it('should return true if breakpoint set successfully', async function() {
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+			it('should fulfill if breakpoint set successfully', async function() {
+				sinon.stub(session!, <any>'post').withArgs(
 					'Debugger.setBreakpointOnFunctionCall',
 					{
 						objectId: functionObjectId,
@@ -381,26 +238,16 @@ describe('nodeManagerHelper', function() {
 					},
 					sinon.match.func
 				)
-				.callsFake(
-					(
-						functionString: string,
-						params: {},
-						callback: (
-								err: Error | null,
-								result: { breakpointId?: string }
-							) => void
-					) => {
-						callback(null, {breakpointId: mockBreakpointId});
-					}
-				);
+				.callsFake((_method, _params, callback) => {
+					callback(null, {breakpointId: mockBreakpointId});
+				});
 
-				const success = await RuntimeWrappers.setBreakpointOnFunctionCall(
+				await assert.isFulfilled(RuntimeWrappers.setBreakpointOnFunctionCall(
 					session!,
 					functionObjectId,
 					'',
 					breakpointInfo
-				);
-				assert.isTrue(success);
+				));
 				assert.equal(breakpointInfo.breakpointId, mockBreakpointId);
 			});
 		});
@@ -419,58 +266,47 @@ describe('nodeManagerHelper', function() {
 				};
 			});
 
-			it('should return false if remove breakpoint has error', async function() {
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+			it('should throw if remove breakpoint was not passed a breakpointId', async function() {
+				breakpointInfo.breakpointId = undefined;
+				await assert.isRejected(RuntimeWrappers.removeBreakpointFromFunction(
+					session!,
+					breakpointInfo
+				), new BreakPointIdRequiredError().message);
+			});
+			it('should throw if remove breakpoint has error', async function() {
+				sinon.stub(session!, <any>'post').withArgs(
 					'Debugger.removeBreakpoint',
 					{
 						breakpointId: breakpointInfo.breakpointId,
 					},
 					sinon.match.func
 				)
-				.callsFake(
-					(
-						functionString: string,
-						params: Debugger.RemoveBreakpointParameterType,
-						callback: (err: Error | null) => void
-					) => {
-						callback(new Error('mock error'));
-					}
-				);
+				.callsFake((_method, _params, callback) => {
+					callback(new Error('mock error'));
+				});
 
-				const success = await RuntimeWrappers.removeBreakpointFromFunction(
+				await assert.isRejected(RuntimeWrappers.removeBreakpointFromFunction(
 					session!,
 					breakpointInfo
-				);
-				assert.isFalse(success);
+				), 'mock error');
 			});
 
-			it('should return true if remove breakpoint was successful', async function() {
-				sinon
-				.stub(session!, <any>'post')
-				.withArgs(
+			it('should resolve if remove breakpoint was successful', async function() {
+				sinon.stub(session!, <any>'post').withArgs(
 					'Debugger.removeBreakpoint',
 					{
 						breakpointId: breakpointInfo.breakpointId,
 					},
 					sinon.match.func
 				)
-				.callsFake(
-					(
-						functionString: string,
-						params: Debugger.RemoveBreakpointParameterType,
-						callback: (err: Error | null) => void
-					) => {
-						callback(null);
-					}
-				);
+				.callsFake((_method, _params, callback) => {
+					callback(null);
+				});
 
-				const success = await RuntimeWrappers.removeBreakpointFromFunction(
+				await assert.isFulfilled(RuntimeWrappers.removeBreakpointFromFunction(
 					session!,
 					breakpointInfo
-				);
-				assert.isTrue(success);
+				));
 			});
 		});
 	});
