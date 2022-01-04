@@ -1,5 +1,5 @@
 export {TreePublisher, TreeNonPublisher} from './TreePublisher';
-export {NodeManager} from './nodeManager';
+export {INodeManager, NodeManager} from './nodeManager';
 
 import {toString, toConsole, toDotString, toDotConsole} from './renderTree';
 

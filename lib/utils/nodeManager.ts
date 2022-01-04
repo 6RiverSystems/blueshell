@@ -24,9 +24,25 @@ export class APIFunctionNotFound extends Error {
 	}
 }
 
+export interface INodeManager<S extends BlueshellState, E> {
+	// Starts the server
+	runServer(): void;
+	// Shuts down the debug server
+	shutdown(): Promise<void>;
+
+	// adds a behavior tree node (and all its children) to be considered for debugging (setting/removing breakpoints)
+	addNode(node: BaseNode<S, E>): void;
+
+	// Removes a bt node (and all its children) to be considered for debugging (setting/removing breakpoints)
+	removeNode(node: BaseNode<S, E>): void;
+
+	// Given a node path, return the bt node we have cached for that path
+	getNode(path: string): BaseNode<S, E>|undefined;
+}
+
 // Manages information about what nodes are available in the BT for debugging (nodes must be registered
 // when they become available and unregistered when they are no longer available)
-export class NodeManager<S extends BlueshellState, E> extends EventEmitter {
+export class NodeManager<S extends BlueshellState, E> extends EventEmitter implements INodeManager<S, E> {
 	// maps node path to the bt node for that path
 	private nodePathMap: Map<NodePathKey, BaseNode<S, E>> = new Map();
 	// maps class/method to the breakpoint info for any breakpoints set on that class/method
@@ -326,7 +342,7 @@ export class NodeManager<S extends BlueshellState, E> extends EventEmitter {
 	}
 
 	// Returns the singleton instance
-	public static getInstance<S extends BlueshellState, E>(): NodeManager<S, E> {
+	public static getInstance<S extends BlueshellState, E>(): INodeManager<S, E> {
 		if (!this.instance) {
 			this.instance = new NodeManager();
 		}

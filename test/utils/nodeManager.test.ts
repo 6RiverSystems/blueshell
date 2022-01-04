@@ -1,7 +1,7 @@
 import 'mocha';
 import * as sinon from 'sinon';
 import {assert} from 'chai';
-import {APIFunctionNotFound, DuplicateNodeAdded, NodeManager} from '../../lib/utils/nodeManager';
+import {APIFunctionNotFound, DuplicateNodeAdded, NodeManager, INodeManager} from '../../lib/utils/nodeManager';
 import {RuntimeWrappers, Utils} from '../../lib/utils/nodeManagerHelper';
 import {BlueshellState} from '../../lib/models';
 import {Action, Sequence} from '../../lib/nodes';
@@ -20,7 +20,7 @@ class WebSocketClientMock extends EventEmitter {
 }
 
 describe('nodeManager', function() {
-	let nodeManager: NodeManager<BlueshellState, null>;
+	let nodeManager: INodeManager<BlueshellState, null>;
 
 	beforeEach(function() {
 		// reset the singleton
@@ -119,7 +119,7 @@ describe('nodeManager', function() {
 			clientSendSpy = sinon.spy(clientMock, 'send');
 			removeBreakpointHelperStub = sinon.stub(RuntimeWrappers, 'removeBreakpointFromFunction').callThrough();
 			setBreakpointHelperStub = sinon.stub(RuntimeWrappers, 'setBreakpointOnFunctionCall').callThrough();
-			session = nodeManager['session'];
+			session = (<NodeManager<BlueshellState, null>>nodeManager)['session'];
 
 			nodeManager.runServer();
 			sinon.assert.calledWith(serverStub, {
