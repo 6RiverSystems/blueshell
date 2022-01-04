@@ -348,6 +348,9 @@ export class NodeManager<S extends BlueshellState, E> extends EventEmitter imple
 		}
 		return this.instance;
 	}
+	public static reset() {
+		this.instance = null;
+	}
 
 	// Adds a bt node (and all its children) to be considered for debugging (setting/removing breakpoints)
 	public addNode(node: BaseNode<S, E>) {

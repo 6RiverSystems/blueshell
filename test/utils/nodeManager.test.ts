@@ -24,7 +24,7 @@ describe('nodeManager', function() {
 
 	beforeEach(function() {
 		// reset the singleton
-		NodeManager['instance'] = null;
+		NodeManager.reset();
 		nodeManager = NodeManager.getInstance();
 	});
 
