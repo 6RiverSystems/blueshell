@@ -14,8 +14,10 @@ class WebSocketServerMock extends EventEmitter {
 }
 
 class WebSocketClientMock extends EventEmitter {
+	public lastResponse: any;
 	send(data: string) {
-		this.emit('messageHandled');
+		this.lastResponse = JSON.parse(data);
+		this.emit('messageHandled', this.lastResponse);
 	}
 }
 
@@ -925,10 +927,42 @@ describe('nodeManager', function() {
 					});
 				});
 			});
-		});
+	
+			describe('client reconnect', function() {
+				it('should send any existing breakpoints back to the client when the client reconnects', async function(){
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						condition: '',
+					}));
+	
+					const placeBreakpointRespObj:any = (await EventEmitter.once(clientMock, 'messageHandled'))[0];
+					assert.deepEqual(placeBreakpointRespObj, {
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						nodeName: childNode.name,
+						nodeParent: childNode.parent,
+						condition: '',
+						success: true
+					});
 
-		describe('client reconnect', function() {
-			it('should send any existing breakpoints back to the client when the client reconnects');
+					const reconnectingClient = new WebSocketClientMock();
+					serverMock.emit('connection', reconnectingClient);
+				
+					// we should get the same breakpoint we set before with the first client
+					assert.deepEqual(reconnectingClient.lastResponse, {
+						request: 'placeBreakpoint',
+						nodePath: childNodePath,
+						methodName: 'handleEvent',
+						nodeName: childNode.name,
+						nodeParent: childNode.parent,
+						condition: '',
+						success: true
+					});
+				});
+			});
 		});
 
 		describe('unknown request', function() {
