@@ -196,24 +196,45 @@ export class NodeManager<S extends BlueshellState, E> extends EventEmitter imple
 	// Uses the node inspector to set a breakpoint using the specified node and the details in breakpointInfo
 	private async _setBreakpoint(key: string, node: BaseNode<S, E>, breakpointInfo: BreakpointInfo) {
 		const nodeName = node.name;
+		let propertyName = breakpointInfo.methodInfo.methodName;
+		// special case getters/setters
+		const getOrSetMatch = propertyName.match(/^(get|set) (.+)$/);
+		if (!!getOrSetMatch) {
+			propertyName = getOrSetMatch[2];
+		}
+
 		// find the class in the inheritance chain which contains the method or property
 		while (node &&
-				!Object.getOwnPropertyDescriptor(node, breakpointInfo.methodInfo.methodName)) {
+				!Object.getOwnPropertyDescriptor(node, propertyName)) {
 			node = Object.getPrototypeOf(node);
 		}
 		// if we climbed to the top of the inheritance chain and still can't find the method or property, return failure
-		if (!node || !Object.getOwnPropertyDescriptor(node, breakpointInfo.methodInfo.methodName)) {
+		if (!node || !Object.getOwnPropertyDescriptor(node, propertyName)) {
 			throw new Error(
-				`Could not find method ${breakpointInfo.methodInfo.methodName} in inheritance chain for ${nodeName}`);
+				`Could not find method ${propertyName} in inheritance chain for ${nodeName}`);
 		}
 
-		const methodPropertyDescriptor = Object.getOwnPropertyDescriptor(node, breakpointInfo.methodInfo.methodName);
 		// special case getters/setters
-		if (methodPropertyDescriptor!.get) {
-			(<any>global).breakpointMethods.set(key, methodPropertyDescriptor!.get.bind(node));
-		} else if (methodPropertyDescriptor!.set) {
-			(<any>global).breakpointMethods.set(key, methodPropertyDescriptor!.set.bind(node));
+		if (!!getOrSetMatch) {
+			const getOrSet = getOrSetMatch[1];
+			const methodPropertyDescriptor = Object.getOwnPropertyDescriptor(node, propertyName);
+			if (!methodPropertyDescriptor) {
+				throw new Error(`Could not find method property descriptor for ${breakpointInfo.methodInfo.methodName} ` +
+												`in ${breakpointInfo.methodInfo.className}`);
+			}
+			if (getOrSet === 'get') {
+				if (!methodPropertyDescriptor.get) {
+					throw new Error(`get is undefined for ${propertyName} in ${breakpointInfo.methodInfo.className}`);
+				}
+				(<any>global).breakpointMethods.set(key, methodPropertyDescriptor.get.bind(node));
+			} else {	// getOrSet === 'set'
+				if (!methodPropertyDescriptor.set) {
+					throw new Error(`set is undefined for ${propertyName} in ${breakpointInfo.methodInfo.className}`);
+				}
+				(<any>global).breakpointMethods.set(key, methodPropertyDescriptor.set.bind(node));
+			}
 		} else {
+			// not a getter/setter function
 			(<any>global).breakpointMethods.set(key, (<any>node)[breakpointInfo.methodInfo.methodName].bind(node));
 		}
 

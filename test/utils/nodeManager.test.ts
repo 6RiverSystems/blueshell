@@ -19,6 +19,14 @@ class WebSocketClientMock extends EventEmitter {
 	}
 }
 
+class SequenceWithSetter extends Sequence<BlueshellState, null> {
+	set setterOnlyProp(foo: string) {}
+	get foo() {
+		return 'foo';
+	}
+	set foo(f: string) {}
+}
+
 describe('nodeManager', function() {
 	let nodeManager: INodeManager<BlueshellState, null>;
 
@@ -188,7 +196,7 @@ describe('nodeManager', function() {
 
 		describe('breakpoints', function() {
 			let childNode: Action<BlueshellState, null>;
-			let rootNode: Sequence<BlueshellState, null>;
+			let rootNode: SequenceWithSetter;
 			const rootNodeName = 'rootTestNode';
 			const childNodeName = 'childTestNode';
 			const childNodePath = `${rootNodeName}_${childNodeName}`;
@@ -196,7 +204,7 @@ describe('nodeManager', function() {
 
 			beforeEach(function() {
 				childNode = new Action<BlueshellState, null>(childNodeName);
-				rootNode = new Sequence<BlueshellState, null>(rootNodeName, [childNode]);
+				rootNode = new SequenceWithSetter(rootNodeName, [childNode]);
 				nodeManager.addNode(rootNode);
 			});
 
@@ -283,8 +291,126 @@ describe('nodeManager', function() {
 					}));
 				});
 
-				it('should place a breakpoint on a getter');	// @@@ I don't think this works yet- always would set it on getter
-				it('should place a breakpoint on a setter');	// @@@ I don't think this works yet- always would set it on getter
+				it('should place a breakpoint on a getter', async function() {
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: rootNodeName,
+						methodName: 'get latched',
+						condition: '',
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+					sinon.assert.notCalled(removeBreakpointHelperStub);
+					const bps = new Map();
+					bps.set(rootNodeName, {
+						nodePath: rootNodeName,
+						condition: '',
+						nodeName: rootNodeName,
+						nodeParent: '',
+					});
+					sinon.assert.calledWith(setBreakpointHelperStub,
+						sinon.match.object,
+						sinon.match.string,
+						`(this.path === '${rootNodeName}')`,
+						{
+							methodInfo: {
+								className: 'Composite',
+								methodName: 'get latched',
+							},
+							breakpointId: sinon.match.string,
+							breakpoints: bps,
+						}
+					);
+					sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: rootNodeName,
+						methodName: 'get latched',
+						nodeName: rootNodeName,
+						nodeParent: '',
+						condition: '',
+						success: true,
+					}));
+				});
+				it('should place a breakpoint on a getter with a getter/setter defined', async function() {
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: rootNodeName,
+						methodName: 'get foo',
+						condition: '',
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+					sinon.assert.notCalled(removeBreakpointHelperStub);
+					const bps = new Map();
+					bps.set(rootNodeName, {
+						nodePath: rootNodeName,
+						condition: '',
+						nodeName: rootNodeName,
+						nodeParent: '',
+					});
+					sinon.assert.calledWith(setBreakpointHelperStub,
+						sinon.match.object,
+						sinon.match.string,
+						`(this.path === '${rootNodeName}')`,
+						{
+							methodInfo: {
+								className: 'SequenceWithSetter',
+								methodName: 'get foo',
+							},
+							breakpointId: sinon.match.string,
+							breakpoints: bps,
+						}
+					);
+					sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: rootNodeName,
+						methodName: 'get foo',
+						nodeName: rootNodeName,
+						nodeParent: '',
+						condition: '',
+						success: true,
+					}));
+				});
+				it('should place a breakpoint on a setter', async function() {
+					clientMock.emit('message', JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: rootNodeName,
+						methodName: 'set setterOnlyProp',
+						condition: '',
+					}));
+					// this is required to get over the promises that happen in the async callback when we emit message above
+					await EventEmitter.once(clientMock, 'messageHandled');
+					sinon.assert.notCalled(removeBreakpointHelperStub);
+					const bps = new Map();
+					bps.set(rootNodeName, {
+						nodePath: rootNodeName,
+						condition: '',
+						nodeName: rootNodeName,
+						nodeParent: '',
+					});
+					sinon.assert.calledWith(setBreakpointHelperStub,
+						sinon.match.object,
+						sinon.match.string,
+						`(this.path === '${rootNodeName}')`,
+						{
+							methodInfo: {
+								className: 'SequenceWithSetter',
+								methodName: 'set setterOnlyProp',
+							},
+							breakpointId: sinon.match.string,
+							breakpoints: bps,
+						}
+					);
+					sinon.assert.calledWith(clientSendSpy, JSON.stringify({
+						request: 'placeBreakpoint',
+						nodePath: rootNodeName,
+						methodName: 'set setterOnlyProp',
+						nodeName: rootNodeName,
+						nodeParent: '',
+						condition: '',
+						success: true,
+					}));
+				});
 				it('should place a 2nd breakpoint on the same function of another instance, same class', async function() {
 					clientMock.emit('message', JSON.stringify({
 						request: 'placeBreakpoint',

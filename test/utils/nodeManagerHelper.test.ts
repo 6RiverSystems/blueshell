@@ -399,7 +399,7 @@ describe('nodeManagerHelper', function() {
 
 		describe('getMethodInfoForObject', function() {
 			it('should give back an alphabetized list of methods with class', function() {
-				class Foo {
+				class TestBaseClass {
 					// should not work on member variables
 					private baseVar: any;
 
@@ -420,7 +420,7 @@ describe('nodeManagerHelper', function() {
 					public baseMethod(): void {}
 				}
 
-				class Bar extends Foo {
+				class TestChildClass extends TestBaseClass {
 					// should not work on member variables
 					private childVar: any;
 
@@ -430,10 +430,10 @@ describe('nodeManagerHelper', function() {
 					}
 
 					// should work on properties
-					get getChildProp(): any {
+					get childProp(): any {
 						return 0;
 					}
-					set setChildProp(i: any) {
+					set childProp(i: any) {
 						i;
 					}
 
@@ -447,18 +447,18 @@ describe('nodeManagerHelper', function() {
 					public privateChildMethod(): void {}
 				}
 
-				const obj = new Bar();
+				const obj = new TestChildClass();
 				const methodInfo = Utils.getMethodInfoForObject(obj);
 				assert.deepEqual(methodInfo, [
-					{methodName: 'baseMethod', className: 'Foo'},
-					{methodName: 'childMethod', className: 'Bar'},
-					{methodName: 'constructor', className: 'Bar'},
-					{methodName: 'getBaseProp', className: 'Foo'},
-					{methodName: 'getChildProp', className: 'Bar'},
-					{methodName: 'inheritedMethod', className: 'Bar'},
-					{methodName: 'privateChildMethod', className: 'Bar'},
-					{methodName: 'setBaseProp', className: 'Foo'},
-					{methodName: 'setChildProp', className: 'Bar'},
+					{methodName: 'baseMethod', className: 'TestBaseClass'},
+					{methodName: 'childMethod', className: 'TestChildClass'},
+					{methodName: 'constructor', className: 'TestChildClass'},
+					{methodName: 'get childProp', className: 'TestChildClass'},
+					{methodName: 'get getBaseProp', className: 'TestBaseClass'},
+					{methodName: 'inheritedMethod', className: 'TestChildClass'},
+					{methodName: 'privateChildMethod', className: 'TestChildClass'},
+					{methodName: 'set childProp', className: 'TestChildClass'},
+					{methodName: 'set setBaseProp', className: 'TestBaseClass'},
 				]);
 			});
 		});

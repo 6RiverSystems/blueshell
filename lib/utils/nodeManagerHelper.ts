@@ -118,10 +118,23 @@ export namespace Utils {
 				const nodePropDescriptor = Object.getOwnPropertyDescriptor(obj, prop);
 				// if the prop name is a getter or setter, if we simply just check that it's a function
 				// that will end up invoking the getter or setter, which could lead to a crash
-				if (nodePropDescriptor && (nodePropDescriptor.get || nodePropDescriptor.set)) {
+				if (nodePropDescriptor?.get || nodePropDescriptor?.set) {
 					return true;
 				}
 				return typeof (obj as any)[prop] === 'function';
+			}).flatMap((prop) => {
+				const props: string[] = [];
+				const nodePropDescriptor = Object.getOwnPropertyDescriptor(obj, prop);
+				if (nodePropDescriptor?.get) {
+					props.push(`get ${prop}`);
+				}
+				if (nodePropDescriptor?.set) {
+					props.push(`set ${prop}`);
+				}
+				if (!nodePropDescriptor?.get && !nodePropDescriptor?.set) {
+					props.push(prop);
+				}
+				return props;
 			});
 			const className = obj.constructor.name;
 			methods.forEach((methodName) => {
