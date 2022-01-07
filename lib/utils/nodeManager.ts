@@ -2,6 +2,7 @@
 
 import {BaseNode, BlueshellState, isParentNode} from '../models';
 import Websocket from 'ws';
+import util from 'util';
 import {EventEmitter} from 'events';
 import {Session} from 'inspector';
 import {RuntimeWrappers, Utils} from './nodeManagerHelper';
@@ -405,18 +406,8 @@ export class NodeManager<S extends BlueshellState, E> extends EventEmitter imple
 
 	// Shuts down the debug server
 	public async shutdown() {
-		return new Promise<void>((resolve, reject) => {
-			if (this.server) {
-				this.server.close((err) => {
-					if (err) {
-						reject(err);
-					} else {
-						resolve();
-					}
-				});
-			} else {
-				resolve();
-			}
-		});
+		if (this.server) {
+			await util.promisify(this.server.close.bind(this.server));
+		}
 	}
 }
