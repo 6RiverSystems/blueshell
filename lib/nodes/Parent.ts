@@ -82,4 +82,8 @@ export abstract class Parent<S extends BlueshellState, E> extends Action<S, E> i
 			child.parent = this.path;
 		}
 	}
+
+	public get parent() {
+		return super.parent;
+	}
 }

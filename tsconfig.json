@@ -2,7 +2,7 @@
 	"compileOnSave": true,
 	"compilerOptions": {
 		"outDir": "dist",
-		"target": "es2018",
+		"target": "es2019",
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"allowJs": false,
@@ -14,11 +14,13 @@
 		"removeComments": false,
 		"preserveConstEnums": true,
 		"noImplicitReturns": true,
+		"esModuleInterop": true,
 		"types": [
 			"node",
 			"reflect-metadata",
 			"mocha",
-			"chai"
+			"chai",
+			"chai-as-promised"
 		],
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
@@ -27,7 +29,6 @@
 		"node_modules",
 		"scripts",
 		"coverage",
-		"dist",
-		"test"
+		"dist"
 	]
 }

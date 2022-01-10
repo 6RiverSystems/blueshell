@@ -10,16 +10,16 @@
     "LICENSE"
   ],
   "scripts": {
-    "compile": "npm-run-all compile:js",
-    "compile:js": "tsc --pretty",
-    "compile:watch": "tsc --pretty --watch",
-    "pretest": "npm-run-all pretest:eslint",
+    "build": "npm-run-all build:js",
+    "build:js": "tsc --pretty",
+    "build:watch": "tsc --pretty --watch",
+    "pretest": "npm-run-all build pretest:eslint",
     "pretest:eslint": "eslint --ext .ts,.js ${ESLINT_OPTS} .",
     "test": "NODE_ENV=test nyc mocha ${MOCHA_OPTS}",
     "test:no-cover": "NODE_ENV=test mocha",
-    "test:debug": "npm run test:no-cover -- --debug-brk test",
+    "test:debug": "npm run test:no-cover -- --inspect-brk test",
     "coverage": "NODE_ENV=test nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "prepublish": "npm-run-all compile"
+    "prepublish": "npm-run-all build"
   },
   "repository": {
     "type": "git",
@@ -44,7 +44,8 @@
     "@6river/commitlint-config-6river": "2.1.0",
     "@commitlint/cli": "^13.2.1",
     "@types/archy": "0.0.31",
-    "@types/chai": "4.1.7",
+    "@types/chai": "4.2.8",
+    "@types/chai-as-promised": "7.1.2",
     "@types/lodash": "4.14.121",
     "@types/mocha": "5.2.6",
     "@types/node": "14.17.6",
@@ -53,7 +54,9 @@
     "@types/uuid": "3.4.4",
     "@typescript-eslint/eslint-plugin": "4.28.5",
     "@typescript-eslint/parser": "4.28.5",
+    "@types/ws": "7.2.1",
     "chai": "4.2.0",
+    "chai-as-promised": "7.1.1",
     "codecov": "3.8.2",
     "dotparser": "0.4.0",
     "eslint": "^7.32.0",
@@ -67,7 +70,6 @@
     "npm-run-all": "4.1.5",
     "nyc": "15.0.0",
     "sinon": "7.3.2",
-    "ts-node": "^10.3.0",
     "typedoc": "^0.22.6",
     "typescript": "~4.3.5",
     "validate-commit-msg": "2.14.0"
@@ -75,7 +77,8 @@
   "dependencies": {
     "archy": "1.0.0",
     "source-map-support": "0.5.10",
-    "uuid": "3.3.2"
+    "uuid": "3.3.2",
+    "ws": "7.2.1"
   },
   "config": {
     "validate-commit-msg": {

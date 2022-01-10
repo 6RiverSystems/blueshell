@@ -9,7 +9,9 @@ import {
 	BaseNode,
 	isParentNode,
 } from '../models';
-import {TreePublisher, TreeNonPublisher} from '../utils';
+import {v4} from 'uuid';
+
+import {TreePublisher, TreeNonPublisher, NodeManager} from '../utils';
 
 /**
  * Interface that defines what is stored in private node storage at the root
@@ -24,6 +26,7 @@ export interface PrivateNodeStorage {
  * @author Joshua Chaitin-Pollak
  */
 export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
+	private _id: string = '';
 	private _parent: string;
 
 	// Hard to properly type this since the static can't
@@ -35,6 +38,14 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 
 	public static registerTreePublisher<S extends BlueshellState, E>(publisher: TreePublisher<S, E>): void {
 		Base.treePublisher = publisher;
+	}
+
+	public static registerNodeForDebug<S extends BlueshellState, E>(node: BaseNode<S, E>): void {
+		NodeManager.getInstance<S, E>().addNode(node);
+	}
+
+	public static unregisterNodeForDebug<S extends BlueshellState, E>(node: BaseNode<S, E>): void {
+		NodeManager.getInstance<S, E>().removeNode(node);
 	}
 
 	/**
@@ -150,6 +161,17 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 
 	public set parent(path: string) {
 		this._parent = path;
+	}
+
+	public get parent() {
+		return this._parent;
+	}
+
+	public get id(): string {
+		if (!this._id) {
+			this._id = `n${v4().replace(/\-/g, '')}`;
+		}
+		return this._id;
 	}
 
 	public get path() {
