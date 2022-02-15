@@ -52,6 +52,8 @@ export class NodeManager<S extends BlueshellState, E> extends EventEmitter imple
 	private server: Websocket.Server|undefined;
 	// node inspection session
 	private session = new Session();
+	// websocket connections connected to the server
+	private connectionSockets: Websocket[] = [];
 	// singleton instance of the manager
 	private static instance: NodeManager<BlueshellState, any>|null = null;
 
@@ -84,6 +86,8 @@ export class NodeManager<S extends BlueshellState, E> extends EventEmitter imple
 
 		// setup the connection handler
 		this.server.on('connection', (clientSocket) => {
+			this.connectionSockets.push(clientSocket);
+
 			// send the current cached breakpoints to the client if the client reconnects
 			this.breakpointInfoMap.forEach((breakpointInfo) => {
 				breakpointInfo.breakpoints.forEach((breakpoint) => {
@@ -406,7 +410,9 @@ export class NodeManager<S extends BlueshellState, E> extends EventEmitter imple
 
 	// Shuts down the debug server
 	public async shutdown() {
+		this.session.disconnect();
 		if (this.server) {
+			this.connectionSockets.forEach((socket) => socket.close());
 			await util.promisify(this.server.close.bind(this.server));
 		}
 	}
