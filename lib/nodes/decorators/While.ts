@@ -24,6 +24,11 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		super('While-' + desc, child);
 	}
 
+	// override getNodeStorage to explicitly return WhileNodeStorage so consumers don't need to cast types
+	override getNodeStorage(state: S): WhileNodeStorage {
+		return super.getNodeStorage(state);
+	}
+
 	protected decorateCall(handleEvent: (state: S, event: E) => ResultCode, state: S, event: E) {
 		const storage: WhileNodeStorage = this.getNodeStorage(state);
 
