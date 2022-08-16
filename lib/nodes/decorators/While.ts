@@ -3,7 +3,7 @@ import {Action} from '../Base';
 import {Decorator} from '../Decorator';
 import {clearEventSeenRecursive} from '../Parent';
 
-interface WhileNodeStorage extends NodeStorage {
+export interface WhileNodeStorage extends NodeStorage {
 	beganAtLeastOneLoop?: boolean;
 	lastLoopResult?: ResultCode,
 	break?: boolean,
