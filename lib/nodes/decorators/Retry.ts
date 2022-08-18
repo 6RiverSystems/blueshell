@@ -1,7 +1,7 @@
 import {NodeStorage, BlueshellState, ResultCode, rc, BaseNode} from '../../models';
 import {RepeatWhen} from './RepeatWhen';
 
-type RetryNodeStorage = NodeStorage & {repeats: number|undefined};
+export type RetryNodeStorage = NodeStorage & {repeats?: number};
 
 export class Retry<S extends BlueshellState, E> extends RepeatWhen<S, E> {
 	constructor(
@@ -32,5 +32,10 @@ export class Retry<S extends BlueshellState, E> extends RepeatWhen<S, E> {
 				}
 			}
 		);
+	}
+
+	// override getNodeStorage to explicitly return RetryNodeStorage so consumers don't need to cast types
+	override getNodeStorage(state: S): RetryNodeStorage {
+		return super.getNodeStorage(state);
 	}
 }

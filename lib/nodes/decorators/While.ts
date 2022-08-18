@@ -3,7 +3,7 @@ import {Action} from '../Base';
 import {Decorator} from '../Decorator';
 import {clearEventSeenRecursive} from '../Parent';
 
-interface WhileNodeStorage extends NodeStorage {
+export interface WhileNodeStorage extends NodeStorage {
 	beganAtLeastOneLoop?: boolean;
 	lastLoopResult?: ResultCode,
 	break?: boolean,
@@ -22,6 +22,11 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		private readonly defaultResult: ResultCode = rc.SUCCESS,
 	) {
 		super('While-' + desc, child);
+	}
+
+	// override getNodeStorage to explicitly return WhileNodeStorage so consumers don't need to cast types
+	override getNodeStorage(state: S): WhileNodeStorage {
+		return super.getNodeStorage(state);
 	}
 
 	protected decorateCall(handleEvent: (state: S, event: E) => ResultCode, state: S, event: E) {
