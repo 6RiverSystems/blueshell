@@ -12,6 +12,7 @@ const RunningAction = Behavior.RunningAction;
 class TestState implements Behavior.BlueshellState {
 	public errorReason?: Error;
 	public __blueshell: any;
+	public nodePath: string = '';
 }
 
 class TestAction extends RunningAction<TestState, string> {

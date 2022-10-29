@@ -67,6 +67,7 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 	 * @protected
 	 */
 	public handleEvent(state: S, event: E): ResultCode {
+		state.nodePath = this.path;
 		this._beforeEvent(state, event);
 
 		const passed = this.precondition(state, event);

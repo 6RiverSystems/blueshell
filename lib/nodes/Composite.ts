@@ -62,7 +62,11 @@ export abstract class Composite<S extends BlueshellState, E> extends Parent<S, E
 		if (this.latched) {
 			const storage = this.getNodeStorage(state);
 			// clear latched status if the node is no longer running after processing the event
-			if (storage.running !== undefined && res !== resultCodes.RUNNING) {
+			if (res !== resultCodes.RUNNING) {
+				const blueshell = this._privateStorage(state);
+				if (blueshell.loggingCallback) {
+					blueshell.loggingCallback(`Resetting latched status for node: ${this.path}`);
+				}
 				storage.running = undefined;
 			}
 		}

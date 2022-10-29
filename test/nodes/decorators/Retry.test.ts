@@ -31,6 +31,7 @@ describe('Retry ', function() {
 		const counter: RetryTestState = {
 			number: 0,
 			__blueshell: {},
+			nodePath: '',
 		};
 		const countUntil = new ResultReturner(rc.FAILURE);
 		const retry = new Behavior.decorators.Retry('RetryTest', countUntil, 2);
@@ -44,6 +45,7 @@ describe('Retry ', function() {
 		const counter: RetryTestState = {
 			number: 0,
 			__blueshell: {},
+			nodePath: '',
 		};
 		const countUntil = new ResultReturner(rc.FAILURE, 3);
 		const retry = new Behavior.decorators.Retry('RetryTest', countUntil, -1);
