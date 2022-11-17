@@ -99,6 +99,9 @@ Decorators intercept and can modify the event sent to or the result from the chi
 
 * The publisher can be registered with the tree which will log each transition.
 
+## API Documentation
+You can find the latest Blueshell api documentation [here](https://6RiverSystems.github.io/blueshell/).
+
 ## Inspiration and Further Reading
 
 The following are sources used when designing this library
