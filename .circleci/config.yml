@@ -77,6 +77,8 @@ workflows:
     jobs:
       - setup
       - test:
+          # need internal tokens for codecov upload
+          context: 6rs-circle
           requires:
             - setup
       - publish:
