@@ -1,0 +1,6 @@
+dist
+pnpm-lock.yaml
+package-lock.json
+.rush/temp/**
+coverage/
+migrations/**/*.js
