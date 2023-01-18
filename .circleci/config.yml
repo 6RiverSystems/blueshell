@@ -1,50 +1,57 @@
 version: 2.1
 
 orbs:
-  sixrs-gke: sixriversystems/sixrs-gke@3
+  sixrs-gke: sixriversystems/sixrs-gke@7
+  gcp-cli: circleci/gcp-cli@3
+
+aliases:
+  - &node_image cimg/node:16.19.0
+  - &npm_global_cache dependency-cache-v1-{{ checksum ".node-version" }}-{{ checksum "package-lock.json" }}
 
 jobs:
   setup:
     docker:
-      - image: cimg/node:14.17.6
+      - image: *node_image
         environment:
           NODE_ENV: test
     steps:
       - checkout
       - restore_cache:
           keys:
-            - dependency-cache-v1-{{ checksum "package-lock.json"}}
-            - dependency-cache-v1-
+            - *npm_global_cache
       - run:
           name: Install node dependencies
           command: |
             npm ci
       - save_cache:
-          key: dependency-cache-v1-{{ checksum "package-lock.json" }}
+          key: *npm_global_cache
           paths:
-            - ./node_modules
+            - ~/.npm
       - run: npm run build
       - persist_to_workspace:
           root: ./
           paths:
-            - .
+            - ./node_modules
+            - ./dist
   publish:
     docker:
-      - image: cimg/node:14.17.6
+      - image: *node_image
         environment:
           NODE_ENV: test
     steps:
+      - checkout
       - attach_workspace:
           at: ./
       - sixrs-gke/run-release
       - sixrs-gke/npm-public-publish
   test:
     docker:
-      - image: cimg/node:14.17.6
+      - image: *node_image
         environment:
           NODE_ENV: test
           MOCHA_OPTS: --reporter mocha-junit-reporter --reporter-options mochaFile=./reports/junit/mocha/mocha.xml
     steps:
+      - checkout
       - attach_workspace:
           at: ./
       - run:
@@ -55,6 +62,7 @@ jobs:
           name: npm run coverage
           command: |
             npm run coverage
+      - sixrs-gke/codecov
       - store_artifacts:
           path: coverage
       - store_artifacts:
