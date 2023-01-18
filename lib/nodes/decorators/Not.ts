@@ -1,5 +1,5 @@
-import {BlueshellState, rc, ResultCode, BaseNode} from '../../models';
-import {Decorator} from '../Decorator';
+import { BlueshellState, rc, ResultCode, BaseNode } from '../../models';
+import { Decorator } from '../Decorator';
 
 /**
  * !Node
@@ -27,13 +27,13 @@ export class Not<S extends BlueshellState, E> extends Decorator<S, E> {
 	 */
 	protected decorateResult(res: ResultCode): ResultCode {
 		switch (res) {
-		case rc.SUCCESS:
-			res = rc.FAILURE;
-			break;
-		case rc.FAILURE:
-			res = rc.SUCCESS;
-			break;
-		default:
+			case rc.SUCCESS:
+				res = rc.FAILURE;
+				break;
+			case rc.FAILURE:
+				res = rc.SUCCESS;
+				break;
+			default:
 			// no-op
 		}
 

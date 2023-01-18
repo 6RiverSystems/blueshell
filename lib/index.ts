@@ -1,4 +1,4 @@
-import {NodeManager} from './utils';
+import { NodeManager } from './utils';
 
 export * from './models';
 export * from './nodes';

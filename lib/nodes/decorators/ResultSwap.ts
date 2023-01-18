@@ -1,5 +1,5 @@
-import {BlueshellState, ResultCode, BaseNode} from '../../models';
-import {Decorator} from '../Decorator';
+import { BlueshellState, ResultCode, BaseNode } from '../../models';
+import { Decorator } from '../Decorator';
 
 /**
  * Swaps one result from a child node for another.
@@ -18,10 +18,12 @@ export class ResultSwap<S extends BlueshellState, E> extends Decorator<S, E> {
 	 * @param child The child Node of the decorator.
 	 * @param desc Optional description of the Node.
 	 */
-	constructor(private _inResult: ResultCode,
-							private _outResult: ResultCode,
-							child: BaseNode<S, E>,
-							desc = `ResultSwap_${_inResult}-${_outResult}-${child.name}`) {
+	constructor(
+		private _inResult: ResultCode,
+		private _outResult: ResultCode,
+		child: BaseNode<S, E>,
+		desc = `ResultSwap_${_inResult}-${_outResult}-${child.name}`,
+	) {
 		super(desc, child);
 	}
 

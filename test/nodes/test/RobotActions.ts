@@ -1,7 +1,7 @@
 /**
  * Created by josh on 1/18/16.
  */
-import {rc} from '../../../lib';
+import { rc } from '../../../lib';
 import * as Behavior from '../../../lib';
 
 class RobotState implements Behavior.BlueshellState {
@@ -74,17 +74,10 @@ class EmergencyShutdown extends Behavior.Action<RobotState, string> {
 	}
 }
 
-const waitAi = new Behavior.LatchedSelector('shutdownWithWaitAi',
-	[
-		new Recharge(),
-		new WaitForCooldown(),
-		new EmergencyShutdown(),
-	]);
+const waitAi = new Behavior.LatchedSelector('shutdownWithWaitAi', [
+	new Recharge(),
+	new WaitForCooldown(),
+	new EmergencyShutdown(),
+]);
 
-export {
-	RobotState,
-	Recharge,
-	WaitForCooldown,
-	EmergencyShutdown,
-	waitAi,
-};
+export { RobotState, Recharge, WaitForCooldown, EmergencyShutdown, waitAi };

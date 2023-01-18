@@ -1,13 +1,13 @@
-import {assert} from 'chai';
+import { assert } from 'chai';
 
-import {Constant, rc} from '../../../lib';
+import { Constant, rc } from '../../../lib';
 import * as Behavior from '../../../lib';
-import {DroneState} from '../test/DroneActions';
+import { DroneState } from '../test/DroneActions';
 
 const ResultAdapt = Behavior.decorators.ResultAdapt;
 
-describe('ResultAdapt', function() {
-	it('should apply the resultAdapter', function() {
+describe('ResultAdapt', function () {
+	it('should apply the resultAdapter', function () {
 		const testState = new DroneState();
 		const testEvent = {};
 

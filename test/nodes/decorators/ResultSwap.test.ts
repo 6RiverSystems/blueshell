@@ -1,8 +1,8 @@
-import {assert} from 'chai';
+import { assert } from 'chai';
 
-import {rc} from '../../../lib';
+import { rc } from '../../../lib';
 import * as Behavior from '../../../lib';
-import {DroneState} from '../test/DroneActions';
+import { DroneState } from '../test/DroneActions';
 
 const Action = Behavior.Action;
 const ResultSwap = Behavior.decorators.ResultSwap;
@@ -29,8 +29,8 @@ class FailureAction extends Action<DroneState, string> {
 	}
 }
 
-describe('ResultSwap', function() {
-	it('success in action should return success', function() {
+describe('ResultSwap', function () {
+	it('success in action should return success', function () {
 		const successAction = new SuccessAction();
 		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, successAction);
 
@@ -39,7 +39,7 @@ describe('ResultSwap', function() {
 		assert.equal(response, rc.SUCCESS);
 	});
 
-	it('failure in action should return success', function() {
+	it('failure in action should return success', function () {
 		const failureAction = new FailureAction();
 		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction);
 
@@ -48,14 +48,14 @@ describe('ResultSwap', function() {
 		assert.equal(response, rc.SUCCESS);
 	});
 
-	it('should use default name', function() {
+	it('should use default name', function () {
 		const failureAction = new FailureAction();
 		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction);
 
 		assert.equal(resultSwap.name, 'ResultSwap_FAILURE-SUCCESS-failureAction');
 	});
 
-	it('should use overridden name', function() {
+	it('should use overridden name', function () {
 		const failureAction = new FailureAction();
 		const resultSwap = new ResultSwap(rc.FAILURE, rc.SUCCESS, failureAction, 'foo');
 

@@ -1,10 +1,10 @@
 /**
  * Created by josh on 1/10/16.
  */
-import {assert} from 'chai';
+import { assert } from 'chai';
 import * as sinon from 'sinon';
 
-import {rc} from '../../lib';
+import { rc } from '../../lib';
 import * as Behavior from '../../lib';
 
 const RunningAction = Behavior.RunningAction;
@@ -33,11 +33,11 @@ class TestAction extends RunningAction<TestState, string> {
 
 	protected isCompletionEvent(event: string) {
 		this.count++;
-		return (this.count === this.numIter || event === this.testValue);
+		return this.count === this.numIter || event === this.testValue;
 	}
 }
 
-describe('RunningAction', function() {
+describe('RunningAction', function () {
 	let action: TestAction;
 	let state: TestState;
 	let activateSpy: sinon.SinonSpy;
@@ -52,16 +52,16 @@ describe('RunningAction', function() {
 		onIncompleteSpy = sinon.spy(<any>action, 'onIncomplete');
 	}
 
-	beforeEach(function() {
+	beforeEach(function () {
 		state = new TestState();
 	});
 
-	afterEach(function() {
+	afterEach(function () {
 		sinon.restore();
 	});
 
-	context('Activate returns non-RUNNING on first handleEvent call', function() {
-		it('returns SUCCESS', function() {
+	context('Activate returns non-RUNNING on first handleEvent call', function () {
+		it('returns SUCCESS', function () {
 			action = new TestAction('TestRunningAction', undefined, rc.SUCCESS);
 			setupSpies();
 			const res = action.handleEvent(state, 'foo');
@@ -71,7 +71,7 @@ describe('RunningAction', function() {
 			assert.strictEqual(onCompleteSpy.callCount, 0, 'onComplete called');
 			assert.strictEqual(onIncompleteSpy.callCount, 0, 'onIncomplete called');
 		});
-		it('returns FAILURE', function() {
+		it('returns FAILURE', function () {
 			action = new TestAction('TestRunningAction', undefined, rc.FAILURE);
 			setupSpies();
 			const res = action.handleEvent(state, 'foo');
@@ -81,7 +81,7 @@ describe('RunningAction', function() {
 			assert.strictEqual(onCompleteSpy.callCount, 0, 'onComplete called');
 			assert.strictEqual(onIncompleteSpy.callCount, 0, 'onIncomplete called');
 		});
-		it('returns ERROR', function() {
+		it('returns ERROR', function () {
 			action = new TestAction('TestRunningAction', undefined, rc.ERROR);
 			setupSpies();
 			const res = action.handleEvent(state, 'foo');
@@ -93,8 +93,8 @@ describe('RunningAction', function() {
 		});
 	});
 
-	context('RUNNING tests', function() {
-		it('returns after second handleEvent', function() {
+	context('RUNNING tests', function () {
+		it('returns after second handleEvent', function () {
 			action = new TestAction('TestRunningAction', 1);
 			setupSpies();
 			let res = action.handleEvent(state, 'foo');
@@ -106,7 +106,7 @@ describe('RunningAction', function() {
 			assert.strictEqual(onCompleteSpy.callCount, 1, 'onComplete not called once');
 			assert.strictEqual(onIncompleteSpy.callCount, 0, 'onIncomplete called');
 		});
-		it('returns after second handleEvent', function() {
+		it('returns after second handleEvent', function () {
 			action = new TestAction('TestRunningAction', 2);
 			setupSpies();
 			let res = action.handleEvent(state, 'foo');
@@ -122,8 +122,8 @@ describe('RunningAction', function() {
 		});
 	});
 
-	context('additional tests', function() {
-		it('can use event to determine completion', function() {
+	context('additional tests', function () {
+		it('can use event to determine completion', function () {
 			action = new TestAction('TestRunningAction', 100, rc.RUNNING, 'bar');
 			setupSpies();
 			let res = action.handleEvent(state, 'foo');
@@ -137,7 +137,7 @@ describe('RunningAction', function() {
 			assert.strictEqual(onCompleteSpy.callCount, 1, 'onComplete not called once');
 			assert.strictEqual(onIncompleteSpy.callCount, 1, 'onIncomplete not called once');
 		});
-		it('resets when resetNodeStorage() is called', function() {
+		it('resets when resetNodeStorage() is called', function () {
 			action = new TestAction('TestRunningAction', 100, rc.RUNNING, 'bar');
 			setupSpies();
 			let res = action.handleEvent(state, 'foo');

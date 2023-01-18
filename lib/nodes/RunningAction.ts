@@ -1,5 +1,5 @@
-import {Action} from './Base';
-import {BlueshellState, ResultCode, rc} from '../models';
+import { Action } from './Base';
+import { BlueshellState, ResultCode, rc } from '../models';
 
 export abstract class RunningAction<S extends BlueshellState, E> extends Action<S, E> {
 	constructor(name: string) {

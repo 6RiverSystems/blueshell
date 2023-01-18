@@ -1,5 +1,5 @@
-import {Switch} from './Switch';
-import {BlueshellState, ResultCode, rc, BaseNode, Conditional} from '../models';
+import { Switch } from './Switch';
+import { BlueshellState, ResultCode, rc, BaseNode, Conditional } from '../models';
 
 /**
  * Executes the child action associated with the first matching conditional.

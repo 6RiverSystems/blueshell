@@ -1,7 +1,7 @@
-import {ResultCode, BlueshellState, BaseNode, ConditionalWithResult} from '../../models';
-import {Action} from '../Base';
-import {Decorator} from '../Decorator';
-import {clearEventSeenRecursive} from '../Parent';
+import { ResultCode, BlueshellState, BaseNode, ConditionalWithResult } from '../../models';
+import { Action } from '../Base';
+import { Decorator } from '../Decorator';
+import { clearEventSeenRecursive } from '../Parent';
 
 /**
  * Given a conditional, have the child Node repeat handling of the event.
@@ -9,9 +9,11 @@ import {clearEventSeenRecursive} from '../Parent';
  * @author Joshua Chaitin-Pollak
  */
 export class RepeatWhen<S extends BlueshellState, E> extends Decorator<S, E> {
-	constructor(desc: string,
-	            child: BaseNode<S, E>,
-	            private conditional: ConditionalWithResult<S, E>) {
+	constructor(
+		desc: string,
+		child: BaseNode<S, E>,
+		private conditional: ConditionalWithResult<S, E>,
+	) {
 		super('RepeatWhen-' + desc, child);
 	}
 

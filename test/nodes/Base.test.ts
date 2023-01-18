@@ -1,9 +1,9 @@
 /**
  * Created by josh on 1/10/16.
  */
-import {assert} from 'chai';
+import { assert } from 'chai';
 
-import {rc} from '../../lib';
+import { rc } from '../../lib';
 import * as Behavior from '../../lib';
 
 const Base = Behavior.Action;
@@ -24,22 +24,22 @@ class TestAction extends Base<TestState, string> {
 	}
 }
 
-describe('Base', function() {
-	describe('#name', function() {
-		it('has a name', function() {
+describe('Base', function () {
+	describe('#name', function () {
+		it('has a name', function () {
 			assert.equal(new TestAction().name, 'TestAction');
 			assert.equal(new TestAction('override').name, 'override');
 		});
 	});
 
-	describe('#path', function() {
-		it('sets a simple path', function() {
+	describe('#path', function () {
+		it('sets a simple path', function () {
 			const node = new Base('test');
 
 			assert.equal(node.path, 'test', 'Node Name');
 		});
 
-		it('builds hierarchical paths', function() {
+		it('builds hierarchical paths', function () {
 			const leaf = new TestAction('leaf');
 			const parent1 = new Decorator('parent1', leaf);
 			const parent2 = new Decorator('parent2_foo', parent1);
@@ -50,8 +50,8 @@ describe('Base', function() {
 		});
 	});
 
-	describe('#getNodeStorage', function() {
-		it('has separate storage for each state', function() {
+	describe('#getNodeStorage', function () {
+		it('has separate storage for each state', function () {
 			const node = new Base('test');
 
 			const state1 = new TestState();
@@ -67,8 +67,8 @@ describe('Base', function() {
 		});
 	});
 
-	describe('#handleEvent', function() {
-		it('handles events', function() {
+	describe('#handleEvent', function () {
+		it('handles events', function () {
 			const action = new TestAction();
 
 			const res = action.handleEvent(new TestState(), 'testEvent');
@@ -78,8 +78,8 @@ describe('Base', function() {
 		});
 	});
 
-	describe('#precondition', function() {
-		it('should return FAILURE if the precondition fails', function() {
+	describe('#precondition', function () {
+		it('should return FAILURE if the precondition fails', function () {
 			const action = new TestAction('will fail', false);
 
 			const res = action.handleEvent(new TestState(), 'testEvent');
@@ -89,8 +89,8 @@ describe('Base', function() {
 		});
 	});
 
-	describe('#EventCounter', function() {
-		it('Parent Node Counter', function() {
+	describe('#EventCounter', function () {
+		it('Parent Node Counter', function () {
 			const root = new Base('root');
 			const state = new TestState();
 
@@ -101,7 +101,7 @@ describe('Base', function() {
 			assert.equal(root.getLastEventSeen(state), 2);
 		});
 
-		it('Child Node Counter', function() {
+		it('Child Node Counter', function () {
 			const child = new Base('child');
 			const root = new Behavior.Decorator('root', child);
 
@@ -120,12 +120,12 @@ describe('Base', function() {
 		});
 	});
 
-	describe('publisher', function() {
-		it('Has a non publisher by default', function() {
+	describe('publisher', function () {
+		it('Has a non publisher by default', function () {
 			assert.isTrue(Base.treePublisher instanceof Behavior.TreeNonPublisher);
 		});
 
-		it('We can make a publisher', function() {
+		it('We can make a publisher', function () {
 			const action = new TestAction();
 			let published = false;
 			const publisher = {

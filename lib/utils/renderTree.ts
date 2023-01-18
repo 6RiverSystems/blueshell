@@ -1,18 +1,22 @@
 /**
  * Created by jpollak on 3/23/16.
  */
-import {serializeArchyTree} from './archyTree';
-import {serializeDotTree} from './dotTree';
-import {BlueshellState, BaseNode} from '../models';
+import { serializeArchyTree } from './archyTree';
+import { serializeDotTree } from './dotTree';
+import { BlueshellState, BaseNode } from '../models';
 
 export function toString<S extends BlueshellState, E>(
-	tree: BaseNode<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
+	tree: BaseNode<S, E>,
+	state?: S,
+	contextDepth = Number.MAX_SAFE_INTEGER,
 ): string {
 	return serializeArchyTree(tree, state, contextDepth);
 }
 
 export function toConsole<S extends BlueshellState, E>(
-	tree: BaseNode<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
+	tree: BaseNode<S, E>,
+	state?: S,
+	contextDepth = Number.MAX_SAFE_INTEGER,
 ) {
 	console.log(toString(tree, state, contextDepth)); // eslint-disable-line no-console
 }

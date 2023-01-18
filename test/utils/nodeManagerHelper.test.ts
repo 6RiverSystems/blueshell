@@ -5,7 +5,7 @@ import * as sinon from 'sinon';
 
 chai.use(chaiAsPromised);
 const assert = chai.assert;
-import {Session} from 'inspector';
+import { Session } from 'inspector';
 
 import {
 	BreakPointIdRequiredError,
@@ -16,148 +16,170 @@ import {
 	RuntimeWrappers,
 	Utils,
 } from '../../lib/utils/nodeManagerHelper';
-import {
-	BreakpointInfo,
-	BreakpointData,
-	NodePathKey,
-} from '../../lib/utils/nodeManagerTypes';
+import { BreakpointInfo, BreakpointData, NodePathKey } from '../../lib/utils/nodeManagerTypes';
 
-describe('nodeManagerHelper', function() {
-	describe('RuntimeWrappers', function() {
+describe('nodeManagerHelper', function () {
+	describe('RuntimeWrappers', function () {
 		let session: Session;
 
-		beforeEach(function() {
+		beforeEach(function () {
 			session = new Session();
 		});
-		afterEach(function() {
+		afterEach(function () {
 			sinon.reset();
 		});
 
-		describe('getObjectIdFromRuntimeEvaluate', function() {
+		describe('getObjectIdFromRuntimeEvaluate', function () {
 			const key = 'foo';
 
-			it('should throw error if error present', async function() {
+			it('should throw error if error present', async function () {
 				const testError = new Error('test error');
-				sinon.stub(session, <any>'post').withArgs(	// HACK - types not well defined for post
-					'Runtime.evaluate',
-					{expression: `global.breakpointMethods.get('${key}')`},
-					sinon.match.func,
-				).callsFake((_method, _params, callback) => {
-					callback(testError, {});
-				});
-				await assert.isRejected(RuntimeWrappers.getObjectIdFromRuntimeEvaluate(session!, key), testError.message);
+				sinon
+					.stub(session, <any>'post')
+					.withArgs(
+						// HACK - types not well defined for post
+						'Runtime.evaluate',
+						{ expression: `global.breakpointMethods.get('${key}')` },
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(testError, {});
+					});
+				await assert.isRejected(
+					RuntimeWrappers.getObjectIdFromRuntimeEvaluate(session!, key),
+					testError.message,
+				);
 			});
 
-			it('should throw error if no objectId', async function() {
-				sinon.stub(session, <any>'post').withArgs(
-					'Runtime.evaluate',
-					{expression: `global.breakpointMethods.get('${key}')`},
-					sinon.match.func
-				)
-				.callsFake((_method, _params, callback) => {
-					callback(null, {result: {type: ''}});
-				});
+			it('should throw error if no objectId', async function () {
+				sinon
+					.stub(session, <any>'post')
+					.withArgs(
+						'Runtime.evaluate',
+						{ expression: `global.breakpointMethods.get('${key}')` },
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(null, { result: { type: '' } });
+					});
 
 				await assert.isRejected(
-					RuntimeWrappers.getObjectIdFromRuntimeEvaluate(session!, key), new NoObjectIdError(key).message);
+					RuntimeWrappers.getObjectIdFromRuntimeEvaluate(session!, key),
+					new NoObjectIdError(key).message,
+				);
 			});
 
-			it('should succeed if objectId exists', async function() {
-				sinon.stub(session, <any>'post').withArgs(
-					'Runtime.evaluate',
-					{expression: `global.breakpointMethods.get('${key}')`},
-					sinon.match.func
-				)
-				.callsFake((_method, _params, callback) => {
-					callback(null, {result: {type: '', objectId: 'foobar'}});
-				});
+			it('should succeed if objectId exists', async function () {
+				sinon
+					.stub(session, <any>'post')
+					.withArgs(
+						'Runtime.evaluate',
+						{ expression: `global.breakpointMethods.get('${key}')` },
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(null, { result: { type: '', objectId: 'foobar' } });
+					});
 				await assert.isFulfilled(
-					RuntimeWrappers.getObjectIdFromRuntimeEvaluate(session!, key), 'foobar');
+					RuntimeWrappers.getObjectIdFromRuntimeEvaluate(session!, key),
+					'foobar',
+				);
 			});
 		});
 
-		describe('getFunctionObjectIdFromRuntimeProperties', function() {
+		describe('getFunctionObjectIdFromRuntimeProperties', function () {
 			const objectId = 'mockObjectId';
 			const functionObjectId = 'mockFunctionObjectId';
-			it('should error if Runtime.getProperties has error', async function() {
+			it('should error if Runtime.getProperties has error', async function () {
 				const errMsg = 'test error';
-				sinon.stub(session!, <any>'post').withArgs(
-					'Runtime.getProperties',
-					{
-						objectId,
-					},
-					sinon.match.func
-				)
-				.callsFake((_method, _params, callback) => {
-					callback(new Error(errMsg), {});
-				});
+				sinon
+					.stub(session!, <any>'post')
+					.withArgs(
+						'Runtime.getProperties',
+						{
+							objectId,
+						},
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(new Error(errMsg), {});
+					});
 
-				await assert.isRejected(RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(
-					session!,
-					objectId
-				), errMsg);
+				await assert.isRejected(
+					RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(session!, objectId),
+					errMsg,
+				);
 			});
 
-			it('should error if Runtime.getProperties throw error when accessing function object id ', async function() {
-				sinon.stub(session!, <any>'post').withArgs(
-					'Runtime.getProperties',
-					{
-						objectId,
-					},
-					sinon.match.func
-				)
-				.callsFake((_method, _params, callback) => {
-					callback(null, {result: []});
-				});
-				await assert.isRejected(RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(
-					session!,
-					objectId
-				), new NoFunctionObjectIdError(objectId).message);
+			it('should error if Runtime.getProperties throw error when accessing function object id ', async function () {
+				sinon
+					.stub(session!, <any>'post')
+					.withArgs(
+						'Runtime.getProperties',
+						{
+							objectId,
+						},
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(null, { result: [] });
+					});
+				await assert.isRejected(
+					RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(session!, objectId),
+					new NoFunctionObjectIdError(objectId).message,
+				);
 			});
 
-			it('should error if Runtime.getProperties has no function object id ', async function() {
-				sinon.stub(session!, <any>'post').withArgs(
-					'Runtime.getProperties',
-					{
-						objectId,
-					},
-					sinon.match.func
-				)
-				.callsFake((_method, _params, callback) => {
-					callback(null, {result: [], internalProperties: [{name: '', value: {type: ''}}]});
-				});
+			it('should error if Runtime.getProperties has no function object id ', async function () {
+				sinon
+					.stub(session!, <any>'post')
+					.withArgs(
+						'Runtime.getProperties',
+						{
+							objectId,
+						},
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(null, { result: [], internalProperties: [{ name: '', value: { type: '' } }] });
+					});
 
-				await assert.isRejected(RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(
-					session!,
-					objectId
-				), new NoFunctionObjectIdError(objectId).message);
+				await assert.isRejected(
+					RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(session!, objectId),
+					new NoFunctionObjectIdError(objectId).message,
+				);
 			});
 
-			it('should return functionObjectId', async function() {
-				sinon.stub(session!, <any>'post').withArgs(
-					'Runtime.getProperties',
-					{
-						objectId,
-					},
-					sinon.match.func
-				)
-				.callsFake((_method, _params, callback) => {
-					callback(null, {result: [], internalProperties: [{name: '', value: {type: '', objectId: functionObjectId}}]});
-				});
+			it('should return functionObjectId', async function () {
+				sinon
+					.stub(session!, <any>'post')
+					.withArgs(
+						'Runtime.getProperties',
+						{
+							objectId,
+						},
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(null, {
+							result: [],
+							internalProperties: [{ name: '', value: { type: '', objectId: functionObjectId } }],
+						});
+					});
 
-				await assert.isFulfilled(RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(
-						session!,
-						objectId
-				), functionObjectId);
+				await assert.isFulfilled(
+					RuntimeWrappers.getFunctionObjectIdFromRuntimeProperties(session!, objectId),
+					functionObjectId,
+				);
 			});
 		});
 
-		describe('setBreakpointOnFunctionCall', function() {
+		describe('setBreakpointOnFunctionCall', function () {
 			const functionObjectId = 'foo';
 			const mockBreakpointId = 'qwerty123';
 			let breakpointInfo: BreakpointInfo;
 
-			beforeEach(function() {
+			beforeEach(function () {
 				breakpointInfo = {
 					methodInfo: {
 						className: 'myClass',
@@ -168,96 +190,115 @@ describe('nodeManagerHelper', function() {
 				};
 			});
 
-			it('should return reject if Debugger.setBreakpointOnFunctionCall has error', async function() {
-				sinon.stub(session!, <any>'post').withArgs(
-					'Debugger.setBreakpointOnFunctionCall',
-					{
-						objectId: functionObjectId,
-						condition: '',
-					},
-					sinon.match.func
-				)
-				.callsFake((_method, _params, callback) => {
-					callback(new Error('test error'), {});
-				});
+			it('should return reject if Debugger.setBreakpointOnFunctionCall has error', async function () {
+				sinon
+					.stub(session!, <any>'post')
+					.withArgs(
+						'Debugger.setBreakpointOnFunctionCall',
+						{
+							objectId: functionObjectId,
+							condition: '',
+						},
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(new Error('test error'), {});
+					});
 
-				await assert.isRejected(RuntimeWrappers.setBreakpointOnFunctionCall(
-					session!,
-					functionObjectId,
-					'',
-					breakpointInfo
-				), 'test error');
+				await assert.isRejected(
+					RuntimeWrappers.setBreakpointOnFunctionCall(
+						session!,
+						functionObjectId,
+						'',
+						breakpointInfo,
+					),
+					'test error',
+				);
 			});
 
-			it('should reject if Debugger.setBreakpointOnFunctionCall has empty result', async function() {
-				sinon.stub(session!, <any>'post').withArgs(
-					'Debugger.setBreakpointOnFunctionCall',
-					{
-						objectId: functionObjectId,
-						condition: '',
-					},
-					sinon.match.func
-				)
-				.callsFake((_method, _params, callback) => {
-					callback(null, undefined);
-				});
+			it('should reject if Debugger.setBreakpointOnFunctionCall has empty result', async function () {
+				sinon
+					.stub(session!, <any>'post')
+					.withArgs(
+						'Debugger.setBreakpointOnFunctionCall',
+						{
+							objectId: functionObjectId,
+							condition: '',
+						},
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(null, undefined);
+					});
 
-				await assert.isRejected(RuntimeWrappers.setBreakpointOnFunctionCall(
-					session!,
-					functionObjectId,
-					'',
-					breakpointInfo
-				), new NoBreakpointForBreakpointError(functionObjectId).message);
+				await assert.isRejected(
+					RuntimeWrappers.setBreakpointOnFunctionCall(
+						session!,
+						functionObjectId,
+						'',
+						breakpointInfo,
+					),
+					new NoBreakpointForBreakpointError(functionObjectId).message,
+				);
 			});
 
-			it('should reject if Debugger.setBreakpointOnFunctionCall has no breakpoind id', async function() {
-				sinon.stub(session!, <any>'post').withArgs(
-					'Debugger.setBreakpointOnFunctionCall',
-					{
-						objectId: functionObjectId,
-						condition: '',
-					},
-					sinon.match.func
-				)
-				.callsFake((_method, _params, callback) => {
-					callback(null, {});
-				});
+			it('should reject if Debugger.setBreakpointOnFunctionCall has no breakpoind id', async function () {
+				sinon
+					.stub(session!, <any>'post')
+					.withArgs(
+						'Debugger.setBreakpointOnFunctionCall',
+						{
+							objectId: functionObjectId,
+							condition: '',
+						},
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(null, {});
+					});
 
-				await assert.isRejected(RuntimeWrappers.setBreakpointOnFunctionCall(
-					session!,
-					functionObjectId,
-					'',
-					breakpointInfo
-				), new NoBreakpointIdForBreakpointError(functionObjectId).message);
+				await assert.isRejected(
+					RuntimeWrappers.setBreakpointOnFunctionCall(
+						session!,
+						functionObjectId,
+						'',
+						breakpointInfo,
+					),
+					new NoBreakpointIdForBreakpointError(functionObjectId).message,
+				);
 			});
 
-			it('should fulfill if breakpoint set successfully', async function() {
-				sinon.stub(session!, <any>'post').withArgs(
-					'Debugger.setBreakpointOnFunctionCall',
-					{
-						objectId: functionObjectId,
-						condition: '',
-					},
-					sinon.match.func
-				)
-				.callsFake((_method, _params, callback) => {
-					callback(null, {breakpointId: mockBreakpointId});
-				});
+			it('should fulfill if breakpoint set successfully', async function () {
+				sinon
+					.stub(session!, <any>'post')
+					.withArgs(
+						'Debugger.setBreakpointOnFunctionCall',
+						{
+							objectId: functionObjectId,
+							condition: '',
+						},
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(null, { breakpointId: mockBreakpointId });
+					});
 
-				await assert.isFulfilled(RuntimeWrappers.setBreakpointOnFunctionCall(
-					session!,
-					functionObjectId,
-					'',
-					breakpointInfo
-				));
+				await assert.isFulfilled(
+					RuntimeWrappers.setBreakpointOnFunctionCall(
+						session!,
+						functionObjectId,
+						'',
+						breakpointInfo,
+					),
+				);
 				assert.equal(breakpointInfo.breakpointId, mockBreakpointId);
 			});
 		});
 
-		describe('removeBreakpointFromFunction', function() {
+		describe('removeBreakpointFromFunction', function () {
 			let breakpointInfo: BreakpointInfo;
 
-			beforeEach(function() {
+			beforeEach(function () {
 				breakpointInfo = {
 					methodInfo: {
 						className: 'myClass',
@@ -268,65 +309,65 @@ describe('nodeManagerHelper', function() {
 				};
 			});
 
-			it('should throw if remove breakpoint was not passed a breakpointId', async function() {
+			it('should throw if remove breakpoint was not passed a breakpointId', async function () {
 				breakpointInfo.breakpointId = undefined;
-				await assert.isRejected(RuntimeWrappers.removeBreakpointFromFunction(
-					session!,
-					breakpointInfo
-				), new BreakPointIdRequiredError().message);
+				await assert.isRejected(
+					RuntimeWrappers.removeBreakpointFromFunction(session!, breakpointInfo),
+					new BreakPointIdRequiredError().message,
+				);
 			});
-			it('should throw if remove breakpoint has error', async function() {
-				sinon.stub(session!, <any>'post').withArgs(
-					'Debugger.removeBreakpoint',
-					{
-						breakpointId: breakpointInfo.breakpointId,
-					},
-					sinon.match.func
-				)
-				.callsFake((_method, _params, callback) => {
-					callback(new Error('mock error'));
-				});
+			it('should throw if remove breakpoint has error', async function () {
+				sinon
+					.stub(session!, <any>'post')
+					.withArgs(
+						'Debugger.removeBreakpoint',
+						{
+							breakpointId: breakpointInfo.breakpointId,
+						},
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(new Error('mock error'));
+					});
 
-				await assert.isRejected(RuntimeWrappers.removeBreakpointFromFunction(
-					session!,
-					breakpointInfo
-				), 'mock error');
+				await assert.isRejected(
+					RuntimeWrappers.removeBreakpointFromFunction(session!, breakpointInfo),
+					'mock error',
+				);
 			});
 
-			it('should resolve if remove breakpoint was successful', async function() {
-				sinon.stub(session!, <any>'post').withArgs(
-					'Debugger.removeBreakpoint',
-					{
-						breakpointId: breakpointInfo.breakpointId,
-					},
-					sinon.match.func
-				)
-				.callsFake((_method, _params, callback) => {
-					callback(null);
-				});
+			it('should resolve if remove breakpoint was successful', async function () {
+				sinon
+					.stub(session!, <any>'post')
+					.withArgs(
+						'Debugger.removeBreakpoint',
+						{
+							breakpointId: breakpointInfo.breakpointId,
+						},
+						sinon.match.func,
+					)
+					.callsFake((_method, _params, callback) => {
+						callback(null);
+					});
 
-				await assert.isFulfilled(RuntimeWrappers.removeBreakpointFromFunction(
-					session!,
-					breakpointInfo
-				));
+				await assert.isFulfilled(
+					RuntimeWrappers.removeBreakpointFromFunction(session!, breakpointInfo),
+				);
 			});
 		});
 	});
 
-	describe('Utils', function() {
-		describe('createConditionString', function() {
-			it('should create string with one breakpoint and no condition', function() {
+	describe('Utils', function () {
+		describe('createConditionString', function () {
+			it('should create string with one breakpoint and no condition', function () {
 				const breakpointData: BreakpointData = {
 					nodePath: 'foo_bar',
 				};
 				const conditionString = Utils.createConditionString([breakpointData]);
-				assert.equal(
-					conditionString,
-					`(this.path === '${breakpointData.nodePath}')`
-				);
+				assert.equal(conditionString, `(this.path === '${breakpointData.nodePath}')`);
 			});
 
-			it('should create string with one breakpoint and condition', function() {
+			it('should create string with one breakpoint and condition', function () {
 				const breakpointData: BreakpointData = {
 					nodePath: 'foo_bar',
 					condition: 'myVar === 123',
@@ -334,11 +375,11 @@ describe('nodeManagerHelper', function() {
 				const conditionString = Utils.createConditionString([breakpointData]);
 				assert.equal(
 					conditionString,
-					`(this.path === '${breakpointData.nodePath}' && ${breakpointData.condition})`
+					`(this.path === '${breakpointData.nodePath}' && ${breakpointData.condition})`,
 				);
 			});
 
-			it('should create string with multiple breakpoints and no conditions', function() {
+			it('should create string with multiple breakpoints and no conditions', function () {
 				const breakpointData1: BreakpointData = {
 					nodePath: 'foo_bar',
 				};
@@ -346,18 +387,15 @@ describe('nodeManagerHelper', function() {
 					nodePath: 'fizz_buzz',
 				};
 
-				const conditionString = Utils.createConditionString([
-					breakpointData1,
-					breakpointData2,
-				]);
+				const conditionString = Utils.createConditionString([breakpointData1, breakpointData2]);
 				assert.equal(
 					conditionString,
 					`(this.path === '${breakpointData1.nodePath}') || ` +
-						`(this.path === '${breakpointData2.nodePath}')`
+						`(this.path === '${breakpointData2.nodePath}')`,
 				);
 			});
 
-			it('should create string with multiple breakpoints and one condition', function() {
+			it('should create string with multiple breakpoints and one condition', function () {
 				const breakpointData1: BreakpointData = {
 					nodePath: 'foo_bar',
 					condition: 'myVar === 123',
@@ -366,18 +404,15 @@ describe('nodeManagerHelper', function() {
 					nodePath: 'fizz_buzz',
 				};
 
-				const conditionString = Utils.createConditionString([
-					breakpointData1,
-					breakpointData2,
-				]);
+				const conditionString = Utils.createConditionString([breakpointData1, breakpointData2]);
 				assert.equal(
 					conditionString,
 					`(this.path === '${breakpointData1.nodePath}' && ${breakpointData1.condition}) || ` +
-						`(this.path === '${breakpointData2.nodePath}')`
+						`(this.path === '${breakpointData2.nodePath}')`,
 				);
 			});
 
-			it('should create string with multiple breakpoints and multiple conditions', function() {
+			it('should create string with multiple breakpoints and multiple conditions', function () {
 				const breakpointData1: BreakpointData = {
 					nodePath: 'foo_bar',
 					condition: 'myVar === 123',
@@ -387,20 +422,17 @@ describe('nodeManagerHelper', function() {
 					condition: `otherVar === 'hello'`,
 				};
 
-				const conditionString = Utils.createConditionString([
-					breakpointData1,
-					breakpointData2,
-				]);
+				const conditionString = Utils.createConditionString([breakpointData1, breakpointData2]);
 				assert.equal(
 					conditionString,
 					`(this.path === '${breakpointData1.nodePath}' && ${breakpointData1.condition}) || ` +
-						`(this.path === '${breakpointData2.nodePath}' && ${breakpointData2.condition})`
+						`(this.path === '${breakpointData2.nodePath}' && ${breakpointData2.condition})`,
 				);
 			});
 		});
 
-		describe('getMethodInfoForObject', function() {
-			it('should give back an alphabetized list of methods with class', function() {
+		describe('getMethodInfoForObject', function () {
+			it('should give back an alphabetized list of methods with class', function () {
 				class TestBaseClass {
 					// should not work on member variables
 					private baseVar: any;
@@ -452,15 +484,15 @@ describe('nodeManagerHelper', function() {
 				const obj = new TestChildClass();
 				const methodInfo = Utils.getMethodInfoForObject(obj);
 				assert.deepEqual(methodInfo, [
-					{methodName: 'baseMethod', className: 'TestBaseClass'},
-					{methodName: 'childMethod', className: 'TestChildClass'},
-					{methodName: 'constructor', className: 'TestChildClass'},
-					{methodName: 'get childProp', className: 'TestChildClass'},
-					{methodName: 'get getBaseProp', className: 'TestBaseClass'},
-					{methodName: 'inheritedMethod', className: 'TestChildClass'},
-					{methodName: 'privateChildMethod', className: 'TestChildClass'},
-					{methodName: 'set childProp', className: 'TestChildClass'},
-					{methodName: 'set setBaseProp', className: 'TestBaseClass'},
+					{ methodName: 'baseMethod', className: 'TestBaseClass' },
+					{ methodName: 'childMethod', className: 'TestChildClass' },
+					{ methodName: 'constructor', className: 'TestChildClass' },
+					{ methodName: 'get childProp', className: 'TestChildClass' },
+					{ methodName: 'get getBaseProp', className: 'TestBaseClass' },
+					{ methodName: 'inheritedMethod', className: 'TestChildClass' },
+					{ methodName: 'privateChildMethod', className: 'TestChildClass' },
+					{ methodName: 'set childProp', className: 'TestChildClass' },
+					{ methodName: 'set setBaseProp', className: 'TestBaseClass' },
 				]);
 			});
 		});

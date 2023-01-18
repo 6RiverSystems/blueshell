@@ -1,5 +1,5 @@
-import {IfElse} from './IfElse';
-import {BlueshellState, ResultCode, rc, BaseNode} from '../models';
+import { IfElse } from './IfElse';
+import { BlueshellState, ResultCode, rc, BaseNode } from '../models';
 
 export class IfElseWithNodeCondition<S extends BlueshellState, E> extends IfElse<S, E> {
 	// below variable is used to communicate the result of running the conditionNode between
@@ -10,13 +10,9 @@ export class IfElseWithNodeCondition<S extends BlueshellState, E> extends IfElse
 		name: string,
 		private readonly conditionNode: BaseNode<S, E>,
 		consequent: BaseNode<S, E>,
-		alternative?: BaseNode<S, E> | ResultCode) {
-		super(
-			name,
-			() => this.conditionResult,
-			consequent,
-			alternative,
-		);
+		alternative?: BaseNode<S, E> | ResultCode,
+	) {
+		super(name, () => this.conditionResult, consequent, alternative);
 	}
 
 	getChildren() {

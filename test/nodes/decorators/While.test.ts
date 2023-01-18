@@ -1,6 +1,6 @@
-import {assert} from 'chai';
+import { assert } from 'chai';
 
-import {Action, BlueshellState, rc, ResultCode, decorators} from '../../../lib';
+import { Action, BlueshellState, rc, ResultCode, decorators } from '../../../lib';
 
 class TestAction extends Action<TestState, number> {
 	public eventCount = 0;
@@ -8,7 +8,7 @@ class TestAction extends Action<TestState, number> {
 
 	constructor(
 		name?: string,
-		private readonly sequence: {rc: ResultCode, inc: boolean}[] = [{rc: rc.SUCCESS, inc: true}],
+		private readonly sequence: { rc: ResultCode; inc: boolean }[] = [{ rc: rc.SUCCESS, inc: true }],
 	) {
 		super(name);
 	}
@@ -34,12 +34,12 @@ class TestAction extends Action<TestState, number> {
 }
 
 interface TestState extends BlueshellState {
-	counter: number,
+	counter: number;
 }
 
-describe('While', function() {
-	it('executes the child action until condition is met and returns the child result', function() {
-		const testAction = new TestAction('testAction', [{rc: rc.FAILURE, inc: true}]);
+describe('While', function () {
+	it('executes the child action until condition is met and returns the child result', function () {
+		const testAction = new TestAction('testAction', [{ rc: rc.FAILURE, inc: true }]);
 
 		const uut = new decorators.While<TestState, number>(
 			'uut',
@@ -61,7 +61,7 @@ describe('While', function() {
 		assert.strictEqual(testAction.eventCount, 1);
 	});
 
-	it('returns defaultResult when the condition is already met', function() {
+	it('returns defaultResult when the condition is already met', function () {
 		const testAction = new TestAction();
 
 		const uut = new decorators.While<TestState, number>(
@@ -85,7 +85,7 @@ describe('While', function() {
 		assert.strictEqual(testAction.eventCount, 0);
 	});
 
-	it('defaults defaultResult to SUCCESS', function() {
+	it('defaults defaultResult to SUCCESS', function () {
 		const testAction = new TestAction();
 
 		const uut = new decorators.While<TestState, number>(
@@ -108,14 +108,11 @@ describe('While', function() {
 		assert.strictEqual(testAction.eventCount, 0);
 	});
 
-	it('latches', function() {
-		const testAction = new TestAction(
-			'testAction',
-			[
-				{rc: rc.RUNNING, inc: false},
-				{rc: rc.SUCCESS, inc: true},
-			],
-		);
+	it('latches', function () {
+		const testAction = new TestAction('testAction', [
+			{ rc: rc.RUNNING, inc: false },
+			{ rc: rc.SUCCESS, inc: true },
+		]);
 
 		const uut = new decorators.While<TestState, number>(
 			'uut',

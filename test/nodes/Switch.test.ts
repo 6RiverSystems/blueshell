@@ -1,6 +1,6 @@
-import {assert} from 'chai';
+import { assert } from 'chai';
 
-import {Action, BlueshellState, rc, ResultCode, Switch, SwitchEntry} from '../../lib';
+import { Action, BlueshellState, rc, ResultCode, Switch, SwitchEntry } from '../../lib';
 
 class TestAction<S extends BlueshellState, E> extends Action<S, E> {
 	public eventCount = 0;
@@ -12,11 +12,11 @@ class TestAction<S extends BlueshellState, E> extends Action<S, E> {
 }
 
 interface TestState extends BlueshellState {
-	switchEntryIndex?: number,
+	switchEntryIndex?: number;
 }
 
-describe('Switch', function() {
-	it('executes the child of the first matching switch entry', function() {
+describe('Switch', function () {
+	it('executes the child of the first matching switch entry', function () {
 		const testAction0 = new TestAction<TestState, number>('0');
 		const testAction1 = new TestAction<TestState, number>('1');
 		const testAction2 = new TestAction<TestState, number>('2');
@@ -51,7 +51,7 @@ describe('Switch', function() {
 		assert.strictEqual(testAction2.eventCount, 0);
 	});
 
-	it('assumes that a switchEntry with a missing condition always matches', function() {
+	it('assumes that a switchEntry with a missing condition always matches', function () {
 		const testAction0 = new TestAction<TestState, number>('0');
 		const testAction1 = new TestAction<TestState, number>('1');
 
@@ -79,7 +79,7 @@ describe('Switch', function() {
 		assert.strictEqual(testAction1.eventCount, 1);
 	});
 
-	it('returns the defaultResult when there are no matching switch entries', function() {
+	it('returns the defaultResult when there are no matching switch entries', function () {
 		const switchEntries: SwitchEntry<TestState, number>[] = [];
 
 		const uut = new Switch<TestState, number>('uut', switchEntries, rc.FAILURE);
@@ -94,7 +94,7 @@ describe('Switch', function() {
 		assert.strictEqual(result, rc.FAILURE);
 	});
 
-	it('defaults defaultResult to SUCCESS', function() {
+	it('defaults defaultResult to SUCCESS', function () {
 		const switchEntries: SwitchEntry<TestState, number>[] = [];
 
 		const uut = new Switch<TestState, number>('uut', switchEntries);

@@ -1,15 +1,15 @@
-import {Constant} from './Constant';
-import {Parent} from './Parent';
-import {BlueshellState, ResultCode, isResultCode, rc, BaseNode, Conditional} from '../models';
+import { Constant } from './Constant';
+import { Parent } from './Parent';
+import { BlueshellState, ResultCode, isResultCode, rc, BaseNode, Conditional } from '../models';
 
 export interface SwitchEntry<S extends BlueshellState, E> {
-	conditional?: Conditional<S, E>,
-	child: BaseNode<S, E> | ResultCode,
+	conditional?: Conditional<S, E>;
+	child: BaseNode<S, E> | ResultCode;
 }
 
 interface AdaptedSwitchEntry<S extends BlueshellState, E> {
-	conditional: Conditional<S, E>,
-	child: BaseNode<S, E>,
+	conditional: Conditional<S, E>;
+	child: BaseNode<S, E>;
 }
 
 /**

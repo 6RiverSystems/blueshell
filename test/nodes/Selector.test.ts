@@ -1,27 +1,25 @@
 /**
  * Created by josh on 1/18/16.
  */
-import {assert} from 'chai';
+import { assert } from 'chai';
 
 import * as TestActions from './test/RobotActions';
-import {RobotState} from './test/RobotActions';
-import {rc, BlueshellState} from '../../lib';
+import { RobotState } from './test/RobotActions';
+import { rc, BlueshellState } from '../../lib';
 import * as Behavior from '../../lib';
 
-
-describe('Selector', function() {
+describe('Selector', function () {
 	let waitAi: Behavior.Selector<BlueshellState, any>;
 
-	beforeEach(function() {
-		waitAi = new Behavior.Selector('shutdownWithWaitAi',
-			[
-				new TestActions.Recharge(),
-				new TestActions.WaitForCooldown(),
-				new TestActions.EmergencyShutdown(),
-			]);
+	beforeEach(function () {
+		waitAi = new Behavior.Selector('shutdownWithWaitAi', [
+			new TestActions.Recharge(),
+			new TestActions.WaitForCooldown(),
+			new TestActions.EmergencyShutdown(),
+		]);
 	});
 
-	it('should return success', function() {
+	it('should return success', function () {
 		// With a happy bot
 		const botState = new RobotState();
 
@@ -32,7 +30,7 @@ describe('Selector', function() {
 		assert.equal(botState.commands[0], 'findDock', 'Searching for dock');
 	});
 
-	it('should return failure', function() {
+	it('should return failure', function () {
 		// With a overheated bot
 		const botState = new RobotState();
 		botState.overheated = true;
