@@ -6,8 +6,12 @@ export interface TreePublisher<B extends BlueshellState, V> {
 }
 
 export class TreeNonPublisher implements TreePublisher<any, any> {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	publishResult(_state: BlueshellState, _event: any, _topLevel: boolean) {}
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	configure(_options: object) {}
+	publishResult(_state: BlueshellState, _event: any, _topLevel: boolean): void {
+		// no-op
+		return;
+	}
+	configure(_options: object): void {
+		// no-op
+		return;
+	}
 }

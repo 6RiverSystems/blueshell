@@ -128,23 +128,25 @@ export namespace Utils {
 		return condition;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	export function getMethodInfoForObject(obj: Object): NodeMethodInfo[] {
 		const setOfMethods: Set<string> = new Set();
 		const methodsData: NodeMethodInfo[] = [];
+		let targetObj: typeof obj | undefined = obj;
 		do {
-			const methods = Object.getOwnPropertyNames(obj)
+			const methods = Object.getOwnPropertyNames(targetObj)
 				.filter((prop) => {
-					const nodePropDescriptor = Object.getOwnPropertyDescriptor(obj, prop);
+					const nodePropDescriptor = Object.getOwnPropertyDescriptor(targetObj, prop);
 					// if the prop name is a getter or setter, if we simply just check that it's a function
 					// that will end up invoking the getter or setter, which could lead to a crash
 					if (nodePropDescriptor?.get || nodePropDescriptor?.set) {
 						return true;
 					}
-					return typeof (obj as any)[prop] === 'function';
+					return typeof (targetObj as any)[prop] === 'function';
 				})
 				.flatMap((prop) => {
 					const props: string[] = [];
-					const nodePropDescriptor = Object.getOwnPropertyDescriptor(obj, prop);
+					const nodePropDescriptor = Object.getOwnPropertyDescriptor(targetObj, prop);
 					if (nodePropDescriptor?.get) {
 						props.push(`get ${prop}`);
 					}
@@ -156,7 +158,7 @@ export namespace Utils {
 					}
 					return props;
 				});
-			const className = obj.constructor.name;
+			const className = targetObj.constructor.name;
 			methods.forEach((methodName) => {
 				// de-duplicate any inherited methods
 				if (!setOfMethods.has(methodName)) {
@@ -165,8 +167,8 @@ export namespace Utils {
 				}
 			});
 			// climb up the inheritance tree until we get to Object
-			obj = Object.getPrototypeOf(obj);
-		} while (!!obj && obj.constructor.name !== 'Object');
+			targetObj = Object.getPrototypeOf(targetObj);
+		} while (!!targetObj && targetObj.constructor.name !== 'Object');
 
 		methodsData.sort((a, b) => {
 			if (a.methodName < b.methodName) {

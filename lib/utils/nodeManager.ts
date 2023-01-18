@@ -62,13 +62,14 @@ export class NodeManager<S extends BlueshellState, E>
 
 	private constructor() {
 		super();
+		// eslint-disable-next-line @typescript-eslint/ban-types
 		(<any>global).breakpointMethods = new Map<string, Function>();
 		this.session.connect();
 	}
 
 	// Runs the web socket server that listens for commands from a client to query/set/remove breakpoints
 	public runServer() {
-		this.session.post('Debugger.enable', () => {});
+		this.session.post('Debugger.enable', () => undefined);
 
 		this.server = new Websocket.Server({
 			host: 'localhost',
@@ -220,18 +221,19 @@ export class NodeManager<S extends BlueshellState, E>
 		}
 
 		// find the class in the inheritance chain which contains the method or property
-		while (node && !Object.getOwnPropertyDescriptor(node, propertyName)) {
-			node = Object.getPrototypeOf(node);
+		let targetNode: typeof node | undefined = node;
+		while (targetNode && !Object.getOwnPropertyDescriptor(targetNode, propertyName)) {
+			targetNode = Object.getPrototypeOf(targetNode);
 		}
 		// if we climbed to the top of the inheritance chain and still can't find the method or property, return failure
-		if (!node || !Object.getOwnPropertyDescriptor(node, propertyName)) {
+		if (!targetNode || !Object.getOwnPropertyDescriptor(targetNode, propertyName)) {
 			throw new Error(`Could not find method ${propertyName} in inheritance chain for ${nodeName}`);
 		}
 
 		// special case getters/setters
 		if (!!getOrSetMatch) {
 			const getOrSet = getOrSetMatch[1];
-			const methodPropertyDescriptor = Object.getOwnPropertyDescriptor(node, propertyName);
+			const methodPropertyDescriptor = Object.getOwnPropertyDescriptor(targetNode, propertyName);
 			if (!methodPropertyDescriptor) {
 				throw new Error(
 					`Could not find method property descriptor for ${breakpointInfo.methodInfo.methodName} ` +
@@ -244,7 +246,7 @@ export class NodeManager<S extends BlueshellState, E>
 						`get is undefined for ${propertyName} in ${breakpointInfo.methodInfo.className}`,
 					);
 				}
-				(<any>global).breakpointMethods.set(key, methodPropertyDescriptor.get.bind(node));
+				(<any>global).breakpointMethods.set(key, methodPropertyDescriptor.get.bind(targetNode));
 			} else {
 				// getOrSet === 'set'
 				if (!methodPropertyDescriptor.set) {
@@ -252,13 +254,13 @@ export class NodeManager<S extends BlueshellState, E>
 						`set is undefined for ${propertyName} in ${breakpointInfo.methodInfo.className}`,
 					);
 				}
-				(<any>global).breakpointMethods.set(key, methodPropertyDescriptor.set.bind(node));
+				(<any>global).breakpointMethods.set(key, methodPropertyDescriptor.set.bind(targetNode));
 			}
 		} else {
 			// not a getter/setter function
 			(<any>global).breakpointMethods.set(
 				key,
-				(<any>node)[breakpointInfo.methodInfo.methodName].bind(node),
+				(<any>targetNode)[breakpointInfo.methodInfo.methodName].bind(targetNode),
 			);
 		}
 

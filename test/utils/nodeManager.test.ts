@@ -17,7 +17,10 @@ import {
 import { RuntimeWrappers, Utils } from '../../lib/utils/nodeManagerHelper';
 
 class WebSocketServerMock extends EventEmitter {
-	close() {}
+	close() {
+		// no-op
+		return;
+	}
 }
 
 class WebSocketClientMock extends EventEmitter {
@@ -29,11 +32,17 @@ class WebSocketClientMock extends EventEmitter {
 }
 
 class SequenceWithSetter extends Sequence<BlueshellState, null> {
-	set setterOnlyProp(foo: string) {}
+	set setterOnlyProp(foo: string) {
+		// no-op
+		return;
+	}
 	get foo() {
 		return 'foo';
 	}
-	set foo(f: string) {}
+	set foo(f: string) {
+		// no-op
+		return;
+	}
 }
 
 describe('nodeManager', function () {

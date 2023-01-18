@@ -75,6 +75,7 @@ export function serializeDotTree<S extends BlueshellState, E>(
 	root: BaseNode<S, E>,
 	state?: S,
 ): string {
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (!root) {
 		return '';
 	}

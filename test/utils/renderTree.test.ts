@@ -1,11 +1,4 @@
-/**
- * Created by josh on 3/23/16.
- */
 import { assert } from 'chai';
-
-const parse = require('dotparser');
-
-import {} from '../../lib';
 
 import {
 	renderTree,
@@ -17,6 +10,9 @@ import {
 	BlueshellState,
 } from '../../lib';
 import { RobotState, waitAi } from '../nodes/test/RobotActions';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const parse = require('dotparser');
 
 class ConsumeOnce extends Action<any, any> {
 	onEvent(state: any): ResultCode {

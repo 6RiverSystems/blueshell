@@ -35,7 +35,7 @@
     "pretest": "npm-run-all build pretest:eslint pretest:prettier",
     "test": "NODE_ENV=test nyc mocha ${MOCHA_OPTS}",
     "pretest:eslint": "eslint --ext .ts,.js ${ESLINT_OPTS} .",
-    "pretest:prettier": "./node_modules/.bin/prettier --check ${PRETTIER_OPTS} .",
+    "pretest:prettier": "prettier --check ${PRETTIER_OPTS} .",
     "test:no-cover": "NODE_ENV=test mocha",
     "test:debug": "npm run test:no-cover -- --inspect-brk test",
     "coverage": "NODE_ENV=test nyc report --reporter=text-lcov > coverage.lcov",

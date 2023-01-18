@@ -1,11 +1,8 @@
-import 'mocha';
-import * as chai from 'chai';
+import { Session } from 'inspector';
+
+import { assert, use as chaiUse } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import * as sinon from 'sinon';
-
-chai.use(chaiAsPromised);
-const assert = chai.assert;
-import { Session } from 'inspector';
 
 import {
 	BreakPointIdRequiredError,
@@ -17,6 +14,8 @@ import {
 	Utils,
 } from '../../lib/utils/nodeManagerHelper';
 import { BreakpointInfo, BreakpointData, NodePathKey } from '../../lib/utils/nodeManagerTypes';
+
+chaiUse(chaiAsPromised);
 
 describe('nodeManagerHelper', function () {
 	describe('RuntimeWrappers', function () {
@@ -242,7 +241,7 @@ describe('nodeManagerHelper', function () {
 				);
 			});
 
-			it('should reject if Debugger.setBreakpointOnFunctionCall has no breakpoind id', async function () {
+			it('should reject if Debugger.setBreakpointOnFunctionCall has no breakpoint id', async function () {
 				sinon
 					.stub(session!, <any>'post')
 					.withArgs(
@@ -437,8 +436,6 @@ describe('nodeManagerHelper', function () {
 					// should not work on member variables
 					private baseVar: any;
 
-					constructor() {}
-
 					// should work on properties
 					get getBaseProp(): any {
 						return 0;
@@ -448,10 +445,14 @@ describe('nodeManagerHelper', function () {
 					}
 
 					// should work on methods inherited from base class
-					public inheritedMethod(): void {}
+					public inheritedMethod(): void {
+						return;
+					}
 
 					// should work on methods only in base class
-					public baseMethod(): void {}
+					public baseMethod(): void {
+						return;
+					}
 				}
 
 				class TestChildClass extends TestBaseClass {
@@ -472,13 +473,19 @@ describe('nodeManagerHelper', function () {
 					}
 
 					// should work on methods inherited from base class
-					public inheritedMethod(): void {}
+					public inheritedMethod(): void {
+						return;
+					}
 
 					// should work on methods only in child class
-					public childMethod(): void {}
+					public childMethod(): void {
+						return;
+					}
 
 					// should work on private methods
-					public privateChildMethod(): void {}
+					public privateChildMethod(): void {
+						return;
+					}
 				}
 
 				const obj = new TestChildClass();

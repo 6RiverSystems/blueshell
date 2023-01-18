@@ -129,12 +129,13 @@ describe('Base', function () {
 			const action = new TestAction();
 			let published = false;
 			const publisher = {
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				publishResult(_state: any, _event: any, _topLevel: boolean) {
 					published = true;
 				},
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				configure(_options: object) {},
+				configure(_options: object) {
+					// no-op
+					return;
+				},
 			} as Behavior.TreePublisher<any, any>;
 
 			Base.registerTreePublisher(publisher);

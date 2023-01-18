@@ -14,7 +14,7 @@ describe('ResultAdapt', function () {
 		const resultAdapt = new ResultAdapt(
 			'adaptResultToFailure',
 			new Constant(rc.SUCCESS),
-			(state: DroneState, event: {}, res: Behavior.ResultCode) => {
+			(state: DroneState, event: unknown, res: Behavior.ResultCode) => {
 				assert.equal(state, testState);
 				assert.equal(event, testEvent);
 				assert.equal(res, rc.SUCCESS);

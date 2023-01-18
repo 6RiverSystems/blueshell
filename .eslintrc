@@ -3,7 +3,7 @@
 		"es6": true,
 		"node": true
 	},
-	"extends": ["6river/typescript"],
+	"extends": ["6river/typescript", "plugin:import/typescript", "prettier"],
 	"globals": {
 		"Atomics": "readonly",
 		"SharedArrayBuffer": "readonly"
