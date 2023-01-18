@@ -2,17 +2,19 @@
  * Created by josh on 1/10/16.
  */
 import {assert} from 'chai';
+
 import {rc, ResultCode} from '../../lib';
 import * as Behavior from '../../lib';
+
 class TestState implements Behavior.BlueshellState {
 	public calledMap: Map<ResultCode, boolean> = new Map();
-	public runCounter: number = 0;
+	public runCounter = 0;
 	public errorReason?: Error;
 	public __blueshell: any;
 }
 
 class LatchedAction extends Behavior.Action<TestState, string> {
-	private runCounter: number = 0;
+	private runCounter = 0;
 
 	constructor(
 		name?: string,

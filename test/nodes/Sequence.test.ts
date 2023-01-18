@@ -3,9 +3,9 @@
  */
 import {assert} from 'chai';
 
+import {DroneState} from './test/DroneActions';
 import {rc} from '../../lib';
 import * as Behavior from '../../lib';
-import {DroneState} from './test/DroneActions';
 
 class ShootFlares extends Behavior.Action<DroneState, string> {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

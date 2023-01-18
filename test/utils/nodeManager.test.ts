@@ -1,13 +1,16 @@
 import 'mocha';
-import * as sinon from 'sinon';
+import {EventEmitter} from 'events';
+import {Session} from 'inspector';
+
 import {assert} from 'chai';
-import {APIFunctionNotFound, DuplicateNodeAdded, NodeManager, INodeManager} from '../../lib/utils/nodeManager';
-import {RuntimeWrappers, Utils} from '../../lib/utils/nodeManagerHelper';
+import * as sinon from 'sinon';
+import WebSocket from 'ws';
+
 import {BlueshellState} from '../../lib/models';
 import {Action, Sequence} from '../../lib/nodes';
-import {Session} from 'inspector';
-import WebSocket from 'ws';
-import {EventEmitter} from 'events';
+import {APIFunctionNotFound, DuplicateNodeAdded, NodeManager, INodeManager} from '../../lib/utils/nodeManager';
+import {RuntimeWrappers, Utils} from '../../lib/utils/nodeManagerHelper';
+
 
 class WebSocketServerMock extends EventEmitter {
 	close() {}

@@ -1,5 +1,5 @@
-import {NodeStorage, BlueshellState, ResultCode, rc, BaseNode} from '../../models';
 import {RepeatWhen} from './RepeatWhen';
+import {NodeStorage, BlueshellState, ResultCode, rc, BaseNode} from '../../models';
 
 export type RetryNodeStorage = NodeStorage & {repeats?: number};
 

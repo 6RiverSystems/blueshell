@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
 
-import {BaseNode, BlueshellState, isParentNode} from '../models';
-import Websocket from 'ws';
-import util from 'util';
 import {EventEmitter} from 'events';
 import {Session} from 'inspector';
+import util from 'util';
+
+import Websocket from 'ws';
+
 import {RuntimeWrappers, Utils} from './nodeManagerHelper';
 import {
 	NodePathKey,
@@ -12,6 +13,7 @@ import {
 	BreakpointInfo,
 	NodeMethodsInfo
 } from './nodeManagerTypes';
+import {BaseNode, BlueshellState, isParentNode} from '../models';
 
 export class DuplicateNodeAdded extends Error {
 	constructor(path: string) {

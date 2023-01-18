@@ -1,8 +1,8 @@
 /**
  * Created by josh on 1/12/16.
  */
-import {BlueshellState, BaseNode} from '../../models';
 import {RepeatWhen} from './RepeatWhen';
+import {BlueshellState, BaseNode} from '../../models';
 
 /**
  * The child Node repeats handling the event if the child resulted in a specified status.

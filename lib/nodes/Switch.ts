@@ -1,6 +1,6 @@
-import {BlueshellState, ResultCode, isResultCode, rc, BaseNode, Conditional} from '../models';
-import {Parent} from './Parent';
 import {Constant} from './Constant';
+import {Parent} from './Parent';
+import {BlueshellState, ResultCode, isResultCode, rc, BaseNode, Conditional} from '../models';
 
 export interface SwitchEntry<S extends BlueshellState, E> {
 	conditional?: Conditional<S, E>,

@@ -3,10 +3,10 @@
  */
 import {assert} from 'chai';
 
+import * as TestActions from './test/RobotActions';
 import {rc} from '../../lib';
 import * as Behavior from '../../lib';
 
-import * as TestActions from './test/RobotActions';
 
 const shutdownAi = new Behavior.LatchedSelector('shutdownAi',
 	[

@@ -1,5 +1,6 @@
 import {Runtime, Session, Debugger} from 'inspector';
 import {promisify} from 'util';
+
 import {
 	ClassMethodNameKey,
 	BreakpointInfo,
@@ -104,8 +105,8 @@ export namespace Utils {
 			}
 			condition +=
 			`(this.path === '${breakpointData.nodePath}'` +
-				(!!breakpointData.condition ? ` && ${breakpointData.condition}` : '')
-				+ ')';
+				(!!breakpointData.condition ? ` && ${breakpointData.condition}` : '') +
+				')';
 		});
 		return condition;
 	}

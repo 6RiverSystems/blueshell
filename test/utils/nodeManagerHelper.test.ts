@@ -1,10 +1,12 @@
 import 'mocha';
-import * as sinon from 'sinon';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import * as sinon from 'sinon';
+
 chai.use(chaiAsPromised);
 const assert = chai.assert;
 import {Session} from 'inspector';
+
 import {
 	BreakPointIdRequiredError,
 	NoBreakpointForBreakpointError,

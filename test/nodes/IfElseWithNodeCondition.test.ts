@@ -7,8 +7,8 @@ import {rc} from '../../lib';
 import * as Behavior from '../../lib';
 
 class TestState implements Behavior.BlueshellState {
-	public successCount: number = 0;
-	public failureCount: number = 0;
+	public successCount = 0;
+	public failureCount = 0;
 	public errorReason?: Error;
 	public __blueshell: any;
 }

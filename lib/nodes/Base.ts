@@ -1,6 +1,8 @@
 /**
  * Created by josh on 1/10/16.
  */
+import {v4} from 'uuid';
+
 import {
 	BlueshellState,
 	NodeStorage,
@@ -9,8 +11,6 @@ import {
 	BaseNode,
 	isParentNode,
 } from '../models';
-import {v4} from 'uuid';
-
 import {TreePublisher, TreeNonPublisher, NodeManager} from '../utils';
 
 /**
@@ -26,7 +26,7 @@ export interface PrivateNodeStorage {
  * @author Joshua Chaitin-Pollak
  */
 export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
-	private _id: string = '';
+	private _id = '';
 	private _parent: string;
 
 	// Hard to properly type this since the static can't

@@ -1,5 +1,5 @@
-import {BlueshellState, ResultCode, rc, BaseNode} from '../models';
 import {Composite} from './Composite';
+import {BlueshellState, ResultCode, rc, BaseNode} from '../models';
 
 /**
  * Base Class for all Decorator Nodes. Can only have one child.

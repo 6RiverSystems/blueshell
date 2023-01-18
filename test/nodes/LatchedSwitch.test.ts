@@ -1,8 +1,9 @@
 import {assert} from 'chai';
+
 import {Action, BlueshellState, rc, ResultCode, LatchedSwitch, SwitchEntry} from '../../lib';
 
 class TestAction<S extends BlueshellState, E> extends Action<S, E> {
-	public eventCount: number = 0;
+	public eventCount = 0;
 
 	constructor(
 		name?: string,

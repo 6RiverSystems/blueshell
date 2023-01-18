@@ -1,5 +1,5 @@
-import {BlueshellState, rc, ResultCode} from '../models';
 import {Composite} from './Composite';
+import {BlueshellState, rc, ResultCode} from '../models';
 
 
 /**

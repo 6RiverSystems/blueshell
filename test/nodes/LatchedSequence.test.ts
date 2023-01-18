@@ -3,10 +3,10 @@
  */
 import {assert} from 'chai';
 
+import {RobotState} from './test/RobotActions';
 import {rc} from '../../lib';
 import * as Behavior from '../../lib';
 
-import {RobotState} from './test/RobotActions';
 
 class StopMotors extends Behavior.Action<RobotState, string> {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

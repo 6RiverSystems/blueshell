@@ -1,8 +1,9 @@
 import {assert} from 'chai';
+
 import {Action, BlueshellState, rc, ResultCode, Switch, SwitchEntry} from '../../lib';
 
 class TestAction<S extends BlueshellState, E> extends Action<S, E> {
-	public eventCount: number = 0;
+	public eventCount = 0;
 
 	onEvent(state: S, event: E): ResultCode {
 		this.eventCount++;

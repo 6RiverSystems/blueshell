@@ -1,9 +1,9 @@
 /**
  * Created by jpollak on 5/29/16.
  */
-import {BlueshellState, ResultCode, isResultCode, rc, BaseNode, Conditional} from '../models';
-import {Parent} from './Parent';
 import {Constant} from './Constant';
+import {Parent} from './Parent';
+import {BlueshellState, ResultCode, isResultCode, rc, BaseNode, Conditional} from '../models';
 
 /**
  * If-Else Conditional Composite Node.

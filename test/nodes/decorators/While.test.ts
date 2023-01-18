@@ -1,9 +1,10 @@
 import {assert} from 'chai';
+
 import {Action, BlueshellState, rc, ResultCode, decorators} from '../../../lib';
 
 class TestAction extends Action<TestState, number> {
-	public eventCount: number = 0;
-	private currentSequenceIdx: number = 0;
+	public eventCount = 0;
+	private currentSequenceIdx = 0;
 
 	constructor(
 		name?: string,

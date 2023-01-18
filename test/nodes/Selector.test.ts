@@ -3,11 +3,11 @@
  */
 import {assert} from 'chai';
 
+import * as TestActions from './test/RobotActions';
+import {RobotState} from './test/RobotActions';
 import {rc, BlueshellState} from '../../lib';
 import * as Behavior from '../../lib';
 
-import * as TestActions from './test/RobotActions';
-import {RobotState} from './test/RobotActions';
 
 describe('Selector', function() {
 	let waitAi: Behavior.Selector<BlueshellState, any>;

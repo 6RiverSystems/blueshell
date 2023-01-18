@@ -1,5 +1,5 @@
-import {BlueshellState, rc, ResultCode} from '../models';
 import {Composite} from './Composite';
+import {BlueshellState, rc, ResultCode} from '../models';
 
 /**
  * Sends an event to each child until one of the returns `FAILURE`, or `RUNNING`, then returns that value.

@@ -19,4 +19,5 @@ export {Switch, SwitchEntry} from './Switch';
 export {LatchedSwitch} from './LatchedSwitch';
 
 import * as decorators from './decorators';
+
 export {decorators};

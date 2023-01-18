@@ -4,8 +4,8 @@
 
 import {assert} from 'chai';
 
-import {rc} from '../../lib';
 import {RobotState, waitAi} from './test/RobotActions';
+import {rc} from '../../lib';
 
 describe('Composite', function() {
 	context('#resetNodeStorage', function() {

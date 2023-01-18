@@ -14,7 +14,7 @@ class RobotState implements Behavior.BlueshellState {
 	public errorReason?: Error;
 	public __blueshell: any;
 
-	constructor(debug: boolean = false) {
+	constructor(debug = false) {
 		this.overheated = false;
 		this.commands = [];
 		this.__blueshell = {
