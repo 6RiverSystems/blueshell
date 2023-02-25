@@ -5,7 +5,7 @@ orbs:
   gcp-cli: circleci/gcp-cli@3
 
 aliases:
-  - &node_image cimg/node:16.19.0
+  - &node_image cimg/node:16.19.1
   - &npm_global_cache dependency-cache-v1-{{ checksum ".node-version" }}-{{ checksum "package-lock.json" }}
 
 jobs:
