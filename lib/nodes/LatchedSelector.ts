@@ -1,8 +1,8 @@
 /**
  * Created by josh on 1/10/16.
  */
-import {BlueshellState, BaseNode} from '../models';
-import {Selector} from './Selector';
+import { Selector } from './Selector';
+import { BlueshellState, BaseNode } from '../models';
 
 /**
  * Sends an event to each child until one of them returns `SUCCESS` or `RUNNING`, then returns that value.

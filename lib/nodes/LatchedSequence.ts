@@ -1,5 +1,5 @@
-import {BlueshellState, BaseNode} from '../models';
-import {Sequence} from './Sequence';
+import { Sequence } from './Sequence';
+import { BlueshellState, BaseNode } from '../models';
 
 /**
  * Sends an event to each child until one of the returns `FAILURE`, or `RUNNING`, then returns that value.

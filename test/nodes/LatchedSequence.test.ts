@@ -1,12 +1,11 @@
 /**
  * Created by josh on 1/15/16.
  */
-import {assert} from 'chai';
+import { assert } from 'chai';
 
-import {rc} from '../../lib';
+import { RobotState } from './test/RobotActions';
+import { rc } from '../../lib';
 import * as Behavior from '../../lib';
-
-import {RobotState} from './test/RobotActions';
 
 class StopMotors extends Behavior.Action<RobotState, string> {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,15 +46,14 @@ class Shutdown extends Behavior.Action<RobotState, string> {
 	}
 }
 
-const shutdownSequence = new Behavior.LatchedSequence('shutdownWithWaitAi',
-	[
-		new StopMotors(),
-		new StopLasers(),
-		new Shutdown(),
-	]);
+const shutdownSequence = new Behavior.LatchedSequence('shutdownWithWaitAi', [
+	new StopMotors(),
+	new StopLasers(),
+	new Shutdown(),
+]);
 
-describe('LatchedSelector', function() {
-	it('should run correctly', function() {
+describe('LatchedSelector', function () {
+	it('should run correctly', function () {
 		// With a happy bot
 		const botState = new RobotState();
 		botState.laserCooldownTime = 0;
@@ -69,7 +67,7 @@ describe('LatchedSelector', function() {
 		assert.equal(botState.commands[2], 'powerOff');
 	});
 
-	it('should loop correctly', function() {
+	it('should loop correctly', function () {
 		// With a happy bot
 		const botState = new RobotState();
 		botState.laserCooldownTime = 1;

@@ -1,8 +1,8 @@
 /**
  * Created by masdoorian on 06/23/21
  */
-import {BlueshellState, ResultCode, rc, BaseNode, Conditional} from '../models';
-import {IfElse} from './IfElse';
+import { IfElse } from './IfElse';
+import { BlueshellState, ResultCode, rc, BaseNode, Conditional } from '../models';
 
 const LATCHED_RUNNING_CONSEQUENT = 0;
 const LATCHED_RUNNING_ALTERNATIVE = 1;
@@ -30,7 +30,7 @@ export class LatchedIfElse<S extends BlueshellState, E> extends IfElse<S, E> {
 		name: string,
 		private conditionalToLatch: Conditional<S, E>,
 		consequent: BaseNode<S, E>,
-		alternative?: BaseNode<S, E> | ResultCode
+		alternative?: BaseNode<S, E> | ResultCode,
 	) {
 		super(
 			name,

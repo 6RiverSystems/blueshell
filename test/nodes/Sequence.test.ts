@@ -1,11 +1,11 @@
 /**
  * Created by josh on 1/10/16.
  */
-import {assert} from 'chai';
+import { assert } from 'chai';
 
-import {rc} from '../../lib';
+import { DroneState } from './test/DroneActions';
+import { rc } from '../../lib';
 import * as Behavior from '../../lib';
-import {DroneState} from './test/DroneActions';
 
 class ShootFlares extends Behavior.Action<DroneState, string> {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,14 +29,10 @@ class EvasiveManeuver extends Behavior.Action<DroneState, string> {
 	}
 }
 
-const droneAi = new Behavior.Sequence('droneAi',
-	[
-		new ShootFlares(),
-		new EvasiveManeuver(),
-	]);
+const droneAi = new Behavior.Sequence('droneAi', [new ShootFlares(), new EvasiveManeuver()]);
 
-describe('Sequence', function() {
-	it('should return success', function() {
+describe('Sequence', function () {
+	it('should return success', function () {
 		// With an armed jet
 		const jetState = new DroneState();
 		jetState.flares = 2;
@@ -48,7 +44,7 @@ describe('Sequence', function() {
 		assert.equal(jetState.commands[0], 'turnLeft', 'Turning Left');
 	});
 
-	it('should return failure', function() {
+	it('should return failure', function () {
 		// With an empty jet
 		const emptyDrone = new DroneState();
 		emptyDrone.flares = 0;

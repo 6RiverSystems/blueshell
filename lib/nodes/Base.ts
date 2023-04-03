@@ -1,24 +1,17 @@
 /**
  * Created by josh on 1/10/16.
  */
-import {
-	BlueshellState,
-	NodeStorage,
-	rc,
-	ResultCode,
-	BaseNode,
-	isParentNode,
-} from '../models';
-import {v4} from 'uuid';
+import { v4 } from 'uuid';
 
-import {TreePublisher, TreeNonPublisher, NodeManager} from '../utils';
+import { BlueshellState, NodeStorage, rc, ResultCode, BaseNode, isParentNode } from '../models';
+import { TreePublisher, TreeNonPublisher, NodeManager } from '../utils';
 
 /**
  * Interface that defines what is stored in private node storage at the root
  */
 export interface PrivateNodeStorage {
 	debug: boolean;
-	eventCounter: number|undefined;
+	eventCounter: number | undefined;
 }
 
 /**
@@ -26,7 +19,7 @@ export interface PrivateNodeStorage {
  * @author Joshua Chaitin-Pollak
  */
 export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
-	private _id: string = '';
+	private _id = '';
 	private _parent: string;
 
 	// Hard to properly type this since the static can't
@@ -36,7 +29,9 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 	// marginally better than a global
 	static treePublisher: TreePublisher<any, any> = new TreeNonPublisher();
 
-	public static registerTreePublisher<S extends BlueshellState, E>(publisher: TreePublisher<S, E>): void {
+	public static registerTreePublisher<S extends BlueshellState, E>(
+		publisher: TreePublisher<S, E>,
+	): void {
 		Base.treePublisher = publisher;
 	}
 
@@ -247,5 +242,5 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 	}
 }
 
-export {Base as Action};
-export {Base as Condition};
+export { Base as Action };
+export { Base as Condition };

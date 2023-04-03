@@ -1,12 +1,12 @@
-import {ResultCode, BlueshellState, BaseNode, rc, Conditional, NodeStorage} from '../../models';
-import {Action} from '../Base';
-import {Decorator} from '../Decorator';
-import {clearEventSeenRecursive} from '../Parent';
+import { ResultCode, BlueshellState, BaseNode, rc, Conditional, NodeStorage } from '../../models';
+import { Action } from '../Base';
+import { Decorator } from '../Decorator';
+import { clearEventSeenRecursive } from '../Parent';
 
 export interface WhileNodeStorage extends NodeStorage {
 	beganAtLeastOneLoop?: boolean;
-	lastLoopResult?: ResultCode,
-	break?: boolean,
+	lastLoopResult?: ResultCode;
+	break?: boolean;
 }
 
 /**

@@ -2,14 +2,14 @@
  * Created by josh on 3/30/16.
  */
 
-import {assert} from 'chai';
+import { assert } from 'chai';
 
-import {rc} from '../../lib';
-import {RobotState, waitAi} from './test/RobotActions';
+import { RobotState, waitAi } from './test/RobotActions';
+import { rc } from '../../lib';
 
-describe('Composite', function() {
-	context('#resetNodeStorage', function() {
-		it('should reset child state', function() {
+describe('Composite', function () {
+	context('#resetNodeStorage', function () {
+		it('should reset child state', function () {
 			const event = '';
 			const state = new RobotState(false);
 

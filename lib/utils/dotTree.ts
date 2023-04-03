@@ -1,5 +1,5 @@
-import {BlueshellState, rc, BaseNode, isParentNode} from '../models';
-import {Decorator, IfElse} from '../nodes';
+import { BlueshellState, rc, BaseNode, isParentNode } from '../models';
+import { Decorator, IfElse } from '../nodes';
 
 const DefaultStyle = 'style="filled,bold"';
 
@@ -15,7 +15,7 @@ const ErrorColor = 'fillcolor="#e41a1c"';
 const EnteredColor = 'fillcolor="#ff7f00"';
 const DefaultColor = 'fillcolor="#e5e5e5"';
 
-const DefaultEdgeColor ='color="#000000"';
+const DefaultEdgeColor = 'color="#000000"';
 
 function getShape<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
 	if (node instanceof Decorator) {
@@ -38,14 +38,14 @@ function getColor<S extends BlueshellState, E>(node: BaseNode<S, E>, state?: S):
 		if (lastEventSeen === eventCounter) {
 			if (lastResult) {
 				switch (lastResult) {
-				case rc.ERROR:
-					return ErrorColor;
-				case rc.SUCCESS:
-					return SuccessColor;
-				case rc.RUNNING:
-					return RunningColor;
-				case rc.FAILURE:
-					return FailureColor;
+					case rc.ERROR:
+						return ErrorColor;
+					case rc.SUCCESS:
+						return SuccessColor;
+					case rc.RUNNING:
+						return RunningColor;
+					case rc.FAILURE:
+						return FailureColor;
 				}
 			} else {
 				return EnteredColor;
@@ -71,7 +71,11 @@ function getTooltip<S extends BlueshellState, E>(node: BaseNode<S, E>): string {
 	return `tooltip="${node.constructor.name}"`;
 }
 
-export function serializeDotTree<S extends BlueshellState, E>(root: BaseNode<S, E>, state?: S): string {
+export function serializeDotTree<S extends BlueshellState, E>(
+	root: BaseNode<S, E>,
+	state?: S,
+): string {
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (!root) {
 		return '';
 	}
@@ -93,13 +97,18 @@ export function serializeDotTree<S extends BlueshellState, E>(root: BaseNode<S, 
 		const nodeId = currentNode!.id;
 
 		resultingString += `\t${nodeId} `;
-		resultingString += `[${getLabel(currentNode!)} ${getShape(currentNode!)} ${getTooltip(currentNode!)}`;
+		resultingString += `[${getLabel(currentNode!)} ${getShape(currentNode!)} ${getTooltip(
+			currentNode!,
+		)}`;
 		resultingString += ` ${getPath(currentNode!)} ${getColor(currentNode!, state)}];\n`;
 
 		if (!!currentNode && isParentNode(currentNode)) {
-			resultingString = currentNode.getChildren().reduce(
-				(acc: string, child: BaseNode<S, E>) => (`${acc}\t${nodeId}->${child!.id};\n`),
-				resultingString);
+			resultingString = currentNode
+				.getChildren()
+				.reduce(
+					(acc: string, child: BaseNode<S, E>) => `${acc}\t${nodeId}->${child!.id};\n`,
+					resultingString,
+				);
 			for (const child of [...currentNode.getChildren()].reverse()) {
 				nodesToVisit.push(child);
 			}

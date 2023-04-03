@@ -1,4 +1,4 @@
-import {Debugger} from 'inspector';
+import { Debugger } from 'inspector';
 
 // Map key that is the path property of a bt node
 export type NodePathKey = string;
@@ -22,9 +22,9 @@ export interface BreakpointData {
 
 // the information about a breakpoint set on a particular class/method (for 1 or more nodes)
 export interface BreakpointInfo {
-	methodInfo: NodeMethodInfo,
+	methodInfo: NodeMethodInfo;
 	breakpointId?: Debugger.BreakpointId;
-	breakpoints: Map<NodePathKey, BreakpointData>,
+	breakpoints: Map<NodePathKey, BreakpointData>;
 }
 
 // the information for the methods available for a particuliar node as well as the node name and parent

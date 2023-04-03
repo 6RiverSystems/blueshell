@@ -1,11 +1,13 @@
 import archy = require('archy');
-import {Data} from 'archy';
+import { Data } from 'archy';
 
-import {BlueshellState, isParentNode, BaseNode} from '../models';
+import { BlueshellState, isParentNode, BaseNode } from '../models';
 
 function buildArchyTree<S extends BlueshellState, E>(
-	node: BaseNode<S, E>, contextDepth: number, state?: S
-): Required<Data>|undefined {
+	node: BaseNode<S, E>,
+	contextDepth: number,
+	state?: S,
+): Required<Data> | undefined {
 	let label = node.name;
 
 	if (label !== node.constructor.name) {
@@ -57,7 +59,9 @@ function buildArchyTree<S extends BlueshellState, E>(
 }
 
 export function serializeArchyTree<S extends BlueshellState, E>(
-	tree: BaseNode<S, E>, state?: S, contextDepth = Number.MAX_SAFE_INTEGER
+	tree: BaseNode<S, E>,
+	state?: S,
+	contextDepth = Number.MAX_SAFE_INTEGER,
 ): string {
 	const archyTree = buildArchyTree(tree, contextDepth, state);
 	if (archyTree) {

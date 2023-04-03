@@ -1,5 +1,5 @@
-import {ResultCode, BlueshellState, BaseNode} from '../../models';
-import {Decorator} from '../Decorator';
+import { ResultCode, BlueshellState, BaseNode } from '../../models';
+import { Decorator } from '../Decorator';
 
 /**
  * Given a state, event, and result code (from a child Node), return a result code.
@@ -16,9 +16,7 @@ export interface ResultAdapter<S, E> {
  * @author Timothy Deignan
  */
 export class ResultAdapt<S extends BlueshellState, E> extends Decorator<S, E> {
-	constructor(desc: string,
-	            child: BaseNode<S, E>,
-	            private resultAdapter: ResultAdapter<S, E>) {
+	constructor(desc: string, child: BaseNode<S, E>, private resultAdapter: ResultAdapter<S, E>) {
 		super('ResultAdapt-' + desc, child);
 	}
 

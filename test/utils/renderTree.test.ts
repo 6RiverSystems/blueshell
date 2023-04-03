@@ -1,11 +1,4 @@
-/**
- * Created by josh on 3/23/16.
- */
-import {assert} from 'chai';
-
-const parse = require('dotparser');
-
-import {} from '../../lib';
+import { assert } from 'chai';
 
 import {
 	renderTree,
@@ -16,7 +9,10 @@ import {
 	ResultCode,
 	BlueshellState,
 } from '../../lib';
-import {RobotState, waitAi} from '../nodes/test/RobotActions';
+import { RobotState, waitAi } from '../nodes/test/RobotActions';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const parse = require('dotparser');
 
 class ConsumeOnce extends Action<any, any> {
 	onEvent(state: any): ResultCode {
@@ -32,45 +28,21 @@ class ConsumeOnce extends Action<any, any> {
 	}
 }
 
-describe('renderTree', function() {
-	context('archy tree', function() {
-		context('contextDepth', function() {
-			const testTree = new LatchedSequence(
-				'root',
-				[
-					new LatchedSequence(
-						'0',
-						[
-							new LatchedSequence(
-								'0.0',
-								[
-									new ConsumeOnce('0.0.0'),
-									new ConsumeOnce('0.0.1'),
-								]
-							),
-							new LatchedSequence(
-								'0.1',
-								[
-									new ConsumeOnce('0.1.0'),
-									new ConsumeOnce('0.1.1'),
-								]
-							),
-						]
-					),
-					new LatchedSequence(
-						'1',
-						[
-							new ConsumeOnce('1.0'),
-							new ConsumeOnce('1.1'),
-						]
-					),
-				]
-			);
+describe('renderTree', function () {
+	context('archy tree', function () {
+		context('contextDepth', function () {
+			const testTree = new LatchedSequence('root', [
+				new LatchedSequence('0', [
+					new LatchedSequence('0.0', [new ConsumeOnce('0.0.0'), new ConsumeOnce('0.0.1')]),
+					new LatchedSequence('0.1', [new ConsumeOnce('0.1.0'), new ConsumeOnce('0.1.1')]),
+				]),
+				new LatchedSequence('1', [new ConsumeOnce('1.0'), new ConsumeOnce('1.1')]),
+			]);
 			let state: BlueshellState = {
 				errorReason: undefined,
 				__blueshell: {},
 			};
-			beforeEach(function() {
+			beforeEach(function () {
 				state = {
 					errorReason: undefined,
 					__blueshell: {},
@@ -80,7 +52,7 @@ describe('renderTree', function() {
 				expectedNodes: number,
 				expectedEllipses: number,
 				expectedArrows: number,
-				contextDepth?: number
+				contextDepth?: number,
 			) {
 				const render = renderTree!.toString(testTree, state, contextDepth);
 
@@ -94,47 +66,47 @@ describe('renderTree', function() {
 
 				function getCount(re: RegExp) {
 					const matches = render.match(re);
-					return matches && matches.length || 0;
+					return (matches && matches.length) || 0;
 				}
 			}
-			context('before running', function() {
-				it('should show everything at unspecified context depth', function() {
+			context('before running', function () {
+				it('should show everything at unspecified context depth', function () {
 					runContextDepthTest(11, 0, 0);
 				});
-				it('should show nothing at -1 context depth', function() {
+				it('should show nothing at -1 context depth', function () {
 					runContextDepthTest(0, 0, 0, -1);
 				});
-				it('should show root ellipsis at 0 context depth', function() {
+				it('should show root ellipsis at 0 context depth', function () {
 					runContextDepthTest(1, 1, 0, 0);
 				});
 			});
-			context('after one run', function() {
-				beforeEach(async function() {
+			context('after one run', function () {
+				beforeEach(async function () {
 					await testTree.handleEvent(state, {});
 				});
-				it('should arrow the first path at unspecified context depth', function() {
+				it('should arrow the first path at unspecified context depth', function () {
 					runContextDepthTest(11, 0, 4);
 				});
-				it('should show only the active path at -1 context depth', function() {
+				it('should show only the active path at -1 context depth', function () {
 					runContextDepthTest(4, 0, 4, -1);
 				});
-				it('should show only the active path and ellipses at 0 context depth', function() {
+				it('should show only the active path and ellipses at 0 context depth', function () {
 					runContextDepthTest(7, 3, 4, 0);
 				});
-				it('should show only the active path, siblings, and ellipses at 1 context depth', function() {
+				it('should show only the active path, siblings, and ellipses at 1 context depth', function () {
 					runContextDepthTest(11, 4, 4, 1);
 				});
-				it('should show everything at 2 context depth', function() {
+				it('should show everything at 2 context depth', function () {
 					runContextDepthTest(11, 0, 4, 2);
 				});
 			});
 		});
-		it('should not crash', function(done) {
+		it('should not crash', function (done) {
 			renderTree!.toConsole(waitAi);
 			done();
 		});
 
-		it('should generate a tree of nodes without a state', function(done) {
+		it('should generate a tree of nodes without a state', function (done) {
 			const a = renderTree.toString(waitAi);
 
 			assert.ok(a);
@@ -157,7 +129,7 @@ describe('renderTree', function() {
 			done();
 		});
 
-		it('should generate a tree of nodes with state', function() {
+		it('should generate a tree of nodes with state', function () {
 			const state = new RobotState();
 			const event = 'testEvent';
 
@@ -185,12 +157,12 @@ describe('renderTree', function() {
 		});
 	});
 
-	context('dot notation tree', function() {
-		it('should not crash', function(done) {
+	context('dot notation tree', function () {
+		it('should not crash', function (done) {
 			renderTree!.toDotConsole(waitAi);
 			done();
 		});
-		it('should generate a dot string without state', function(done) {
+		it('should generate a dot string without state', function (done) {
 			const dotString = renderTree.toDotString(waitAi);
 
 			assert.notOk(dotString.includes('fillcolor="#4daf4a"')); // SUCCESS
@@ -199,13 +171,13 @@ describe('renderTree', function() {
 			assert.notOk(dotString.includes('fillcolor="#e41a1c"')); // ERROR
 			// eslint-disable-next-line no-console
 			console.log(dotString);
-			assert.doesNotThrow(function() {
+			assert.doesNotThrow(function () {
 				parse(dotString);
 			});
 			done();
 		});
 
-		it('should generate a digraph string with state', function() {
+		it('should generate a digraph string with state', function () {
 			const state = new RobotState();
 			const event = 'testEvent';
 
@@ -218,17 +190,17 @@ describe('renderTree', function() {
 			assert.ok(result);
 			// eslint-disable-next-line no-console
 			console.log(result);
-			assert.doesNotThrow(function() {
+			assert.doesNotThrow(function () {
 				parse(result);
 			});
 		});
 
-		it('should generate a digraph with custom node', function(done) {
+		it('should generate a digraph with custom node', function (done) {
 			const customLSelector = new CustomLatchedSelector();
 			const dotString = renderTree.toDotString(customLSelector);
 			// eslint-disable-next-line no-console
 			console.log(dotString);
-			assert.doesNotThrow(function() {
+			assert.doesNotThrow(function () {
 				parse(dotString);
 			});
 			done();

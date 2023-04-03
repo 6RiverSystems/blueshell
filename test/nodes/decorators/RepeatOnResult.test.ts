@@ -1,11 +1,11 @@
 /**
  * Created by josh on 1/21/16.
  */
-import {assert} from 'chai';
+import { assert } from 'chai';
 
-import {rc} from '../../../lib';
+import { rc } from '../../../lib';
 import * as Behavior from '../../../lib';
-import {DroneState} from '../test/DroneActions';
+import { DroneState } from '../test/DroneActions';
 
 const Action = Behavior.Action;
 const RepeatOnResult = Behavior.decorators.RepeatOnResult;
@@ -18,19 +18,23 @@ class CountUntil extends Action<DroneState, number> {
 	}
 }
 
-describe('RepeatOnResult', function() {
-	it('repeat when child returns running', function() {
+describe('RepeatOnResult', function () {
+	it('repeat when child returns running', function () {
 		const countUntil = new CountUntil();
 		const unEcho = new RepeatOnResult(rc.RUNNING, countUntil);
 
 		const tests = [
-			{action: unEcho, event: 0, counter: 1},
-			{action: unEcho, event: 2, counter: 3},
+			{ action: unEcho, event: 0, counter: 1 },
+			{ action: unEcho, event: 2, counter: 3 },
 		];
 
-		const makeVerify = function(test: any, state: DroneState) {
-			return function(res: string) {
-				assert.equal(state.flares, test.counter, `Flare Count: ${test.action.name} -> ${test.counter}`);
+		const makeVerify = function (test: any, state: DroneState) {
+			return function (res: string) {
+				assert.equal(
+					state.flares,
+					test.counter,
+					`Flare Count: ${test.action.name} -> ${test.counter}`,
+				);
 				assert.equal(res, rc.SUCCESS, `Result: ${test.action.name} -> ${test.counter}`);
 			};
 		};

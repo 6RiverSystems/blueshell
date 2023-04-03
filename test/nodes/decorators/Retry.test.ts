@@ -1,16 +1,16 @@
-import {assert} from 'chai';
+import { assert } from 'chai';
 
-import {rc} from '../../../lib';
+import { rc } from '../../../lib';
 import * as Behavior from '../../../lib';
 
-type RetryTestState = Behavior.BlueshellState & {number: number};
+type RetryTestState = Behavior.BlueshellState & { number: number };
 
 class ResultReturner extends Behavior.Action<RetryTestState, any> {
 	private count = 0;
 
 	constructor(
 		private readonly result: Behavior.ResultCode,
-		private readonly successAfterCount: number = 0
+		private readonly successAfterCount: number = 0,
 	) {
 		super();
 	}
@@ -26,8 +26,8 @@ class ResultReturner extends Behavior.Action<RetryTestState, any> {
 	}
 }
 
-describe('Retry ', function() {
-	it('retry on failure', function() {
+describe('Retry ', function () {
+	it('retry on failure', function () {
 		const counter: RetryTestState = {
 			number: 0,
 			__blueshell: {},
@@ -40,7 +40,7 @@ describe('Retry ', function() {
 		assert.equal(counter.number, 3);
 	});
 
-	it('retry until success if numRepeat < 0', function() {
+	it('retry until success if numRepeat < 0', function () {
 		const counter: RetryTestState = {
 			number: 0,
 			__blueshell: {},
@@ -53,7 +53,7 @@ describe('Retry ', function() {
 		assert.equal(counter.number, 4);
 	});
 
-	it('do not retry on success', function() {
+	it('do not retry on success', function () {
 		const counter: any = {
 			number: 0,
 		};
@@ -65,7 +65,7 @@ describe('Retry ', function() {
 		assert.equal(counter.number, 1);
 	});
 
-	it('do not retry on running', function() {
+	it('do not retry on running', function () {
 		const counter: any = {
 			number: 0,
 		};

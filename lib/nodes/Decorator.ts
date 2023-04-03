@@ -1,5 +1,5 @@
-import {BlueshellState, ResultCode, rc, BaseNode} from '../models';
-import {Composite} from './Composite';
+import { Composite } from './Composite';
+import { BlueshellState, ResultCode, rc, BaseNode } from '../models';
 
 /**
  * Base Class for all Decorator Nodes. Can only have one child.
@@ -31,13 +31,9 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 		// Passthrough
 		event = this.decorateEvent(event);
 		const res = this.decorateResult(
-			this.decorateCall(
-				(state, event) => this.child.handleEvent(state, event),
-				state,
-				event
-			),
+			this.decorateCall((state, event) => this.child.handleEvent(state, event), state, event),
 			state,
-			event
+			event,
 		);
 		if (this.latched && res === rc.RUNNING) {
 			const storage = this.getNodeStorage(state);

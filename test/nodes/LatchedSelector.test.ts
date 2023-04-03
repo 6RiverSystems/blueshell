@@ -1,23 +1,21 @@
 /**
  * Created by josh on 1/10/16.
  */
-import {assert} from 'chai';
-
-import {rc} from '../../lib';
-import * as Behavior from '../../lib';
+import { assert } from 'chai';
 
 import * as TestActions from './test/RobotActions';
+import { rc } from '../../lib';
+import * as Behavior from '../../lib';
 
-const shutdownAi = new Behavior.LatchedSelector('shutdownAi',
-	[
-		new TestActions.Recharge(),
-		new TestActions.EmergencyShutdown(),
-	]);
+const shutdownAi = new Behavior.LatchedSelector('shutdownAi', [
+	new TestActions.Recharge(),
+	new TestActions.EmergencyShutdown(),
+]);
 
 const waitAi = TestActions.waitAi;
 
-describe('LatchedSelector', function() {
-	it('should return success', function() {
+describe('LatchedSelector', function () {
+	it('should return success', function () {
 		// With a happy bot
 		const botState = new TestActions.RobotState();
 
@@ -28,7 +26,7 @@ describe('LatchedSelector', function() {
 		assert.equal(botState.commands[0], 'findDock', 'Searching for dock');
 	});
 
-	it('should return failure', function() {
+	it('should return failure', function () {
 		// With a happy bot
 		const botState = new TestActions.RobotState();
 		botState.overheated = true;

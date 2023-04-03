@@ -1,5 +1,5 @@
-import {BlueshellState, rc, ResultCode} from '../models';
-import {Composite} from './Composite';
+import { Composite } from './Composite';
+import { BlueshellState, rc, ResultCode } from '../models';
 
 /**
  * Sends an event to each child until one of the returns `FAILURE`, or `RUNNING`, then returns that value.
@@ -26,8 +26,7 @@ export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 		const child = this.getChildren()[i];
 
 		const res = child.handleEvent(state, event);
-		const {res: res_, state: state_, event: event_} =
-			this._afterChild(res, state, event);
+		const { res: res_, state: state_, event: event_ } = this._afterChild(res, state, event);
 
 		if (res_ === rc.SUCCESS) {
 			// Call the next child
@@ -48,7 +47,7 @@ export class Sequence<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param event
 	 */
 	protected _afterChild(res: ResultCode, state: S, event: E) {
-		return {res, state, event};
+		return { res, state, event };
 	}
 
 	get symbol(): string {

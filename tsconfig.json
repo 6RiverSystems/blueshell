@@ -2,7 +2,7 @@
 	"compileOnSave": true,
 	"compilerOptions": {
 		"outDir": "dist",
-		"target": "es2019",
+		"target": "es2021",
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"allowJs": false,
@@ -15,20 +15,9 @@
 		"preserveConstEnums": true,
 		"noImplicitReturns": true,
 		"esModuleInterop": true,
-		"types": [
-			"node",
-			"reflect-metadata",
-			"mocha",
-			"chai",
-			"chai-as-promised"
-		],
+		"types": ["node", "reflect-metadata", "mocha", "chai", "chai-as-promised"],
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
 	},
-	"exclude": [
-		"node_modules",
-		"scripts",
-		"coverage",
-		"dist"
-	]
+	"exclude": ["node_modules", "scripts", "coverage", "dist"]
 }

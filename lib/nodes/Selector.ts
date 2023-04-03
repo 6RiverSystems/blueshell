@@ -1,6 +1,5 @@
-import {BlueshellState, rc, ResultCode} from '../models';
-import {Composite} from './Composite';
-
+import { Composite } from './Composite';
+import { BlueshellState, rc, ResultCode } from '../models';
 
 /**
  * Selector Node (a.k.a. Fallback)
@@ -29,8 +28,7 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 
 		const res = child.handleEvent(state, event);
 
-		const {res: res_, state: state_, event: event_} =
-			this._afterChild(res, state, event);
+		const { res: res_, state: state_, event: event_ } = this._afterChild(res, state, event);
 
 		if (res_ !== rc.FAILURE) {
 			if (this.latched && res_ === rc.RUNNING) {
@@ -50,7 +48,7 @@ export class Selector<S extends BlueshellState, E> extends Composite<S, E> {
 	 * @param event
 	 */
 	protected _afterChild(res: ResultCode, state: S, event: E) {
-		return {res, state, event};
+		return { res, state, event };
 	}
 
 	get symbol(): string {

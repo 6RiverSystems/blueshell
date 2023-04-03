@@ -1,14 +1,14 @@
 /**
  * Created by josh on 1/10/16.
  */
-import {assert} from 'chai';
+import { assert } from 'chai';
 
-import {rc} from '../../lib';
+import { rc } from '../../lib';
 import * as Behavior from '../../lib';
 
 class TestState implements Behavior.BlueshellState {
-	public successCount: number = 0;
-	public failureCount: number = 0;
+	public successCount = 0;
+	public failureCount = 0;
 	public errorReason?: Error;
 	public __blueshell: any;
 }
@@ -30,7 +30,7 @@ class TestRunningAction extends Behavior.Action<TestState, string> {
 	}
 }
 
-describe('IfElseWithNodeCondition', function() {
+describe('IfElseWithNodeCondition', function () {
 	const successAction = new (class extends Behavior.Action<TestState, string> {
 		onEvent(state: TestState) {
 			state.successCount++;
@@ -45,12 +45,12 @@ describe('IfElseWithNodeCondition', function() {
 		}
 	})();
 
-	context('conditional returns success (true)', function() {
-		it('should return success (consequent) when conditional is true with no alternative', function() {
+	context('conditional returns success (true)', function () {
+		it('should return success (consequent) when conditional is true with no alternative', function () {
 			const ifElse = new Behavior.IfElseWithNodeCondition(
 				'testIfElse',
 				successAction,
-				successAction
+				successAction,
 			);
 
 			const state = new TestState();
@@ -62,7 +62,7 @@ describe('IfElseWithNodeCondition', function() {
 			assert.strictEqual(ifElse.getChildren().length, 2, 'ifElse does not have 2 children');
 		});
 
-		it('should return success (consequent) when conditional is true with an alternative rc', function() {
+		it('should return success (consequent) when conditional is true with an alternative rc', function () {
 			const ifElse = new Behavior.IfElseWithNodeCondition(
 				'testIfElse',
 				successAction,
@@ -79,12 +79,12 @@ describe('IfElseWithNodeCondition', function() {
 			assert.strictEqual(ifElse.getChildren().length, 3, 'ifElse does not have 3 children');
 		});
 
-		it('should return success (consequent) when conditional is true with an alternative node', function() {
+		it('should return success (consequent) when conditional is true with an alternative node', function () {
 			const ifElse = new Behavior.IfElseWithNodeCondition(
 				'testIfElse',
 				successAction,
 				successAction,
-				failureAction
+				failureAction,
 			);
 
 			const state = new TestState();
@@ -98,12 +98,12 @@ describe('IfElseWithNodeCondition', function() {
 		});
 	});
 
-	context('conditional returns failure (false)', function() {
-		it('should return failure when conditional is false and there is no alternative', function() {
+	context('conditional returns failure (false)', function () {
+		it('should return failure when conditional is false and there is no alternative', function () {
 			const ifElse = new Behavior.IfElseWithNodeCondition(
 				'testIfElse',
 				failureAction,
-				successAction
+				successAction,
 			);
 
 			const state = new TestState();
@@ -115,12 +115,12 @@ describe('IfElseWithNodeCondition', function() {
 			assert.strictEqual(state.failureCount, 1, 'Expected Action was not called');
 		});
 
-		it('should return success (alternative) when conditional is false with an alternative rc', function() {
+		it('should return success (alternative) when conditional is false with an alternative rc', function () {
 			const ifElse = new Behavior.IfElseWithNodeCondition(
 				'testIfElse',
 				failureAction,
 				failureAction,
-				rc.SUCCESS
+				rc.SUCCESS,
 			);
 
 			const state = new TestState();
@@ -131,12 +131,12 @@ describe('IfElseWithNodeCondition', function() {
 			assert.strictEqual(state.failureCount, 1, 'Expected Action was not called once');
 		});
 
-		it('should return success (alternative) when conditional is false with an alternative node', function() {
+		it('should return success (alternative) when conditional is false with an alternative node', function () {
 			const ifElse = new Behavior.IfElseWithNodeCondition(
 				'testIfElse',
 				failureAction,
 				failureAction,
-				successAction
+				successAction,
 			);
 
 			const state = new TestState();
@@ -149,14 +149,10 @@ describe('IfElseWithNodeCondition', function() {
 		});
 	});
 
-	context('conditional returns success (true) after running twice', function() {
-		it('should return success (consequent) when conditional is true after running with no alternative', function() {
+	context('conditional returns success (true) after running twice', function () {
+		it('should return success (consequent) when conditional is true after running with no alternative', function () {
 			const condition = new TestRunningAction('testRunningAction');
-			const ifElse = new Behavior.IfElseWithNodeCondition(
-				'testIfElse',
-				condition,
-				successAction
-			);
+			const ifElse = new Behavior.IfElseWithNodeCondition('testIfElse', condition, successAction);
 
 			const state = new TestState();
 			let res = ifElse.handleEvent(state, 'testEvent');
@@ -171,7 +167,7 @@ describe('IfElseWithNodeCondition', function() {
 			assert.strictEqual(condition.numCalls, 3, 'Condition not called 3 times');
 		});
 
-		it('should return success (consequent) when conditional is true after running with alternative rc', function() {
+		it('should return success (consequent) when conditional is true after running with alternative rc', function () {
 			const condition = new TestRunningAction('testRunningAction');
 			const ifElse = new Behavior.IfElseWithNodeCondition(
 				'testIfElse',
@@ -193,13 +189,13 @@ describe('IfElseWithNodeCondition', function() {
 			assert.strictEqual(condition.numCalls, 3, 'Condition not called 3 times');
 		});
 
-		it('should return success (consequent) when conditional is true after running with alternative node', function() {
+		it('should return success (consequent) when conditional is true after running with alternative node', function () {
 			const condition = new TestRunningAction('testRunningAction');
 			const ifElse = new Behavior.IfElseWithNodeCondition(
 				'testIfElse',
 				condition,
 				successAction,
-				failureAction
+				failureAction,
 			);
 
 			const state = new TestState();

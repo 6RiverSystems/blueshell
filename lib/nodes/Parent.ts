@@ -1,5 +1,5 @@
-import {BlueshellState, BaseNode, ParentNode, isParentNode} from '../models';
-import {Action, PrivateNodeStorage} from './Base';
+import { Action, PrivateNodeStorage } from './Base';
+import { BlueshellState, BaseNode, ParentNode, isParentNode } from '../models';
 
 /**
  * Sets the event counter of the nocde and any child nodes to indicate
@@ -11,7 +11,7 @@ import {Action, PrivateNodeStorage} from './Base';
 export function setEventCounter<S extends BlueshellState, E>(
 	pStorage: PrivateNodeStorage,
 	state: S,
-	node: BaseNode<S, E>
+	node: BaseNode<S, E>,
 ) {
 	const nodeStorage = node.getNodeStorage(state);
 	if (nodeStorage.lastEventSeen !== undefined) {
@@ -29,7 +29,10 @@ export function setEventCounter<S extends BlueshellState, E>(
  * @param node The node to clear
  * @param state The state holding the node storage
  */
-export function clearEventSeenRecursive<S extends BlueshellState, E>(node: BaseNode<S, E>, state: S) {
+export function clearEventSeenRecursive<S extends BlueshellState, E>(
+	node: BaseNode<S, E>,
+	state: S,
+) {
 	if (isParentNode(node)) {
 		node.getChildren().forEach((child: any) => {
 			clearEventSeenRecursive(child, state);
@@ -46,7 +49,10 @@ export function clearEventSeenRecursive<S extends BlueshellState, E>(node: BaseN
  *
  * @author Mark Asdoorian
  */
-export abstract class Parent<S extends BlueshellState, E> extends Action<S, E> implements ParentNode<S, E> {
+export abstract class Parent<S extends BlueshellState, E>
+	extends Action<S, E>
+	implements ParentNode<S, E>
+{
 	/**
 	 * @constructor
 	 * @param name

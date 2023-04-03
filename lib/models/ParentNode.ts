@@ -1,5 +1,5 @@
-import {BaseNode} from './BaseNode';
-import {BlueshellState} from './BlueshellState';
+import { BaseNode } from './BaseNode';
+import { BlueshellState } from './BlueshellState';
 
 /**
  * NOTE: this file is separate from Parent.ts so that Base can reference items from here
@@ -20,8 +20,6 @@ export interface ParentNode<S extends BlueshellState, E> extends BaseNode<S, E> 
  * Checks if the passed in object exposes a list of children.
  * @param node Node to check
  */
-export function isParentNode<S extends BlueshellState, E>(
-	node: any
-): node is ParentNode<S, E> {
+export function isParentNode<S extends BlueshellState, E>(node: any): node is ParentNode<S, E> {
 	return !!node.getChildren;
 }

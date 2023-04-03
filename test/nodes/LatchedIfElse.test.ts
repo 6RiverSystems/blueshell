@@ -1,18 +1,20 @@
 /**
  * Created by josh on 1/10/16.
  */
-import {assert} from 'chai';
-import {rc, ResultCode} from '../../lib';
+import { assert } from 'chai';
+
+import { rc, ResultCode } from '../../lib';
 import * as Behavior from '../../lib';
+
 class TestState implements Behavior.BlueshellState {
 	public calledMap: Map<ResultCode, boolean> = new Map();
-	public runCounter: number = 0;
+	public runCounter = 0;
 	public errorReason?: Error;
 	public __blueshell: any;
 }
 
 class LatchedAction extends Behavior.Action<TestState, string> {
-	private runCounter: number = 0;
+	private runCounter = 0;
 
 	constructor(
 		name?: string,
@@ -38,17 +40,18 @@ class LatchedAction extends Behavior.Action<TestState, string> {
 	}
 }
 
-describe('LatchedIfElse', function() {
+describe('LatchedIfElse', function () {
 	let state: TestState;
 
-	beforeEach(function() {
+	beforeEach(function () {
 		state = new TestState();
 	});
 
-	context('conditional is true', function() {
-		it('should return success (consequent) when conditional is true with no alternative (1x)', function() {
+	context('conditional is true', function () {
+		it('should return success (consequent) when conditional is true with no alternative (1x)', function () {
 			const successAction = new LatchedAction('testLatchedAction', 1, rc.SUCCESS);
-			const ifElse = new Behavior.LatchedIfElse('testLatchedIfElse',
+			const ifElse = new Behavior.LatchedIfElse(
+				'testLatchedIfElse',
 				(state) => {
 					return state.runCounter === 0;
 				},
@@ -68,9 +71,10 @@ describe('LatchedIfElse', function() {
 			assert.isTrue(state.calledMap.get(rc.SUCCESS), 'Expected Action was not called');
 			assert.strictEqual(state.runCounter, 1, 'Run counter was not incremented');
 		});
-		it('should return success (consequent) when conditional is true with alternative (2x)', function() {
+		it('should return success (consequent) when conditional is true with alternative (2x)', function () {
 			const successAction = new LatchedAction('testLatchedAction', 2, rc.SUCCESS);
-			const ifElse = new Behavior.LatchedIfElse('testLatchedIfElse',
+			const ifElse = new Behavior.LatchedIfElse(
+				'testLatchedIfElse',
 				(state) => {
 					return state.runCounter === 0;
 				},
@@ -105,9 +109,10 @@ describe('LatchedIfElse', function() {
 			assert.equal(res, rc.SUCCESS, '4th behavior tree not success');
 		});
 
-		it('should restart latching if resetNodeStorage is called', function() {
+		it('should restart latching if resetNodeStorage is called', function () {
 			const successAction = new LatchedAction('testLatchedAction', 2, rc.SUCCESS);
-			const ifElse = new Behavior.LatchedIfElse('testLatchedIfElse',
+			const ifElse = new Behavior.LatchedIfElse(
+				'testLatchedIfElse',
 				(state) => {
 					return state.runCounter === 0;
 				},
@@ -137,9 +142,10 @@ describe('LatchedIfElse', function() {
 		});
 	});
 
-	context('conditional is false', function() {
-		it('should return failure when conditional is false and there is no alternative', function() {
-			const ifElse = new Behavior.IfElse('testIfElse',
+	context('conditional is false', function () {
+		it('should return failure when conditional is false and there is no alternative', function () {
+			const ifElse = new Behavior.IfElse(
+				'testIfElse',
 				() => false,
 				new LatchedAction('testLatchedAction', 1, rc.SUCCESS),
 			);
@@ -150,8 +156,9 @@ describe('LatchedIfElse', function() {
 			assert.isUndefined(state.calledMap.get(rc.SUCCESS), 'Unexpected Action was called');
 		});
 
-		it('should return failure (alternative) when conditional is false with an alternative rc', function() {
-			const ifElse = new Behavior.LatchedIfElse('testIfElse',
+		it('should return failure (alternative) when conditional is false with an alternative rc', function () {
+			const ifElse = new Behavior.LatchedIfElse(
+				'testIfElse',
 				() => false,
 				new LatchedAction('testLatchedAction', 1, rc.SUCCESS),
 				rc.FAILURE,
@@ -165,9 +172,10 @@ describe('LatchedIfElse', function() {
 			assert.strictEqual(state.runCounter, 0, 'Run counter was incremented');
 		});
 
-		it('should return success (alternative) when conditional is false with an alternative node (1x)', function() {
+		it('should return success (alternative) when conditional is false with an alternative node (1x)', function () {
 			const successAction = new LatchedAction('testLatchedAction', 1, rc.SUCCESS);
-			const ifElse = new Behavior.LatchedIfElse('testLatchedIfElse',
+			const ifElse = new Behavior.LatchedIfElse(
+				'testLatchedIfElse',
 				(state) => {
 					return state.runCounter !== 0;
 				},
@@ -189,9 +197,10 @@ describe('LatchedIfElse', function() {
 			assert.strictEqual(state.runCounter, 1, 'Run counter was not incremented');
 		});
 
-		it('should return success (alternative) when conditional is false with an alternative node (2x)', function() {
+		it('should return success (alternative) when conditional is false with an alternative node (2x)', function () {
 			const successAction = new LatchedAction('testLatchedAction', 2, rc.SUCCESS);
-			const ifElse = new Behavior.LatchedIfElse('testLatchedIfElse',
+			const ifElse = new Behavior.LatchedIfElse(
+				'testLatchedIfElse',
 				(state) => {
 					return state.runCounter !== 0;
 				},

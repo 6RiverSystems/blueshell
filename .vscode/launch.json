@@ -23,7 +23,7 @@
 			"outFiles": ["${workspaceFolder}/dist/**/*"],
 			"preLaunchTask": "npm run build",
 			"internalConsoleOptions": "openOnSessionStart"
-		},
+		}
 	],
 	"inputs": [
 		{

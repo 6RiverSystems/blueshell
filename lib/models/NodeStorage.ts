@@ -3,7 +3,7 @@
  * Note: a node is free to store additional properties by casting this as an any.
  */
 export interface NodeStorage {
-	lastEventSeen: number|undefined;
-	lastResult: string|undefined;
-	running: number|undefined;
+	lastEventSeen: number | undefined;
+	lastResult: string | undefined;
+	running: number | undefined;
 }
