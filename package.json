@@ -69,7 +69,7 @@
     "archy": "1.0.0",
     "source-map-support": "0.5.10",
     "uuid": "3.3.2",
-    "ws": "7.2.1"
+    "ws": "7.4.6"
   },
   "devDependencies": {
     "@6river/commitlint-config-6river": "^2.2.94",
