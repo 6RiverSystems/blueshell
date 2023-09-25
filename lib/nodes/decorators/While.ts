@@ -71,6 +71,10 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 		}
 	}
 
+	protected onEvent(state: S, event: E): ResultCode {
+		return this.handleChild(state, event);
+	}
+
 	get symbol(): string {
 		return '↻';
 	}
