@@ -32,7 +32,7 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 	protected decorateCall(handleEvent: (state: S, event: E) => ResultCode, state: S, event: E) {
 		const storage: WhileNodeStorage = this.getNodeStorage(state);
 
-		if (storage.running || this.conditional(state, event)) {
+		if (storage.running !== undefined || this.conditional(state, event)) {
 			if (storage.beganAtLeastOneLoop) {
 				Action.treePublisher.publishResult(state, event, false);
 				clearEventSeenRecursive(this.child, state);
@@ -68,6 +68,10 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 			storage.lastLoopResult = res;
 			return this.handleEvent(state, event);
 		}
+	}
+
+	protected onEvent(state: S, event: E): ResultCode {
+		return this.handleChild(state, event);
 	}
 
 	get symbol(): string {

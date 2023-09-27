@@ -110,8 +110,8 @@ describe('While', function () {
 
 	it('latches', function () {
 		const testAction = new TestAction('testAction', [
-			{ rc: rc.RUNNING, inc: false },
-			{ rc: rc.SUCCESS, inc: true },
+			{ rc: rc.RUNNING, inc: true },
+			{ rc: rc.SUCCESS, inc: false },
 		]);
 
 		const uut = new decorators.While<TestState, number>(
@@ -129,17 +129,17 @@ describe('While', function () {
 
 		let result = uut.handleEvent(state, 0);
 		assert.strictEqual(rc.RUNNING, result);
-		assert.strictEqual(state.counter, 0);
+		assert.strictEqual(state.counter, 1);
 		assert.strictEqual(testAction.eventCount, 1);
 
 		result = uut.handleEvent(state, 0);
 		assert.strictEqual(rc.RUNNING, result);
-		assert.strictEqual(state.counter, 1);
+		assert.strictEqual(state.counter, 2);
 		assert.strictEqual(testAction.eventCount, 3);
 
 		result = uut.handleEvent(state, 0);
 		assert.strictEqual(rc.RUNNING, result);
-		assert.strictEqual(state.counter, 2);
+		assert.strictEqual(state.counter, 3);
 		assert.strictEqual(testAction.eventCount, 5);
 
 		result = uut.handleEvent(state, 0);
