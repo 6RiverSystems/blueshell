@@ -52,7 +52,6 @@ export class While<S extends BlueshellState, E> extends Decorator<S, E> {
 
 		if (res === rc.RUNNING) {
 			// yield to the behavior tree because the child node is running
-			storage.running = 0;
 			return res;
 		} else if (storage.break) {
 			// teardown internal state and yield to the behavior tree because the loop has completed
