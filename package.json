@@ -74,7 +74,7 @@
   "devDependencies": {
     "@6river/commitlint-config-6river": "^2.2.94",
     "@6river/prettier-config": "^1.1.8",
-    "@commitlint/cli": "^13.2.1",
+    "@commitlint/cli": "^17.6.1",
     "@types/archy": "0.0.31",
     "@types/chai": "4.2.8",
     "@types/chai-as-promised": "7.1.2",
