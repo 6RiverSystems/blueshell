@@ -42,7 +42,7 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 		return res;
 	}
 
-	protected decorateEvent(event: E): E {
+	protected decorateEvent(event: E, state?: S): E {
 		return event;
 	}
 
