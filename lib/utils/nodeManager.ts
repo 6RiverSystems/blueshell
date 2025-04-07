@@ -72,7 +72,10 @@ export class NodeManager<S extends BlueshellState, E>
 		this.session.post('Debugger.enable', () => undefined);
 
 		this.server = new Websocket.Server({
-			host: 'localhost',
+			// newer Ubuntu causes localhost to resolve to ipv6 ::1 preferably, and
+			// the server doesn't listen on both protocols, which breaks things like
+			// vscode remote development that only forward ipv4.
+			host: '127.0.0.1',
 			port: 8990,
 		});
 
