@@ -33,11 +33,11 @@
     "build:js": "tsc --pretty",
     "build:watch": "tsc --pretty --watch",
     "pretest": "npm-run-all build pretest:eslint pretest:prettier",
-    "test": "NODE_ENV=test nyc mocha ${MOCHA_OPTS}",
+    "test": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --enable-source-maps\" NODE_ENV=test nyc mocha ${MOCHA_OPTS}",
     "pretest:eslint": "eslint --ext .ts,.js ${ESLINT_OPTS} .",
     "pretest:prettier": "prettier --check ${PRETTIER_OPTS} .",
-    "test:no-cover": "NODE_ENV=test mocha",
-    "test:debug": "npm run test:no-cover -- --inspect-brk test",
+    "test:no-cover": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --enable-source-maps\" NODE_ENV=test mocha",
+    "test:debug": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --enable-source-maps\" npm run test:no-cover -- --inspect-brk test",
     "coverage": "NODE_ENV=test nyc report --reporter=text-lcov > coverage.lcov",
     "prepublish": "npm-run-all build"
   },
@@ -67,7 +67,6 @@
   },
   "dependencies": {
     "archy": "1.0.0",
-    "source-map-support": "0.5.10",
     "uuid": "3.3.2",
     "ws": "7.2.1"
   },
