@@ -1,0 +1,12 @@
+full-trace: true
+check-leaks: true
+recursive: true
+timeout: 10000
+exit: true
+global:
+  - breakpointMethods
+  - verbose
+  - dryRun
+  - params
+spec:
+  - dist/**/*.test.js
