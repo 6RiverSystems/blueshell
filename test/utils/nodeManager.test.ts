@@ -153,7 +153,7 @@ describe('nodeManager', function () {
 
 			nodeManager.runServer();
 			sinon.assert.calledWith(serverStub, {
-				host: 'localhost',
+				host: '127.0.0.1',
 				port: 8990,
 			});
 			serverMock.emit('connection', clientMock);
