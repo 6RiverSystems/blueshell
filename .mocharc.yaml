@@ -4,6 +4,7 @@ recursive: true
 timeout: 10000
 exit: true
 global:
+  # from testing NodeManager class
   - breakpointMethods
   - verbose
   - dryRun
