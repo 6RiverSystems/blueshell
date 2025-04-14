@@ -73,7 +73,7 @@ export class Base<S extends BlueshellState, E> implements BaseNode<S, E> {
 			Base.treePublisher.publishResult(state, event, false);
 			const result = this.onEvent(state, event);
 			return this._afterEvent(result, state, event);
-		} catch (err) {
+		} catch (err: any) {
 			state.errorReason = err;
 
 			if (this.getDebug(state)) {
