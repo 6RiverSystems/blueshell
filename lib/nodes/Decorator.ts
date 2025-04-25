@@ -29,7 +29,7 @@ export class Decorator<S extends BlueshellState, E> extends Composite<S, E> {
 	 */
 	protected handleChild(state: S, event: E): ResultCode {
 		// Passthrough
-		event = this.decorateEvent(event);
+		event = this.decorateEvent(event, state);
 		const res = this.decorateResult(
 			this.decorateCall((state, event) => this.child.handleEvent(state, event), state, event),
 			state,
